@@ -655,7 +655,15 @@
             }
         }
 
-        function toggleVista(vista) {
+        let workspaceNavigationReady = false;
+        let workspaceView = 'estimate';
+        function toggleVista(vista, fromHistory = false) {
+            const views = ['estimate', 'radar', 'contract', 'ledger', 'customerLedger', 'form1099'];
+            if (!views.includes(vista)) return;
+            if (workspaceNavigationReady && !fromHistory && vista !== workspaceView) {
+                history.pushState({ kn3xNavigation: 'kn3x-workspace', view: vista }, '', location.href);
+            }
+            workspaceView = vista;
             ['radarContainer', 'estimateContainer', 'contractContainer', 'ledgerContainer', 'customerLedgerContainer', 'form1099Container'].forEach(id => {
                 document.getElementById(id).classList.add('hidden');
                 document.getElementById(id).classList.remove('print:block');
@@ -1507,21 +1515,31 @@
         // Keep ordinary Back navigation inside this workspace without resetting forms.
         function protectWorkspaceNavigation() {
             const marker = 'kn3x-workspace';
-            const state = { ...(history.state || {}), kn3xNavigation: marker };
-            if (history.state?.kn3xNavigation !== marker) {
-                history.replaceState(state, '', location.href);
-                history.pushState(state, '', location.href);
+            const views = ['estimate', 'radar', 'contract', 'ledger', 'customerLedger', 'form1099'];
+            const savedView = history.state?.kn3xNavigation === marker && views.includes(history.state.view)
+                ? history.state.view : 'estimate';
+            if (!history.state?.view || history.state.kn3xNavigation !== marker) {
+                history.replaceState({ kn3xNavigation: marker, boundary: true }, '', location.href);
+                history.pushState({ kn3xNavigation: marker, view: savedView }, '', location.href);
             }
-            window.addEventListener('popstate', () => {
-                history.pushState({ ...(history.state || {}), kn3xNavigation: marker }, '', location.href);
+            workspaceNavigationReady = true;
+            toggleVista(savedView, true);
+            window.addEventListener('popstate', event => {
+                const view = event.state?.kn3xNavigation === marker && views.includes(event.state.view)
+                    ? event.state.view : 'estimate';
+                if (!event.state?.view || event.state.kn3xNavigation !== marker) {
+                    history.pushState({ kn3xNavigation: marker, view }, '', location.href);
+                }
+                toggleVista(view, true);
+                toggleMobileMenu(true);
             });
         }
 
         window.onload = () => {
-            protectWorkspaceNavigation();
+
             actualizarSelectsTerminos();
             agregarFila();
-            toggleVista('estimate');
+            protectWorkspaceNavigation();
             renderCustomerTable();
             initSignaturePads(); // Inicia los paneles de firma táctil
         };
