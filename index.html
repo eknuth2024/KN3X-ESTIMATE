@@ -31,6 +31,7 @@
             .contract-title { font-size: 16px !important; }
             .form-1099-box { border: 2px solid #ef4444 !important; color: #ef4444 !important; }
             .signature-print { display: block !important; }
+            .signature-print:not([src^="data:image/"]) { display: none !important; }
         }
         
         #tablaPresupuesto thead th { vertical-align: middle; padding-top: 0 !important; padding-bottom: 0 !important; }
@@ -38,6 +39,7 @@
         #tablaPresupuesto th:not(:first-child) .estimate-column-title { justify-content: flex-end; }
         #tablaPresupuesto th:nth-child(2) .estimate-column-title { justify-content: center; }
         @media print { #tablaPresupuesto .estimate-column-title { min-height: 26px; } }
+        .signature-img:not([src^="data:image/"]) { display: none !important; }
         .submenu { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
         .submenu.open { max-height: 250px; transition: max-height 0.3s ease-in; }
         /* Keep Leaflet's internal layers below application navigation. */
@@ -1175,7 +1177,7 @@
                     .no-print{display:none!important}.signature-img[src=""]{display:none!important}
                     #estimateContainer [data-i18n="tc_main_title"] + div {display:block!important}
                     #estimateContainer [data-i18n="tc_main_title"] + div > div {display:block!important;width:100%!important;margin-bottom:18px!important}
-                    #estimateContainer.pdf-export .estimate-column-title {min-height:26px!important;transform:translateY(-3px)}
+                    #estimateContainer.pdf-export .estimate-column-title {min-height:26px!important;transform:none!important;color:transparent!important}
                     #estimateContainer .pdf-field {border:0!important;box-shadow:none!important;background:transparent!important;white-space:pre-wrap}
                     #estimateContainer > table > tfoot {display:none!important}
                 `;
@@ -1183,6 +1185,11 @@
                 const pdf=new window.jspdf.jsPDF({unit:'mm',format:'letter'});
                 const rootTop=root.getBoundingClientRect().top;
                 const height=Math.ceil(root.scrollHeight);
+                // Draw export headings as PDF text: no browser/canvas baseline differences on iOS.
+                const headings=Array.from(root.querySelectorAll('#tablaPresupuesto thead th')).filter(th=>th.querySelector('.estimate-column-title')).map((th,index)=>{
+                    const rect=th.getBoundingClientRect(), rr=root.getBoundingClientRect();
+                    return {text:th.textContent.trim(),left:rect.left-rr.left,top:rect.top-rr.top,width:rect.width,height:rect.height,index};
+                });
                 const forced=Array.from(root.querySelectorAll('.page-break-before')).filter(el=>el.getBoundingClientRect().height>0).map(el=>Math.round(el.getBoundingClientRect().top-rootTop)).filter(y=>y>0);
                 const safe=Array.from(root.querySelectorAll('#listaItems tr, #trFotos #photoGrid > div, [data-i18n$="_title"]')).map(el=>Math.floor(el.getBoundingClientRect().top-rootTop)).filter(y=>y>0);
                 const pageHeight=950;let start=0,page=0;
@@ -1194,6 +1201,15 @@
                     const canvas=await html2canvas(root,{backgroundColor:'#ffffff',scale:1.5,useCORS:true,logging:false,width:744,height:end-start,x:0,y:start,windowWidth:816,windowHeight:1056,scrollX:0,scrollY:0});
                     if(page++)pdf.addPage();
                     pdf.addImage(canvas.toDataURL('image/jpeg',.95),'JPEG',10,10,195.9,(end-start)*195.9/744);
+                    const factor=195.9/744;
+                    pdf.setFont('helvetica','bold');pdf.setFontSize(8);pdf.setTextColor(255,255,255);
+                    for(const heading of headings) {
+                        if(heading.top>=start && heading.top+heading.height<=end+1) {
+                            const align=heading.index===0?'left':heading.index===1?'center':'right';
+                            const x=heading.index===0?heading.left+6:heading.index===1?heading.left+heading.width/2:heading.left+heading.width-6;
+                            pdf.text(heading.text,10+x*factor,10+(heading.top-start+heading.height/2)*factor,{align,baseline:'middle'});
+                        }
+                    }
                     canvas.width=canvas.height=0;
                     start=end;
                 }
@@ -1333,7 +1349,7 @@
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             const img = canvas.parentElement.nextElementSibling;
-            img.src = "";
+            img.removeAttribute("src");
             img.classList.add('hidden');
         };
 
@@ -1615,7 +1631,7 @@
                     document.getElementById('photoGrid').innerHTML = '';
                     (data.photos || []).forEach(photo => { agregarTarjetaFoto(photo.src); const card = document.getElementById('photoGrid').lastElementChild; card.querySelector('.photo-title-input').value = photo.title || ''; card.querySelector('.photo-desc-input').value = photo.description || ''; });
                     document.getElementById('trFotos').style.display = data.photos?.length ? 'table-row' : 'none';
-                    document.querySelectorAll('#estimateContainer .signature-img').forEach((img, index) => { img.src = data.signatures?.[index] || ''; const canvas = img.previousElementSibling.querySelector('canvas'); const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height); if (data.signatures?.[index]) { const image = new Image(); image.onload = () => ctx.drawImage(image,0,0,canvas.width,canvas.height); image.src = data.signatures[index]; } });
+                    document.querySelectorAll('#estimateContainer .signature-img').forEach((img, index) => { if (data.signatures?.[index]) img.src = data.signatures[index]; else img.removeAttribute("src"); const canvas = img.previousElementSibling.querySelector('canvas'); const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height); if (data.signatures?.[index]) { const image = new Image(); image.onload = () => ctx.drawImage(image,0,0,canvas.width,canvas.height); image.src = data.signatures[index]; } });
                     calcularTotales();
                 } catch(error) { alert("Error al cargar el archivo."); }
             };
