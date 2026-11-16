@@ -959,7 +959,11 @@
                         <input type="number" min="0" value="0.00" step="0.01" class="w-full max-w-[60px] md:max-w-[80px] p-1 border border-transparent hover:border-gray-200 focus:border-slate-500 rounded focus:outline-none bg-transparent text-right transition price text-[10px] md:text-sm print:p-0 print:text-xs" onchange="calcularTotales()" onkeyup="calcularTotales()">
                     </div>
                 </td>
-                <td class="p-1 md:p-2 print:py-1 print:px-0 align-top pt-3 md:pt-4 print:pt-1 font-semibold text-slate-700 text-right row-total text-[10px] md:text-sm print:text-xs mt-5 md:mt-6 print:mt-0">$0.00</td>
+                <td class="p-1 md:p-2 print:py-1 print:px-0 align-top pt-2 md:pt-3 print:pt-1">
+                    <div class="flex items-center justify-end mt-5 md:mt-6 print:mt-0">
+                        <span class="row-total block p-1 border border-transparent font-semibold text-slate-700 text-right text-[10px] md:text-sm print:p-0 print:text-xs">$0.00</span>
+                    </div>
+                </td>
                 <td class="p-1 md:p-2 align-top pt-2 md:pt-3 text-center no-print opacity-100 md:opacity-0 group-hover:opacity-100 transition">
                     <button onclick="eliminarFila(this)" class="mt-5 md:mt-6 text-red-400 hover:text-red-600 font-bold bg-red-50 hover:bg-red-100 rounded-full w-5 h-5 md:w-7 md:h-7 flex items-center justify-center text-sm md:text-lg leading-none">×</button>
                 </td>
