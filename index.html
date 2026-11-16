@@ -33,6 +33,11 @@
         
         .submenu { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
         .submenu.open { max-height: 250px; transition: max-height 0.3s ease-in; }
+        /* Keep Leaflet's internal layers below application navigation. */
+        #mapView { position: relative; z-index: 0; isolation: isolate; }
+        #mainWrapper { position: relative; z-index: 0; isolation: isolate; }
+        #sidebar { z-index: 2000; }
+        #mobileOverlay { z-index: 1900; }
         .signature-canvas { touch-action: none; } /* Previene que la pantalla se mueva al firmar en celular */
     </style>
 </head>
@@ -1499,7 +1504,21 @@
             toggleVista('estimate'); 
         };
 
+        // Keep ordinary Back navigation inside this workspace without resetting forms.
+        function protectWorkspaceNavigation() {
+            const marker = 'kn3x-workspace';
+            const state = { ...(history.state || {}), kn3xNavigation: marker };
+            if (history.state?.kn3xNavigation !== marker) {
+                history.replaceState(state, '', location.href);
+                history.pushState(state, '', location.href);
+            }
+            window.addEventListener('popstate', () => {
+                history.pushState({ ...(history.state || {}), kn3xNavigation: marker }, '', location.href);
+            });
+        }
+
         window.onload = () => {
+            protectWorkspaceNavigation();
             actualizarSelectsTerminos();
             agregarFila();
             toggleVista('estimate');
