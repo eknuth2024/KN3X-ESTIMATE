@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KN3X Command Center</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@4.2.1/dist/jspdf.umd.min.js" defer></script>
     
     <!-- LIBRERÍAS DEL MAPA -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
@@ -1091,7 +1092,114 @@
                 alert(currentLang === 'en' ? "Please fill all mandatory fields (*) in the Estimate before generating the PDF." : "Por favor llena todos los campos obligatorios (*) del presupuesto antes de generar el PDF.");
                 return;
             }
-            window.print();
+            createEstimatePdf();
+        }
+
+        
+        let estimatePdfFile = null;
+        let estimatePdfUrl = null;
+        function closeEstimatePdf() {
+            document.getElementById('estimatePdfDialog').close();
+            if (estimatePdfUrl) URL.revokeObjectURL(estimatePdfUrl);
+            estimatePdfUrl = null; estimatePdfFile = null;
+        }
+        async function shareEstimatePdf() {
+            if (!estimatePdfFile) return;
+            try { await navigator.share({ files: [estimatePdfFile], title: estimatePdfFile.name }); }
+            catch (error) {
+                if (error.name !== 'AbortError') alert(currentLang === 'es' ? 'No se pudo compartir. Descarga el PDF y adjúntalo al correo.' : 'Unable to share. Download the PDF and attach it to your email.');
+            }
+        }
+        async function createEstimatePdf() {
+            if (!window.jspdf?.jsPDF) { alert(currentLang === 'es' ? 'No se pudo cargar el generador PDF. Revisa la conexión y recarga la página.' : 'PDF generator unavailable. Check your connection and reload.'); return; }
+            const button = document.querySelector('[onclick="validarEImprimirPresupuesto()"]');
+            button.disabled = true;
+            try {
+                calcularTotales();
+                const pdf = new window.jspdf.jsPDF({unit:'mm',format:'letter'});
+                const es = currentLang === 'es';
+                const value = id => document.getElementById(id).value;
+                const label = key => document.querySelector('#estimateContainer [data-i18n="' + key + '"]')?.textContent.trim() || '';
+                let y = 18; const left = 16, right = 200, width = 184, bottom = 260;
+                const money = n => '$' + Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+                function page() { pdf.addPage(); y = 18; }
+                function room(height) { if (y + height > bottom) page(); }
+                function text(content, size = 10, bold = false, maxWidth = width) {
+                    pdf.setFont('helvetica', bold ? 'bold' : 'normal'); pdf.setFontSize(size);
+                    const lines = pdf.splitTextToSize(String(content || ''), maxWidth);
+                    for (const line of lines) { room(size * .45 + 1); pdf.text(line,left,y); y += size * .45 + 1; }
+                    y += 2;
+                }
+                const logo = document.querySelector('#estimateContainer img[alt="KN3X Project LLC"]');
+                if (logo?.complete && logo.naturalWidth) {
+                    const canvas = document.createElement('canvas'); canvas.width = logo.naturalWidth; canvas.height = logo.naturalHeight;
+                    canvas.getContext('2d').drawImage(logo,0,0);
+                    const height = Math.min(20, 48 * logo.naturalHeight / logo.naturalWidth);
+                    pdf.addImage(canvas.toDataURL('image/png'),'PNG',left,y,48,height); y += height + 7;
+                } else text('KN3X PROJECT LLC',18,true);
+                text('512 999-3239 | kn3x.project@gmail.com | kn3xproject.com',9);
+                pdf.setTextColor(234,88,12); text(es ? 'PRESUPUESTO' : 'ESTIMATE',20,true); pdf.setTextColor(30,41,59);
+                text(value('inputEstNum') + ' | ' + value('fechaActual'),10,true);
+                text(value('inputClientName'),12,true);
+                text(value('inputAddress')); text(value('inputClientEmail') + ' | ' + value('inputPhone'));
+                function tableHeader() {
+                    room(14); pdf.setFillColor(241,245,249);pdf.rect(left,y-4,width,9,'F');
+                    pdf.setFontSize(9);pdf.setFont('helvetica','bold');
+                    pdf.text(es?'SERVICIO / MATERIAL':'SERVICE / MATERIAL',left+2,y+1);
+                    pdf.text(es?'CANT.':'QTY',142,y+1,{align:'right'});
+                    pdf.text(es?'PRECIO':'PRICE',170,y+1,{align:'right'});
+                    pdf.text('TOTAL',right-2,y+1,{align:'right'}); y+=12;
+                }
+                tableHeader();
+                for (const row of document.querySelectorAll('#listaItems tr')) {
+                    const sel=row.querySelector('.catalogo-select'), qty=Number(row.querySelector('.qty').value)||0, price=Number(row.querySelector('.price').value)||0;
+                    const service=sel.selectedOptions[0]?.dataset.id ? sel.selectedOptions[0].textContent : (es?'Servicio personalizado':'Custom service');
+                    const notes=row.querySelector('.nota-input').value;
+                    pdf.setFont('helvetica','normal');pdf.setFontSize(9);
+                    const lines=pdf.splitTextToSize(service + (notes?'\n'+notes:''),111);
+                    if(y+Math.min(lines.length*4.5+5,230)>bottom){page();tableHeader();}
+                    pdf.text(String(qty),142,y,{align:'right'});pdf.text(money(price),170,y,{align:'right'});pdf.text(money(qty*price),right-2,y,{align:'right'});
+                    for(const line of lines){if(y+5>bottom){page();tableHeader();}pdf.setFontSize(9);pdf.setFont('helvetica','normal');pdf.text(line,left+2,y);y+=4.5;}
+                    y+=4;pdf.setDrawColor(226,232,240);pdf.line(left,y-2,right,y-2);
+                }
+                room(35);y+=4;
+                text((es?'Subtotal: ':'Subtotal: ')+document.getElementById('subtotal').textContent,11,true);
+                text((es?'Impuesto (8.25%): ':'Tax (8.25%): ')+document.getElementById('impuesto').textContent,11);
+                text('Total USD: '+document.getElementById('total').textContent,14,true);
+                text(es?'CRONOGRAMA DE PAGOS':'PAYMENT SCHEDULE',11,true);
+                text(document.getElementById('pagoDesglose').innerText,10);
+                text((es?'Validez: ':'Validity: ')+document.getElementById('validezSelect').selectedOptions[0].textContent);
+                text((es?'Duración estimada: ':'Estimated duration: ')+value('inputDuration'));
+                page();text(label('tc_main_title'),15,true);
+                for(const n of [1,2,3,4,6]) { room(24);text(label('t'+n+'_title'),11,true);text(label('t'+n+'_text')); }
+                room(65);text(label('acceptance_title'),12,true);text(label('acceptance_text'));
+                const signature=document.querySelector('#estimateContainer .signature-img')?.getAttribute('src');
+                if(signature) {pdf.addImage(signature,'PNG',left,y,65,22);y+=25;} else y+=22;
+                pdf.line(left,y,88,y);pdf.line(96,y,163,y);pdf.line(171,y,right,y);
+                pdf.setFontSize(8);pdf.text(label('sign_signature'),left,y+5);pdf.text(label('sign_name'),96,y+5);pdf.text(label('sign_date'),171,y+5);
+                for(const card of document.querySelectorAll('#photoGrid > div')) {
+                    page(); text(card.querySelector('.photo-title-input').value || (es?'Foto del proyecto':'Project photo'),14,true);
+                    const image=card.querySelector('img');await image.decode();
+                    const w=Math.min(width,210*image.naturalWidth/image.naturalHeight), ht=Math.min(210,width*image.naturalHeight/image.naturalWidth);
+                    const canvas=document.createElement('canvas');const scale=Math.min(1,1600/Math.max(image.naturalWidth,image.naturalHeight));canvas.width=Math.round(image.naturalWidth*scale);canvas.height=Math.round(image.naturalHeight*scale);canvas.getContext('2d').drawImage(image,0,0,canvas.width,canvas.height);
+                    pdf.addImage(canvas.toDataURL('image/jpeg',.85),'JPEG',left,y,w,ht);y+=ht+7;
+                    text(card.querySelector('.photo-desc-input').value);
+                }
+                const pages=pdf.getNumberOfPages();
+                for(let i=1;i<=pages;i++){pdf.setPage(i);pdf.setFontSize(8);pdf.setTextColor(100,116,139);pdf.text('KN3X Project LLC | '+value('inputEstNum'),left,273);pdf.text(i+' / '+pages,right,273,{align:'right'});}
+                const name=('KN3X_'+value('inputEstNum')+'_'+value('inputClientName')).replace(/[^a-zA-Z0-9_-]/g,'_').slice(0,110)+'.pdf';
+                if(estimatePdfUrl) URL.revokeObjectURL(estimatePdfUrl);
+                estimatePdfFile=new File([pdf.output('blob')],name,{type:'application/pdf'});
+                estimatePdfUrl=URL.createObjectURL(estimatePdfFile);
+                const dialog=document.getElementById('estimatePdfDialog');
+                document.getElementById('pdfReadyTitle').textContent=es?'Tu PDF está listo':'Your PDF is ready';
+                document.getElementById('pdfReadyHelp').textContent=es?'Descárgalo o pulsa Compartir y elige Mail u otra aplicación para enviarlo.':'Download it or tap Share and choose Mail or another app to send it.';
+                const download=document.getElementById('downloadEstimatePdf');download.href=estimatePdfUrl;download.download=name;download.textContent=es?'Descargar PDF':'Download PDF';
+                const share=document.getElementById('shareEstimatePdf');share.textContent=es?'Compartir PDF':'Share PDF';share.hidden=!(navigator.canShare && navigator.canShare({files:[estimatePdfFile]}));
+                document.getElementById('closeEstimatePdf').textContent=es?'Cerrar':'Close';
+                dialog.showModal();
+            } catch(error) { console.error('PDF generation failed',error);alert(currentLang==='es'?'No se pudo generar el PDF. Tus datos siguen en pantalla. Inténtalo de nuevo.':'Unable to generate PDF. Your information is still on screen. Please try again.'); }
+            finally { button.disabled=false; }
         }
 
         function procesarImagen(event) {
@@ -1548,6 +1656,14 @@
             initSignaturePads(); // Inicia los paneles de firma táctil
         };
     </script>
+<dialog id="estimatePdfDialog" class="rounded-xl p-6 shadow-xl max-w-md w-[90%] backdrop:bg-black/50">
+<h2 id="pdfReadyTitle" class="text-xl font-bold mb-3">Your PDF is ready</h2>
+<p id="pdfReadyHelp" class="mb-5 text-sm text-slate-600"></p>
+<div class="flex flex-wrap gap-3">
+<a id="downloadEstimatePdf" class="bg-slate-800 text-white rounded-lg px-4 py-3 font-bold">Download PDF</a>
+<button id="shareEstimatePdf" onclick="shareEstimatePdf()" class="bg-orange-500 text-white rounded-lg px-4 py-3 font-bold">Share PDF</button>
+<button id="closeEstimatePdf" onclick="closeEstimatePdf()" class="border rounded-lg px-4 py-3">Close</button>
+</div></dialog>
 </body>
 </html>
 
