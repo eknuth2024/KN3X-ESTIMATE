@@ -1165,7 +1165,13 @@
                 const printStyle=doc.createElement('style');let printRules='';
                 function collectPrint(rules) {for(const rule of rules){if(rule.type===4 && rule.conditionText.includes('print')) printRules+=Array.from(rule.cssRules).map(r=>r.cssText).join('\n');else if(rule.cssRules)collectPrint(rule.cssRules);}}
                 for(const sheet of document.styleSheets){try{collectPrint(sheet.cssRules);}catch{}}
-                printStyle.textContent=printRules+'\n.no-print{display:none!important}.signature-img[src=""]{display:none!important}';
+                printStyle.textContent=printRules+`
+                    .no-print{display:none!important}.signature-img[src=""]{display:none!important}
+                    #estimateContainer [data-i18n="tc_main_title"] + div {display:block!important}
+                    #estimateContainer [data-i18n="tc_main_title"] + div > div {display:block!important;width:100%!important;margin-bottom:18px!important}
+                    #estimateContainer .pdf-field {border:0!important;box-shadow:none!important;background:transparent!important;white-space:pre-wrap}
+                    #estimateContainer > table > tfoot {display:none!important}
+                `;
                 doc.head.appendChild(printStyle);
                 const pdf=new window.jspdf.jsPDF({unit:'mm',format:'letter'});
                 const rootTop=root.getBoundingClientRect().top;
