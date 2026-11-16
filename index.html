@@ -33,6 +33,11 @@
             .signature-print { display: block !important; }
         }
         
+        #tablaPresupuesto thead th { vertical-align: middle; padding-top: 0 !important; padding-bottom: 0 !important; }
+        #tablaPresupuesto .estimate-column-title { display: flex; align-items: center; min-height: 30px; line-height: 1; }
+        #tablaPresupuesto th:not(:first-child) .estimate-column-title { justify-content: flex-end; }
+        #tablaPresupuesto th:nth-child(2) .estimate-column-title { justify-content: center; }
+        @media print { #tablaPresupuesto .estimate-column-title { min-height: 26px; } }
         .submenu { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
         .submenu.open { max-height: 250px; transition: max-height 0.3s ease-in; }
         /* Keep Leaflet's internal layers below application navigation. */
@@ -207,10 +212,10 @@
                                     <table class="w-full text-left border-collapse" id="tablaPresupuesto">
                                         <thead>
                                             <tr class="bg-orange-500 text-white text-[9px] md:text-[11px] uppercase tracking-wider">
-                                                <th class="p-1.5 md:p-3 rounded-tl-lg w-[50%] md:w-1/2 print:py-1" data-i18n="service">Service / Material</th>
-                                                <th class="p-1.5 md:p-3 w-10 md:w-20 text-center print:py-1" data-i18n="qty">Qty</th>
-                                                <th class="p-1.5 md:p-3 w-16 md:w-28 text-right print:py-1" data-i18n="price">Price</th>
-                                                <th class="p-1.5 md:p-3 w-16 md:w-28 text-right rounded-tr-lg print:py-1" data-i18n="total">Total</th>
+                                                <th class="p-1.5 md:p-3 rounded-tl-lg w-[50%] md:w-1/2 print:py-1"><span class="estimate-column-title" data-i18n="service">Service / Material</span></th>
+                                                <th class="p-1.5 md:p-3 w-10 md:w-20 text-center print:py-1"><span class="estimate-column-title" data-i18n="qty">Qty</span></th>
+                                                <th class="p-1.5 md:p-3 w-16 md:w-28 text-right print:py-1"><span class="estimate-column-title" data-i18n="price">Price</span></th>
+                                                <th class="p-1.5 md:p-3 w-16 md:w-28 text-right rounded-tr-lg print:py-1"><span class="estimate-column-title" data-i18n="total">Total</span></th>
                                                 <th class="p-1 md:p-3 w-6 no-print"></th>
                                             </tr>
                                         </thead>
@@ -1146,6 +1151,7 @@
                 `;
                 doc.head.appendChild(style);
                 const root = source.cloneNode(true);
+                root.classList.add("pdf-export");
                 doc.body.appendChild(root);
                 const originalFields=source.querySelectorAll('input,select,textarea');
                 root.querySelectorAll('input,select,textarea').forEach((field,i)=>{
@@ -1169,6 +1175,7 @@
                     .no-print{display:none!important}.signature-img[src=""]{display:none!important}
                     #estimateContainer [data-i18n="tc_main_title"] + div {display:block!important}
                     #estimateContainer [data-i18n="tc_main_title"] + div > div {display:block!important;width:100%!important;margin-bottom:18px!important}
+                    #estimateContainer.pdf-export .estimate-column-title {min-height:26px!important;transform:translateY(-3px)}
                     #estimateContainer .pdf-field {border:0!important;box-shadow:none!important;background:transparent!important;white-space:pre-wrap}
                     #estimateContainer > table > tfoot {display:none!important}
                 `;
