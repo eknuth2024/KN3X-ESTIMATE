@@ -344,11 +344,19 @@
                                         <span data-i18n="add_photo">Add Photo</span>
                                     </button>
                                 </div>
-                                <div class="mt-4 flex justify-center border-t border-gray-200 pt-4 md:pt-6">
+                                <div class="mt-4 border-t border-gray-200 pt-4 md:pt-6 no-print">
+                                    <p id="estimateWorkflowStatus" role="status" class="text-xs text-slate-600 mb-3 text-center"></p>
+                                    <label class="sr-only" for="savedLocalEstimates">Open finalized local estimate / Abrir presupuesto local</label>
+                                    <select id="savedLocalEstimates" onchange="openFinalizedLocalEstimate()" class="w-full border border-slate-300 rounded-lg p-2 mb-4 text-sm"></select>
+                                    <div class="flex flex-col md:flex-row justify-center gap-3">
+                                    <button id="finalizeEstimateButton" onclick="finalizeEstimate()" class="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white font-bold py-3 px-5 rounded-lg w-full md:w-auto" data-i18n="finalize_estimate">Finalize estimate</button>
+
                                     <button onclick="validarEImprimirPresupuesto()" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2.5 md:py-3 px-8 md:px-10 rounded-lg shadow-lg transition transform hover:-translate-y-0.5 w-full md:w-auto text-sm md:text-lg flex items-center justify-center gap-2" data-i18n="generate_pdf">
                                         <svg class="w-4 md:w-5 h-4 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                         Generate PDF
                                     </button>
+                                    <button onclick="clearEstimateContent()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-5 rounded-lg w-full md:w-auto" data-i18n="clear_estimate">Clear content</button>
+                                    </div>
                                 </div>
                             </td>
                         </tr>
@@ -754,7 +762,7 @@
                 digital_sign_note: "* Please return this approved document physically or digitally (e.g., via DocuSign).",
                 sign_signature: "Client Signature", sign_name: "Printed Name", sign_date: "Date",
                 doc_estimate: "Estimate", page_continuation: "Continued Document", valid_doc: "Official Document",
-                btn_save: "Save", btn_open: "Load", btn_radar: "Demo Radar", radar_title: "Demo Bid Radar - Austin Area", toast_saved: "File downloaded successfully!",
+                finalize_estimate: "Finalize estimate", clear_estimate: "Clear content", btn_save: "Save", btn_open: "Load", btn_radar: "Demo Radar", radar_title: "Demo Bid Radar - Austin Area", toast_saved: "File downloaded successfully!",
                 btn_lang: "🌐 ES", btn_contract: "Subcontractor Doc", btn_estimate_view: "Estimate Tool", btn_ledger: "1099 Ledger",
                 menu_customers: "Customers", menu_team: "Vendors & Team", btn_customer_dir: "Directory"
             },
@@ -780,7 +788,7 @@
                 digital_sign_note: "* Por favor, devuelva este documento aprobado en físico o vía digital (ej. DocuSign).",
                 sign_signature: "Firma del Cliente", sign_name: "Nombre en Letra de Molde", sign_date: "Fecha",
                 doc_estimate: "Presupuesto", page_continuation: "Documento Continuo", valid_doc: "Documento Oficial",
-                btn_save: "Guardar", btn_open: "Cargar", btn_radar: "Radar de demostración", radar_title: "Radar de demostración - Austin", toast_saved: "¡Archivo descargado con éxito!",
+                finalize_estimate: "Finalizar presupuesto", clear_estimate: "Borrar contenido", btn_save: "Guardar", btn_open: "Cargar", btn_radar: "Radar de demostración", radar_title: "Radar de demostración - Austin", toast_saved: "¡Archivo descargado con éxito!",
                 btn_lang: "🌐 EN", btn_contract: "Contrato 1099", btn_estimate_view: "Presupuesto", btn_ledger: "Directorio 1099",
                 menu_customers: "Clientes", menu_team: "Proveedores", btn_customer_dir: "Directorio"
             }
@@ -1101,6 +1109,193 @@
             contenedor.innerHTML = html;
         }
 
+
+        // Temporary local repository; the central server will own this sequence later.
+        const ESTIMATE_STORE = 'kn3x_finalized_estimates_v1';
+        let activeEstimateId = null;
+        let estimateFinalizing = false;
+        function estimateMessage(en, es) { return currentLang === 'es' ? es : en; }
+        function readEstimateStore() {
+            const raw = localStorage.getItem(ESTIMATE_STORE);
+            if (!raw) return {version:1, estimates:[]};
+            const data = JSON.parse(raw);
+            if (!data || data.version !== 1 || !Array.isArray(data.estimates)) throw new Error('Invalid estimate store');
+            const numbers = new Set(), ids = new Set();
+            for (const record of data.estimates) {
+                if (!record || !Number.isSafeInteger(record.number) || record.number < 1 || !record.id || !record.document || numbers.has(record.number) || ids.has(record.id)) throw new Error('Invalid saved estimate');
+                numbers.add(record.number); ids.add(record.id);
+            }
+            return data;
+        }
+        function formatEstimateNumber(number) { return '#' + String(number).padStart(6,'0'); }
+        function nextEstimateNumber(store) {
+            const number = store.estimates.reduce((max, record) => Math.max(max, record.number), 0) + 1;
+            if (!Number.isSafeInteger(number)) throw new Error('Sequence exhausted');
+            return number;
+        }
+        function setEstimateNumber(number) {
+            document.getElementById('inputEstNum').value = typeof number === 'number' ? formatEstimateNumber(number) : number;
+            document.querySelectorAll('.est-display').forEach(el => el.textContent = document.getElementById('inputEstNum').value);
+        }
+        function collectEstimateDocument() {
+            syncPrintedName();
+            const data = {
+                estNum: document.getElementById('inputEstNum').value, clientName: document.getElementById('inputClientName').value.trim(),
+                fecha: document.getElementById('fechaActual').value, email: document.getElementById('inputClientEmail').value.trim(),
+                phone: document.getElementById('inputPhone').value.trim(), address: document.getElementById('inputAddress').value.trim(),
+                validez: document.getElementById('validezSelect').value, pagoPlan: document.getElementById('pagoSelect').value,
+                duration: document.getElementById('inputDuration').value.trim(), printedName: document.getElementById("inputPrintedName").value, printedNameManual: document.getElementById("inputPrintedName").dataset.manual === "true", items: [], photos: Array.from(document.querySelectorAll('#photoGrid > div')).map(card => ({src: card.querySelector('img').src, title: card.querySelector('.photo-title-input').value, description: card.querySelector('.photo-desc-input').value})), signatures: Array.from(document.querySelectorAll('#estimateContainer .signature-img')).map(img => img.getAttribute('src') || '')
+            };
+            document.querySelectorAll('#listaItems tr').forEach(fila => {
+                const sel = fila.querySelector('.catalogo-select');
+                data.items.push({ serviceId: sel.selectedOptions[0]?.dataset.id, selectIndex: sel.selectedIndex, nota: fila.querySelector('.nota-input').value, qty: fila.querySelector('.qty').value, price: fila.querySelector('.price').value });
+            });
+
+            data.localEstimateId = activeEstimateId;
+            return data;
+        }
+        function validEstimateForFinalizing() {
+            const required = ['inputClientName','fechaActual','inputClientEmail','inputPhone','inputAddress','inputDuration'];
+            if (required.some(id => !document.getElementById(id).value.trim()) || !document.getElementById('inputClientEmail').checkValidity()) {
+                alert(estimateMessage('Complete all required fields and enter a valid email before finalizing.','Completa los campos obligatorios y un correo válido antes de finalizar.'));
+                return false;
+            }
+            const rows = Array.from(document.querySelectorAll('#listaItems tr'));
+            if (!rows.length || rows.some(row => {
+                const selected = row.querySelector('select').selectedOptions[0];
+                const quantity = Number(row.querySelector('.qty').value), price = Number(row.querySelector('.price').value);
+                return !selected?.dataset.id || (selected.dataset.id === 'custom' && !row.querySelector('.nota-input').value.trim()) ||
+                    !Number.isFinite(quantity) || quantity <= 0 || !row.querySelector('.price').value.trim() || !Number.isFinite(price) || price < 0 || !Number.isFinite(quantity * price);
+            })) {
+                alert(estimateMessage('Select a service on every line and check quantities and prices. Describe custom services in Notes.','Selecciona un servicio en cada partida y revisa cantidades y precios. Describe los servicios personalizados en Notas.'));
+                return false;
+            }
+            return true;
+        }
+        function refreshEstimateControls() {
+            const status = document.getElementById('estimateWorkflowStatus'), selector = document.getElementById('savedLocalEstimates');
+            if (!status || !selector) return;
+            try {
+                const store = readEstimateStore();
+                const record = store.estimates.find(record => record.id === activeEstimateId);
+                const selectedId = selector.value;
+                selector.replaceChildren();
+                const empty = document.createElement('option'); empty.value = '';
+                empty.textContent = estimateMessage('Open a finalized estimate on this device','Abrir presupuesto finalizado en este dispositivo');
+                selector.appendChild(empty);
+                [...store.estimates].sort((a,b) => b.number-a.number).forEach(record => {
+                    const option = document.createElement('option'); option.value = record.id;
+                    option.textContent = formatEstimateNumber(record.number) + ' — ' + record.document.clientName;
+                    selector.appendChild(option);
+                });
+                selector.value = selectedId;
+                const changed = record && JSON.stringify(record.document) !== JSON.stringify(collectEstimateDocument());
+                status.textContent = record ? estimateMessage(
+                    formatEstimateNumber(record.number) + (changed ? ' reserved — changes pending. Finalize again before PDF.' : ' finalized and reserved.'),
+                    formatEstimateNumber(record.number) + (changed ? ' reservado — cambios pendientes. Finaliza de nuevo antes del PDF.' : ' finalizado y reservado.')
+                ) : estimateMessage('Draft — number reserved only when you finalize. Saved on this browser only.','Borrador — el número se reserva al finalizar. Se guarda solo en este navegador.');
+            } catch {
+                status.textContent = estimateMessage('Local storage unavailable. Nothing has been reserved. Keep a JSON backup.','Almacenamiento local no disponible. No se ha reservado ningún número. Conserva una copia JSON.');
+            }
+        }
+        async function finalizeEstimate() {
+            if (estimateFinalizing || !validEstimateForFinalizing()) return;
+            estimateFinalizing = true;
+            const button = document.getElementById('finalizeEstimateButton'); button.disabled = true;
+            const operation = () => {
+                if (!validEstimateForFinalizing()) return;
+                const store = readEstimateStore();
+                let record = store.estimates.find(r => r.id === activeEstimateId);
+                const documentData = collectEstimateDocument();
+                if (record && record.document.clientName.trim().toLowerCase() !== documentData.clientName.trim().toLowerCase()) {
+                    alert(estimateMessage('This number is reserved for '+record.document.clientName+'. Use Clear content for a different client.','Este número está reservado para '+record.document.clientName+'. Usa Borrar contenido para otro cliente.'));
+                    return;
+                }
+                const now = new Date().toISOString();
+                const id = record?.id || crypto.randomUUID();
+                let number = record?.number;
+                if (!number) {
+                    const candidate = Number(documentData.estNum.replace(/^#/, ''));
+                    number = Number.isSafeInteger(candidate) && candidate > 0 && !store.estimates.some(r => r.number === candidate)
+                        ? Math.max(candidate,nextEstimateNumber(store)) : nextEstimateNumber(store);
+                }
+                documentData.estNum = formatEstimateNumber(number); documentData.localEstimateId = id;
+                const updated = {id,number,finalizedAt:record?.finalizedAt || now,updatedAt:now,document:documentData};
+                if (record) store.estimates[store.estimates.indexOf(record)] = updated;
+                else store.estimates.push(updated);
+                // Persist before changing the visible ID or claiming a reservation.
+                localStorage.setItem(ESTIMATE_STORE, JSON.stringify(store));
+                activeEstimateId = id; setEstimateNumber(number);
+                refreshEstimateControls();
+                alert(estimateMessage(documentData.estNum+' finalized and saved on this browser. This does not mean client approval.',
+                    documentData.estNum+' finalizado y guardado en este navegador. Esto no significa aprobación del cliente.'));
+            };
+            try {
+                if (navigator.locks?.request) await navigator.locks.request(ESTIMATE_STORE, operation);
+                else operation();
+            } catch(error) {
+                console.error('Estimate finalization failed',error);
+                alert(estimateMessage('Could not save or reserve the estimate. Your form is unchanged. Local storage may be full or unavailable; save a JSON backup.',
+                    'No se pudo guardar ni reservar el presupuesto. Tus datos siguen en pantalla. El almacenamiento local puede estar lleno o no disponible; guarda una copia JSON.'));
+            } finally { estimateFinalizing = false; button.disabled = false; }
+        }
+        function finalizedEstimateReadyForPdf() {
+            try {
+                const record = readEstimateStore().estimates.find(r => r.id === activeEstimateId);
+                if (record && JSON.stringify(record.document) === JSON.stringify(collectEstimateDocument())) return true;
+            } catch {}
+            alert(estimateMessage('Click the green Finalize estimate button before generating the PDF.','Pulsa el botón verde Finalizar presupuesto antes de generar el PDF.'));
+            refreshEstimateControls(); return false;
+        }
+        function clearEstimateContent() {
+            if (estimateFinalizing) return;
+            if (!confirm(estimateMessage('Clear this form and start a new estimate? Unsaved changes will be lost. Finalized estimates and their reserved numbers will remain.',
+                '¿Borrar este formulario e iniciar un presupuesto nuevo? Se perderán los cambios no finalizados. Los presupuestos finalizados y sus números reservados se conservarán.'))) return;
+            let number; try { number = nextEstimateNumber(readEstimateStore()); } catch { alert(estimateMessage('Cannot read local numbering. Save a JSON backup before clearing.','No se puede leer la numeración local. Guarda una copia JSON antes de borrar.')); return; }
+            activeEstimateId = null;
+            ['inputClientName','inputClientEmail','inputPhone','inputAddress','inputDuration','inputPrintedName'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('inputPrintedName').dataset.manual = 'false';
+            document.getElementById('selectCustomerDir').value = '';
+            document.getElementById('savedLocalEstimates').value = '';
+            document.getElementById('fechaActual').value = localDate();
+            document.getElementById('validezSelect').value = '15d'; document.getElementById('pagoSelect').value = 'thirds';
+            document.getElementById('listaItems').replaceChildren(); agregarFila();
+            document.getElementById('photoGrid').replaceChildren();document.getElementById('trFotos').style.display = 'none';
+            document.querySelectorAll('#estimateContainer .signature-canvas').forEach(canvas => canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height));
+            document.querySelectorAll('#estimateContainer .signature-img').forEach(img => {img.removeAttribute('src');img.classList.add('hidden');});
+            document.getElementById('imageUpload').value = '';
+            if (estimatePdfUrl) {URL.revokeObjectURL(estimatePdfUrl); estimatePdfUrl = null; estimatePdfFile = null;}
+            setEstimateNumber(number);calcularTotales();refreshEstimateControls();
+        }
+        function openFinalizedLocalEstimate() {
+            if (estimateFinalizing) return;
+            const selector = document.getElementById('savedLocalEstimates');
+            if (!selector.value) return;
+            if (!confirm(estimateMessage('Replace the current form with this finalized estimate? Save any unfinished changes first.','¿Reemplazar el formulario con este presupuesto finalizado? Guarda antes los cambios pendientes.'))) {selector.value='';return;}
+            try {
+                const record = readEstimateStore().estimates.find(r => r.id === selector.value);
+                if (!record) throw new Error('Estimate not found');
+                importarArchivo({target:{files:[new File([JSON.stringify(record.document)],'estimate.json',{type:'application/json'})],value:''}});
+            } catch {alert(estimateMessage('Unable to open the local estimate.','No se pudo abrir el presupuesto local.'));}
+        }
+        function restoreEstimateWorkflow(data) {
+            activeEstimateId = null;
+            try {
+                const record = readEstimateStore().estimates.find(r => r.id === data.localEstimateId && formatEstimateNumber(r.number) === data.estNum);
+                if (record) activeEstimateId = record.id;
+            } catch {}
+            document.querySelectorAll('.est-display').forEach(el => el.textContent = document.getElementById('inputEstNum').value);
+            refreshEstimateControls();
+        }
+        function initializeEstimateWorkflow() {
+            document.getElementById('inputEstNum').readOnly = true;
+            try {setEstimateNumber(nextEstimateNumber(readEstimateStore()));} catch {}
+            refreshEstimateControls();
+            document.getElementById('estimateContainer').addEventListener('input', refreshEstimateControls);
+            document.getElementById('estimateContainer').addEventListener('change', refreshEstimateControls);
+            window.addEventListener('storage', event => {if(event.key===ESTIMATE_STORE) refreshEstimateControls();});
+        }
+
         function validarEImprimirPresupuesto() {
             const name = document.getElementById('inputClientName').value.trim();
             const email = document.getElementById('inputClientEmail').value.trim();
@@ -1112,6 +1307,7 @@
                 alert(currentLang === 'en' ? "Please fill all mandatory fields (*) in the Estimate before generating the PDF." : "Por favor llena todos los campos obligatorios (*) del presupuesto antes de generar el PDF.");
                 return;
             }
+            if (!finalizedEstimateReadyForPdf()) return;
             createEstimatePdf();
         }
 
@@ -1595,6 +1791,7 @@
             });
             document.querySelectorAll('.nota-input').forEach(input => input.placeholder = i18n[currentLang].notes);
             actualizarSelectsTerminos();
+            refreshEstimateControls();
         }
 
         // VALIDACIÓN PARA EXPORTAR (GUARDAR JSON)
@@ -1613,17 +1810,7 @@
             }
 
             const cleanClient = client.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-            const data = {
-                estNum: document.getElementById('inputEstNum').value, clientName: client,
-                fecha: document.getElementById('fechaActual').value, email: email,
-                phone: phone, address: addr,
-                validez: document.getElementById('validezSelect').value, pagoPlan: document.getElementById('pagoSelect').value,
-                duration: duration, printedName: document.getElementById("inputPrintedName").value, printedNameManual: document.getElementById("inputPrintedName").dataset.manual === "true", items: [], photos: Array.from(document.querySelectorAll('#photoGrid > div')).map(card => ({src: card.querySelector('img').src, title: card.querySelector('.photo-title-input').value, description: card.querySelector('.photo-desc-input').value})), signatures: Array.from(document.querySelectorAll('#estimateContainer .signature-img')).map(img => img.getAttribute('src') || '')
-            };
-            document.querySelectorAll('#listaItems tr').forEach(fila => {
-                const sel = fila.querySelector('.catalogo-select');
-                data.items.push({ serviceId: sel.selectedOptions[0]?.dataset.id, selectIndex: sel.selectedIndex, nota: fila.querySelector('.nota-input').value, qty: fila.querySelector('.qty').value, price: fila.querySelector('.price').value });
-            });
+            const data = collectEstimateDocument();
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a'); a.href = url; a.download = `KN3X_${num}_${cleanClient}.json`;
@@ -1663,6 +1850,7 @@
                     document.getElementById('trFotos').style.display = data.photos?.length ? 'table-row' : 'none';
                     document.querySelectorAll('#estimateContainer .signature-img').forEach((img, index) => { if (data.signatures?.[index]) img.src = data.signatures[index]; else img.removeAttribute("src"); const canvas = img.previousElementSibling.querySelector('canvas'); const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height); if (data.signatures?.[index]) { const image = new Image(); image.onload = () => ctx.drawImage(image,0,0,canvas.width,canvas.height); image.src = data.signatures[index]; } });
                     calcularTotales();
+                    restoreEstimateWorkflow(data);
                 } catch(error) { alert("Error al cargar el archivo."); }
             };
             reader.readAsText(file); event.target.value = ''; 
@@ -1685,6 +1873,7 @@
         window.cargarProyectoDesdeRadar = function(id) {
             const project = window.radarProjects?.find(p => p.id === id); if (!project) return;
             if (!confirm(currentLang === 'es' ? 'Cargar este ejemplo reemplazará el presupuesto en pantalla. ¿Continuar?' : 'Load this demo and replace the current estimate?')) return;
+            activeEstimateId = null;
             document.getElementById('inputClientName').value = project.client;
             document.getElementById('inputPrintedName').dataset.manual = 'false'; syncPrintedName();
             document.getElementById('inputAddress').value = project.address;
@@ -1734,6 +1923,7 @@
             protectWorkspaceNavigation();
             renderCustomerTable();
             initSignaturePads(); // Inicia los paneles de firma táctil
+            initializeEstimateWorkflow();
         };
     </script>
 <dialog id="estimatePdfDialog" class="rounded-xl p-6 shadow-xl max-w-md w-[90%] backdrop:bg-black/50">
