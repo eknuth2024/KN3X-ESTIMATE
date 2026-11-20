@@ -140,7 +140,7 @@
                         <tr>
                             <td class="pb-6">
                                 <div class="flex justify-between items-end border-b border-gray-400 pb-2">
-                                    <span class="text-[10px] font-black text-gray-500 uppercase tracking-widest">KN3X Project LLC <span class="mx-2 font-light">|</span> <span data-i18n="doc_estimate">Estimate</span> <span class="est-display text-slate-800">#000001</span></span>
+                                    <span class="text-[10px] font-black text-gray-500 uppercase tracking-widest">KN3X Project LLC <span class="mx-2 font-light">|</span> <span data-i18n="doc_estimate">Estimate</span> <span class="est-display text-slate-800">PN-100001</span></span>
                                     <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest" data-i18n="page_continuation">Continued Document</span>
                                 </div>
                             </td>
@@ -178,7 +178,7 @@
                                         <h2 class="text-sm md:text-2xl font-bold text-gray-300 uppercase tracking-widest print:text-gray-400" data-i18n="title">Estimate</h2>
                                         <div class="mt-0.5 md:mt-1 flex justify-end items-center gap-1 md:gap-2 w-full">
                                             <span class="text-[7px] md:text-xs font-bold text-gray-400 print:text-gray-500" data-i18n="est_num">Est. #:</span>
-                                            <input type="text" id="inputEstNum" value="#000001" class="text-[9px] md:text-sm font-bold text-white border-b border-gray-700 focus:outline-none focus:border-orange-500 w-12 md:w-24 text-right bg-transparent print:text-slate-700 print:border-gray-300">
+                                            <input type="text" id="inputEstNum" value="PN-100001" class="text-[9px] md:text-sm font-bold text-white border-b border-gray-700 focus:outline-none focus:border-orange-500 w-24 md:w-32 text-right bg-transparent print:text-slate-700 print:border-gray-300">
                                         </div>
                                     </div>
                                 </div>
@@ -1127,9 +1127,9 @@
             }
             return data;
         }
-        function formatEstimateNumber(number) { return '#' + String(number).padStart(6,'0'); }
+        function formatEstimateNumber(number) { return number >= 100001 ? 'PN-' + String(number) : '#' + String(number).padStart(6,'0'); }
         function nextEstimateNumber(store) {
-            const number = store.estimates.reduce((max, record) => Math.max(max, record.number), 0) + 1;
+            const number = store.estimates.reduce((max, record) => Math.max(max, record.number), 100000) + 1;
             if (!Number.isSafeInteger(number)) throw new Error('Sequence exhausted');
             return number;
         }
@@ -1215,7 +1215,7 @@
                 const id = record?.id || crypto.randomUUID();
                 let number = record?.number;
                 if (!number) {
-                    const candidate = Number(documentData.estNum.replace(/^#/, ''));
+                    const candidate = Number(documentData.estNum.replace(/^(?:PN-|#)/i, ''));
                     number = Number.isSafeInteger(candidate) && candidate > 0 && !store.estimates.some(r => r.number === candidate)
                         ? Math.max(candidate,nextEstimateNumber(store)) : nextEstimateNumber(store);
                 }
@@ -1406,34 +1406,46 @@
                     const icon=span.parentElement.querySelector('svg'), ir=icon.getBoundingClientRect(), tr=span.getBoundingClientRect(), rr=root.getBoundingClientRect();
                     return {text:span.textContent.trim(), x:tr.left-rr.left, center:ir.top-rr.top+ir.height/2, href:span.querySelector('a')?.getAttribute('href')};
                 });
+
+                const factor=195.9/744;
+                const firstInfoRow=root.querySelector(':scope > table > tbody > tr');
+                const headerHeight=Math.ceil(firstInfoRow.getBoundingClientRect().bottom-rootTop);
+                if(headerHeight>=800) throw new Error('Estimate header is too tall. Shorten the client details.');
+                const headerCanvas=await html2canvas(root,{backgroundColor:'#ffffff',scale:1.5,useCORS:true,logging:false,width:744,height:headerHeight,x:0,y:0,windowWidth:816,windowHeight:1056,scrollX:0,scrollY:0});
+                const headerImage=headerCanvas.toDataURL('image/jpeg',.95);
+                headerCanvas.width=headerCanvas.height=0;
                 const pageHeight=950;let start=0,page=0;
                 while(start<height) {
-                    let end=Math.min(start+pageHeight,height);
+                    const continuation=page>0;
+                    const bodyOffset=continuation ? headerHeight+14 : 0;
+                    const available=pageHeight-bodyOffset;
+                    let end=Math.min(start+available,height);
                     const nextForced=forced.find(y=>y>start+2&&y<=end);
                     if(nextForced)end=nextForced;
-                    else if(end<height){const candidates=safe.filter(y=>y>start+pageHeight*.55&&y<end);if(candidates.length)end=Math.max(...candidates);}
+                    else if(end<height){const candidates=safe.filter(y=>y>start+available*.55&&y<end);if(candidates.length)end=Math.max(...candidates);}
                     const canvas=await html2canvas(root,{backgroundColor:'#ffffff',scale:1.5,useCORS:true,logging:false,width:744,height:end-start,x:0,y:start,windowWidth:816,windowHeight:1056,scrollX:0,scrollY:0});
-                    if(page++)pdf.addPage();
-                    pdf.addImage(canvas.toDataURL('image/jpeg',.95),'JPEG',10,10,195.9,(end-start)*195.9/744);
-                    const factor=195.9/744;
+                    if(continuation){pdf.addPage();pdf.addImage(headerImage,'JPEG',10,10,195.9,headerHeight*factor);}
+                    pdf.addImage(canvas.toDataURL('image/jpeg',.95),'JPEG',10,10+bodyOffset*factor,195.9,(end-start)*factor);
                     pdf.setFont('helvetica','bold');pdf.setFontSize(8);pdf.setTextColor(255,255,255);
                     for(const heading of headings) {
                         if(heading.top>=start && heading.top+heading.height<=end+1) {
                             const align=heading.index===0?'left':heading.index===1?'center':'right';
                             const x=heading.index===0?heading.left+6:heading.index===1?heading.left+heading.width/2:heading.left+heading.width-6;
-                            pdf.text(heading.text,10+x*factor,10+(heading.top-start+heading.height/2)*factor,{align,baseline:'middle'});
+                            pdf.text(heading.text,10+x*factor,10+(bodyOffset+heading.top-start+heading.height/2)*factor,{align,baseline:'middle'});
                         }
                     }
                     pdf.setFont('helvetica','normal');pdf.setFontSize(9);pdf.setTextColor(75,85,99);
                     for(const contact of contacts) {
-                        if(contact.center>=start && contact.center<end) {
-                            const x=10+contact.x*factor, y=10+(contact.center-start)*factor;
+                        const repeated=continuation && contact.center<headerHeight;
+                        if(repeated || (contact.center>=start && contact.center<end)) {
+                            const x=10+contact.x*factor;
+                            const y=10+(repeated?contact.center:bodyOffset+contact.center-start)*factor;
                             pdf.text(contact.text,x,y,{baseline:'middle'});
                             if(contact.href)pdf.link(x,y-2,pdf.getTextWidth(contact.text),4,{url:contact.href});
                         }
                     }
                     canvas.width=canvas.height=0;
-                    start=end;
+                    start=end;page++;
                 }
                 const pages=pdf.getNumberOfPages();
                 for(let i=1;i<=pages;i++){pdf.setPage(i);pdf.setFontSize(8);pdf.setTextColor(100,116,139);pdf.text('KN3X Project LLC | '+document.getElementById('inputEstNum').value,10,274);pdf.text(i+' / '+pages,205,274,{align:'right'});}
