@@ -1,0 +1,1952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex,nofollow">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KN3X Command Center</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@4.2.1/dist/jspdf.umd.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" defer></script>
+    
+    <!-- LIBRERÍAS DEL MAPA -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <style>
+        /* ESTILOS DE IMPRESIÓN */
+        @media print {
+            .no-print, #sidebar, #topHeader { display: none !important; }
+            body, html { background-color: white; padding: 0; margin: 0; height: auto !important; overflow: visible !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            #mainWrapper, #mainContent { display: block !important; height: auto !important; overflow: visible !important; padding: 0 !important; width: 100% !important; margin: 0 !important; }
+            
+            .print-border-none { border: none !important; box-shadow: none !important; background: transparent !important; }
+            input, select, textarea { border: none !important; background: transparent !important; padding: 0 !important; color: #1f2937; appearance: none !important; -webkit-appearance: none !important; -moz-appearance: none !important; box-shadow: none !important; resize: none; background-image: none !important; }
+            input::placeholder, textarea::placeholder { color: transparent; }
+            .container-shadow { box-shadow: none !important; }
+            select::-ms-expand { display: none !important; }
+            select { font-weight: 600; white-space: normal; }
+            .print-avoid-break { page-break-inside: avoid; break-inside: avoid; }
+            .page-break-before { break-before: page; page-break-before: always; }
+            .contract-text { font-size: 11px !important; line-height: 1.5 !important; }
+            .contract-title { font-size: 16px !important; }
+            .form-1099-box { border: 2px solid #ef4444 !important; color: #ef4444 !important; }
+            .signature-print { display: block !important; }
+            .signature-print:not([src^="data:image/"]) { display: none !important; }
+        }
+        
+        #tablaPresupuesto thead th { vertical-align: middle; padding-top: 0 !important; padding-bottom: 0 !important; }
+        #tablaPresupuesto .estimate-column-title { display: flex; align-items: center; min-height: 30px; line-height: 1; }
+        #tablaPresupuesto th:not(:first-child) .estimate-column-title { justify-content: flex-end; }
+        #tablaPresupuesto th:nth-child(2) .estimate-column-title { justify-content: center; }
+        @media print { #tablaPresupuesto .estimate-column-title { min-height: 26px; } }
+        .signature-img:not([src^="data:image/"]) { display: none !important; }
+        .printed-name-box { position:relative; }
+        .printed-name-field { position:absolute; bottom:calc(100% + 11px); left:0; width:100%; font-size:12px; line-height:1.3; padding:0; border:0; background:transparent; }
+        .submenu { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .submenu.open { max-height: 250px; transition: max-height 0.3s ease-in; }
+        /* Keep Leaflet's internal layers below application navigation. */
+        #mapView { position: relative; z-index: 0; isolation: isolate; }
+        #mainWrapper { position: relative; z-index: 0; isolation: isolate; }
+        #sidebar { z-index: 2000; }
+        #mobileOverlay { z-index: 1900; }
+        .signature-canvas { touch-action: none; } /* Previene que la pantalla se mueva al firmar en celular */
+    </style>
+
+    <!-- KN3X Estimate browser and iPhone/iPad home-screen icons -->
+    <link rel="icon" href="./favicon.ico?v=20261119" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=20261119">
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=20261119">
+    <link rel="manifest" href="./site.webmanifest?v=20261119">
+    <meta name="theme-color" content="#0D0F12">
+    <meta name="apple-mobile-web-app-title" content="KN3X Estimate">
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans h-screen overflow-hidden flex text-xs md:text-sm">
+
+    <!-- SIDEBAR (MENÚ VERTICAL IZQUIERDO) -->
+    <aside id="sidebar" class="bg-slate-900 text-slate-300 w-64 flex-shrink-0 flex flex-col h-full absolute lg:relative z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 shadow-2xl lg:shadow-none text-sm">
+        <div class="p-6 bg-slate-950 flex items-center justify-center border-b border-slate-800">
+            <img src="logo.PNG" alt="KN3X" class="h-12 object-contain">
+        </div>
+        <button onclick="toggleMobileMenu()" class="lg:hidden absolute top-4 right-4 text-slate-400 hover:text-white">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+
+        <nav class="flex-1 overflow-y-auto py-4">
+            <!-- CUSTOMERS -->
+            <div class="mb-2">
+                <button onclick="toggleMenu('menuCustomers', 'iconCustomers')" class="w-full flex items-center justify-between px-6 py-3 hover:bg-slate-800 text-left focus:outline-none transition">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        <span class="font-bold text-sm uppercase tracking-wider text-white" data-i18n="menu_customers">Customers</span>
+                    </div>
+                    <svg id="iconCustomers" class="w-4 h-4 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div id="menuCustomers" class="submenu bg-slate-950">
+                    <button onclick="cambiarSeccion('estimate')" class="w-full text-left pl-14 pr-6 py-2.5 text-sm hover:text-orange-400 hover:bg-slate-900 transition flex items-center gap-2">📄 <span data-i18n="btn_estimate_view">Estimate Tool</span></button>
+                    <button onclick="cambiarSeccion('customerLedger')" class="w-full text-left pl-14 pr-6 py-2.5 text-sm hover:text-orange-400 hover:bg-slate-900 transition flex items-center gap-2">📇 <span data-i18n="btn_customer_dir">Directory</span></button>
+                </div>
+            </div>
+
+            <!-- VENDORS -->
+            <div class="mb-2">
+                <button onclick="toggleMenu('menuVendors', 'iconVendors')" class="w-full flex items-center justify-between px-6 py-3 hover:bg-slate-800 text-left focus:outline-none transition">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        <span class="font-bold text-sm uppercase tracking-wider text-white" data-i18n="menu_team">Vendors & Team</span>
+                    </div>
+                    <svg id="iconVendors" class="w-4 h-4 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div id="menuVendors" class="submenu bg-slate-950">
+                    <button onclick="cambiarSeccion('contract')" class="w-full text-left pl-14 pr-6 py-2.5 text-sm hover:text-blue-400 hover:bg-slate-900 transition flex items-center gap-2">📝 <span data-i18n="btn_contract">Subcontractor Doc</span></button>
+                    <button onclick="cambiarSeccion('ledger')" class="w-full text-left pl-14 pr-6 py-2.5 text-sm hover:text-blue-400 hover:bg-slate-900 transition flex items-center gap-2">👷‍♂️ <span data-i18n="btn_ledger">1099 Ledger</span></button>
+                </div>
+            </div>
+
+            <!-- RADAR -->
+            <div class="mb-2 border-t border-slate-800 mt-4 pt-4">
+                <button onclick="cambiarSeccion('radar')" class="w-full flex items-center px-6 py-3 hover:bg-slate-800 text-left focus:outline-none transition gap-3">
+                    <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+                    <span class="font-bold text-sm uppercase tracking-wider text-white" data-i18n="btn_radar">Demo Radar</span>
+                </button>
+            </div>
+        </nav>
+        <div class="p-4 border-t border-slate-800 text-center text-[10px] md:text-xs text-slate-500">KN3X Command Center v2.5<br>© 2026 Austin, TX</div>
+    </aside>
+
+    <div id="mobileOverlay" onclick="toggleMobileMenu()" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"></div>
+
+    <!-- ÁREA PRINCIPAL -->
+    <div id="mainWrapper" class="flex-1 flex flex-col h-screen overflow-hidden bg-gray-100">
+        <header id="topHeader" class="bg-white border-b border-gray-200 h-14 md:h-16 flex items-center justify-between px-3 md:px-4 shadow-sm z-30 no-print flex-shrink-0">
+            <button onclick="toggleMobileMenu()" class="lg:hidden text-slate-600 hover:text-slate-900 focus:outline-none">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+            <h1 id="topBarTitle" class="text-[13px] md:text-lg font-black text-slate-800 ml-3 lg:ml-0 truncate">KN3X Workspace</h1>
+            <div class="flex items-center gap-1.5 md:gap-2">
+                <input type="file" id="fileImport" accept=".json" class="hidden" onchange="importarArchivo(event)">
+                <button onclick="document.getElementById('fileImport').click()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] md:text-sm font-bold py-1 md:py-2 px-2 md:px-4 rounded transition border border-slate-300 flex items-center gap-1 shadow-sm" id="btnLoad">📂 <span class="hidden md:inline" data-i18n="btn_open">Load</span></button>
+                <button onclick="exportarArchivo()" class="bg-slate-800 hover:bg-slate-900 text-white text-[10px] md:text-sm font-bold py-1 md:py-2 px-2 md:px-4 rounded transition flex items-center gap-1 shadow-sm" id="btnSave">💾 <span class="hidden md:inline" data-i18n="btn_save">Save</span></button>
+                <div class="w-px h-4 md:h-6 bg-gray-300 mx-0.5 md:mx-1"></div>
+                <button onclick="toggleLanguage()" id="langBtn" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] md:text-xs font-bold py-1 md:py-2 px-2 md:px-3 rounded flex items-center gap-1 transition border border-slate-300 shadow-sm">🇪🇸 <span class="hidden sm:inline">ES</span></button>
+            </div>
+        </header>
+
+        <main id="mainContent" class="flex-1 overflow-x-hidden overflow-y-auto p-2 md:p-8">
+            
+            <!-- VISTA 1: ESTIMATE -->
+            <div id="estimateContainer" class="max-w-5xl mx-auto bg-white rounded-lg md:rounded-xl shadow md:shadow-lg container-shadow overflow-hidden print:overflow-visible relative text-[11px] md:text-sm">
+                <table class="w-full border-collapse">
+                    <thead class="hidden print:table-header-group">
+                        <tr>
+                            <td class="pb-6">
+                                <div class="flex justify-between items-end border-b border-gray-400 pb-2">
+                                    <span class="text-[10px] font-black text-gray-500 uppercase tracking-widest">KN3X Project LLC <span class="mx-2 font-light">|</span> <span data-i18n="doc_estimate">Estimate</span> <span class="est-display text-slate-800">PN-100001</span></span>
+                                    <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest" data-i18n="page_continuation">Continued Document</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </thead>
+                    <tfoot class="hidden print:table-footer-group">
+                        <tr>
+                            <td class="pt-6">
+                                <div class="flex justify-between items-start border-t border-gray-400 pt-2">
+                                    <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">kn3x.project@gmail.com <span class="mx-2 font-light">|</span> 512 999-3239</span>
+                                    <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest" data-i18n="valid_doc">Official Document</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tfoot>
+        
+                    <tbody>
+                        <!-- HEADER Y DATOS DEL CLIENTE -->
+                        <tr>
+                            <td class="p-0 align-top">
+                                <!-- HEADER NEGRO COMPACTO -->
+                                <div class="bg-black flex flex-row justify-between items-center p-3 md:p-6 print:bg-transparent print:p-0 print:pb-3 print:border-b-2 print:border-gray-200 rounded-t-lg md:rounded-t-xl print:rounded-none w-full">
+                                    <div class="flex flex-row items-center gap-2 md:gap-6 print:gap-4 w-2/3">
+                                        <img src="logo.PNG" alt="KN3X Project LLC" class="h-10 md:h-16 object-contain print:h-12">
+                                        <div class="estimate-contact-details flex flex-col gap-0.5 md:gap-1 text-[7px] md:text-[11px] text-gray-300 print:text-gray-600 print:text-[9px]">
+                                            <div class="flex items-center gap-1 md:gap-1.5"><svg class="w-2.5 md:w-3.5 h-2.5 md:h-3.5 text-orange-500" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg><span class="pdf-contact-text font-medium tracking-wide"><a href="tel:5129993239">512 999-3239</a></span></div>
+                                            <div class="flex items-center gap-1 md:gap-1.5"><svg class="w-2.5 md:w-3.5 h-2.5 md:h-3.5 text-orange-500" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg><span class="pdf-contact-text font-medium tracking-wide"><a href="mailto:kn3x.project@gmail.com">kn3x.project@gmail.com</a></span></div>
+                                            <div class="flex items-center gap-1 md:gap-1.5"><svg class="w-2.5 md:w-3.5 h-2.5 md:h-3.5 text-orange-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"></path></svg><span class="pdf-contact-text font-medium tracking-wide"><a href="https://www.instagram.com/kn3xproject/">@kn3xproject</a></span></div>
+                                            <div class="hidden md:flex items-center gap-1.5"><svg class="w-3.5 h-3.5 text-orange-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clip-rule="evenodd"></path></svg><span class="pdf-contact-text font-medium tracking-wide"><a href="https://kn3xproject.com">https://kn3xproject.com</a></span></div>
+                                            <div class="flex items-center gap-1 md:gap-1.5"><svg class="w-2.5 md:w-3.5 h-2.5 md:h-3.5 text-orange-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg><span class="pdf-contact-text font-medium tracking-wide">Austin, TX</span></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="w-1/3 flex flex-col items-end text-right">
+                                        <h2 class="text-sm md:text-2xl font-bold text-gray-300 uppercase tracking-widest print:text-gray-400" data-i18n="title">Estimate</h2>
+                                        <div class="mt-0.5 md:mt-1 flex justify-end items-center gap-1 md:gap-2 w-full">
+                                            <span class="text-[7px] md:text-xs font-bold text-gray-400 print:text-gray-500" data-i18n="est_num">Est. #:</span>
+                                            <input type="text" id="inputEstNum" value="PN-100001" class="text-[9px] md:text-sm font-bold text-white border-b border-gray-700 focus:outline-none focus:border-orange-500 w-24 md:w-32 text-right bg-transparent print:text-slate-700 print:border-gray-300">
+                                        </div>
+                                    </div>
+                                </div>
+        
+                                <div class="px-3 md:px-8 pt-3 md:pt-6 print:px-0 print:pt-4">
+                                    <div class="flex flex-wrap bg-slate-50 p-3 md:p-4 rounded-lg print:bg-transparent print:p-0 print-border-none">
+                                        <div class="w-full mb-2 pb-2 border-b border-gray-200 print:hidden flex justify-between items-center">
+                                            <label class="text-[9px] md:text-xs font-bold text-slate-500 uppercase">Load Directory</label>
+                                            <select id="selectCustomerDir" onchange="loadCustomerToEstimate()" class="border-gray-300 rounded text-[10px] md:text-sm p-1 max-w-[150px] md:max-w-[200px] border focus:outline-none focus:border-orange-500">
+                                                <option value="">-- Select --</option>
+                                            </select>
+                                        </div>
+                                        <div class="w-full md:w-2/3 print:w-2/3 print:pr-4 pr-0 md:pr-4 mb-2 print:mb-1">
+                                            <label class="block text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5"><span data-i18n="client">Client / Project Name</span> <span class="text-red-500 no-print">*</span></label>
+                                            <input type="text" id="inputClientName" class="w-full border-gray-300 rounded shadow-sm focus:border-slate-500 focus:ring-slate-500 p-1 md:p-1.5 border bg-white print:p-0 print:font-semibold text-xs md:text-sm">
+                                        </div>
+                                        <div class="w-full md:w-1/3 print:w-1/3 mb-2 print:mb-1">
+                                            <label class="block text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5"><span data-i18n="date">Date</span> <span class="text-red-500 no-print">*</span></label>
+                                            <input type="date" id="fechaActual" class="w-full border-gray-300 rounded shadow-sm focus:border-slate-500 focus:ring-slate-500 p-1 md:p-1.5 border bg-white text-slate-700 text-xs md:text-sm print:p-0 print:font-semibold">
+                                        </div>
+                                        <div class="w-full md:w-1/3 print:w-1/3 print:pr-4 pr-0 md:pr-4 mb-2 print:mb-0">
+                                            <label class="block text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5"><span data-i18n="email">Email Address</span> <span class="text-red-500 no-print">*</span></label>
+                                            <input type="email" id="inputClientEmail" class="w-full border-gray-300 rounded shadow-sm focus:border-slate-500 focus:ring-slate-500 p-1 md:p-1.5 border bg-white print:p-0 text-xs md:text-sm">
+                                        </div>
+                                        <div class="w-full md:w-1/3 print:w-1/3 print:pr-4 pr-0 md:pr-4 mb-2 print:mb-0">
+                                            <label class="block text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5"><span data-i18n="phone">Phone Number</span> <span class="text-red-500 no-print">*</span></label>
+                                            <input type="tel" id="inputPhone" class="w-full border-gray-300 rounded shadow-sm focus:border-slate-500 focus:ring-slate-500 p-1 md:p-1.5 border bg-white print:p-0 text-xs md:text-sm">
+                                        </div>
+                                        <div class="w-full md:w-1/3 print:w-1/3 mb-2 print:mb-0">
+                                            <label class="block text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5"><span data-i18n="address">Job Site Address</span> <span class="text-red-500 no-print">*</span></label>
+                                            <input type="text" id="inputAddress" class="w-full border-gray-300 rounded shadow-sm focus:border-slate-500 focus:ring-slate-500 p-1 md:p-1.5 border bg-white print:p-0 text-xs md:text-sm">
+                                        </div>
+                                    </div>
+                                    <hr class="border-t border-gray-200 my-4 md:my-6 print:my-4 print:border-gray-300">
+                                </div>
+                            </td>
+                        </tr>
+        
+                        <!-- TABLA DE ITEMS CON BUSCADOR INTELIGENTE -->
+                        <tr>
+                            <td class="px-2 md:px-8 print:px-0 align-top">
+                                <div class="overflow-x-auto mb-4 md:mb-6 min-h-[100px] print:mb-2 overflow-visible">
+                                    <table class="w-full text-left border-collapse" id="tablaPresupuesto">
+                                        <thead>
+                                            <tr class="bg-orange-500 text-white text-[9px] md:text-[11px] uppercase tracking-wider">
+                                                <th class="p-1.5 md:p-3 rounded-tl-lg w-[50%] md:w-1/2 print:py-1"><span class="estimate-column-title" data-i18n="service">Service / Material</span></th>
+                                                <th class="p-1.5 md:p-3 w-10 md:w-20 text-center print:py-1"><span class="estimate-column-title" data-i18n="qty">Qty</span></th>
+                                                <th class="p-1.5 md:p-3 w-16 md:w-28 text-right print:py-1"><span class="estimate-column-title" data-i18n="price">Price</span></th>
+                                                <th class="p-1.5 md:p-3 w-16 md:w-28 text-right rounded-tr-lg print:py-1"><span class="estimate-column-title" data-i18n="total">Total</span></th>
+                                                <th class="p-1 md:p-3 w-6 no-print"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="listaItems" class="text-[10px] md:text-sm"></tbody>
+                                    </table>
+                                    <div class="px-2 md:px-0">
+                                        <button onclick="agregarFila()" class="mt-3 no-print text-[11px] md:text-sm bg-green-500 hover:bg-green-600 text-white font-bold py-1.5 md:py-2.5 px-4 md:px-5 rounded md:rounded-lg shadow transition transform hover:-translate-y-0.5 w-full md:w-auto" data-i18n="add_item">+ Add Item</button>
+                                    </div>
+                                </div>
+        
+                                <div class="px-3 md:px-0 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 print:grid-cols-2 print:gap-4 pt-2 md:pt-4 border-t border-gray-200 print:border-t-2">
+                                    <div class="flex flex-col gap-3 md:gap-4">
+                                        <div class="no-print bg-slate-50 p-3 md:p-4 rounded-lg border border-slate-200">
+                                            <label class="block text-[9px] md:text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5" data-i18n="select_plan">Select Payment Plan</label>
+                                            <select id="pagoSelect" onchange="actualizarDesglosePago()" class="w-full text-xs md:text-sm font-medium text-slate-700 bg-white border border-gray-300 rounded p-1.5 md:p-2 focus:outline-none focus:border-orange-500 cursor-pointer"></select>
+                                        </div>
+                                        <div class="bg-gray-200 border border-gray-300 rounded-lg p-3 md:p-4 print:bg-gray-200 print:border-gray-300 print:p-3 shadow-sm print:shadow-none w-full">
+                                            <h4 class="text-[9px] md:text-[10px] font-bold text-slate-600 uppercase tracking-widest mb-2" data-i18n="payment_schedule">Payment Schedule</h4>
+                                            <div id="pagoDesglose" class="text-[10px] md:text-sm text-slate-800 flex flex-col print:text-xs"></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col gap-3 md:gap-4">
+                                        <div class="space-y-1.5 md:space-y-2 bg-slate-50 p-3 md:p-4 rounded-lg border border-slate-200 print:border-gray-300 print:bg-slate-50 print:p-3 shadow-sm print:shadow-none w-full">
+                                            <div class="flex justify-between text-slate-600 text-[11px] md:text-sm">
+                                                <span class="font-medium" data-i18n="subtotal">Subtotal:</span>
+                                                <span id="subtotal" class="font-semibold">$0.00</span>
+                                            </div>
+                                            <div class="flex justify-between text-slate-600 text-[11px] md:text-sm border-b border-gray-200 print:border-gray-300 pb-1.5 md:pb-2 print:pb-1">
+                                                <span class="font-medium" data-i18n="tax">Tax (8.25%):</span>
+                                                <span id="impuesto" class="font-semibold">$0.00</span>
+                                            </div>
+                                            <div class="flex justify-between text-base md:text-xl font-black text-slate-800 pt-1">
+                                                <span data-i18n="total_usd">Total USD:</span>
+                                                <span id="total">$0.00</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+        
+                                <div class="mx-3 md:mx-0 mt-4 md:mt-6 w-auto md:w-full bg-gray-200 border border-gray-300 rounded-lg p-3 md:p-4 print:bg-gray-200 print:border-gray-300 print:p-3 shadow-sm print:shadow-none print-avoid-break">
+                                    
+                                    <div class="grid grid-cols-2 gap-3 md:gap-4">
+                                        <div class="relative w-full">
+                                            <h3 class="text-[10px] md:text-xs font-bold text-slate-600 uppercase tracking-widest mb-2" data-i18n="info_title">Project Information</h3>
+                                            <label class="sr-only no-print" for="validezSelect" data-i18n="validity_label">Estimate Validity</label>
+                                            <select id="validezSelect" class="w-full text-[10px] md:text-sm font-medium text-slate-800 bg-transparent print:font-semibold focus:outline-none focus:border-orange-500 cursor-pointer print:border-none print:p-0 print:text-xs border border-gray-300 bg-white rounded p-1 md:p-2"></select>
+                                        </div>
+                                        <div class="relative w-full">
+                                            <label for="inputDuration" class="block text-[10px] md:text-xs font-bold text-slate-600 uppercase tracking-widest mb-2"><span data-i18n="duration_label">Estimated Duration</span> <span class="text-red-500 no-print">*</span></label>
+                                            <div class="flex items-center gap-2 w-full text-[10px] md:text-sm font-medium text-slate-800 bg-transparent print:font-semibold print:text-xs">
+                                                <input type="text" id="inputDuration" class="w-full focus:outline-none focus:border-orange-500 bg-white border border-gray-300 rounded p-1 md:p-2 print:border-none print:p-0 print:bg-transparent" placeholder="2-3 Weeks">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+        
+                        <!-- TÉRMINOS Y FIRMA DIGITAL -->
+                        <tr class="page-break-before">
+                            <td class="px-4 md:px-8 print:px-0 align-top pt-6 md:pt-8 print:pt-4">
+                                <div class="w-full">
+                                    <h2 class="text-base md:text-lg font-black text-slate-800 uppercase tracking-widest mb-4 md:mb-6 border-b-2 border-orange-500 pb-1.5 md:pb-2 inline-block" data-i18n="tc_main_title">Standard Terms & Conditions</h2>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 md:gap-y-6 text-[10px] md:text-sm text-slate-600 print:text-[11px] print:grid-cols-1 print:gap-y-4">
+                                        <div><h4 class="font-bold text-slate-800 mb-0.5 md:mb-1" data-i18n="t1_title">1. Change Orders & Extra Work</h4><p class="text-justify leading-relaxed" data-i18n="t1_text">Any alteration or deviation from the above specifications involving extra costs will be executed only upon written change orders.</p></div>
+                                        <div><h4 class="font-bold text-slate-800 mb-0.5 md:mb-1" data-i18n="t2_title">2. Unforeseen Conditions</h4><p class="text-justify leading-relaxed" data-i18n="t2_text">This estimate is based on visual inspections. If hidden or unforeseen conditions are discovered, work may be halted, and repair costs will be billed as extra work.</p></div>
+                                        <div><h4 class="font-bold text-slate-800 mb-0.5 md:mb-1" data-i18n="t3_title">3. Client Responsibilities</h4><p class="text-justify leading-relaxed" data-i18n="t3_text">The client agrees to provide access to the property, water, and electricity during working hours. KN3X Project LLC is not liable for damage to items not cleared.</p></div>
+                                        <div><h4 class="font-bold text-slate-800 mb-0.5 md:mb-1" data-i18n="t4_title">4. Permits & HOA</h4><p class="text-justify leading-relaxed" data-i18n="t4_text">Unless specified, the client is responsible for obtaining all required city permits and HOA approvals.</p></div>
+                                        <div class="bg-red-50 border-l-2 md:border-l-4 border-red-500 p-2 md:p-3 print:bg-transparent print:border-l-2 print:border-slate-800 md:col-span-2"><h4 class="font-bold text-red-700 print:text-slate-800 mb-0.5 md:mb-1" data-i18n="t6_title">5. Texas Mechanic's Lien Warning</h4><p class="text-red-900 print:text-slate-700 text-justify leading-relaxed" data-i18n="t6_text">WARNING: Under Texas law, if you fail to pay your contractor for work or materials provided, your contractor has the right to file a mechanic's lien against your property.</p></div>
+                                    </div>
+                                </div>
+        
+                                <div class="mt-8 md:mt-10 w-full bg-white border border-gray-300 rounded-lg p-4 md:p-6 print:border-gray-300 print:p-4 shadow-sm print:shadow-none print-avoid-break">
+                                    <h3 class="text-[10px] md:text-xs font-bold text-slate-600 uppercase tracking-widest mb-1.5 md:mb-2" data-i18n="acceptance_title">Client Acceptance</h3>
+                                    <p class="text-[9px] md:text-xs text-slate-500 mb-1.5 md:mb-2" data-i18n="acceptance_text">I have reviewed and approve the scope of work, pricing, and terms above. I authorize KN3X Project LLC to proceed.</p>
+                                    
+                                    <div class="flex justify-between gap-2 md:gap-4 mt-6 md:mt-8 w-full items-end">
+                                        <!-- FIRMA DIGITAL -->
+                                        <div class="w-[45%] md:w-[40%]">
+                                            <div class="signature-pad-container h-20 md:h-28 border-2 border-dashed border-gray-300 rounded mb-1 relative no-print bg-gray-50 cursor-crosshair">
+                                                <canvas class="absolute inset-0 w-full h-full signature-canvas"></canvas>
+                                                <button onclick="clearSignature(this)" class="absolute top-1 right-1 bg-red-100 text-red-600 text-[8px] md:text-[10px] px-1.5 py-0.5 rounded font-bold hover:bg-red-200">Clear</button>
+                                                <span class="absolute bottom-1 left-2 text-[8px] text-gray-400 pointer-events-none">Sign here</span>
+                                            </div>
+                                            <!-- Aquí se inyecta la firma para impresión -->
+                                            <img src="" class="signature-img hidden h-20 md:h-28 object-contain mb-1 signature-print w-full" alt="Signature">
+                                            
+                                            <div class="border-t border-gray-400 print:border-gray-800 pt-1">
+                                                <span class="text-[8px] md:text-[10px] font-bold text-slate-500 print:text-slate-700 uppercase tracking-wider" data-i18n="sign_signature">Client Signature</span>
+                                            </div>
+                                        </div>
+                                        <div class="printed-name-box w-[35%] md:w-[40%] border-t border-gray-400 print:border-gray-800 pt-1"><input id="inputPrintedName" type="text" aria-label="Printed name / Nombre del firmante" autocomplete="off" maxlength="100" class="printed-name-field bg-transparent text-slate-800 focus:outline-none"><span class="text-[8px] md:text-[10px] font-bold text-slate-500 print:text-slate-700 uppercase tracking-wider" data-i18n="sign_name">Printed Name</span></div>
+                                        <div class="w-[15%] border-t border-gray-400 print:border-gray-800 pt-1"><span class="text-[8px] md:text-[10px] font-bold text-slate-500 print:text-slate-700 uppercase tracking-wider" data-i18n="sign_date">Date</span></div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+        
+                        <tr id="trFotos" style="display: none;" class="page-break-before">
+                            <td class="px-4 md:px-8 print:px-0 align-top pt-6 md:pt-8 print:pt-4 print-avoid-break">
+                                <div class="w-full bg-gray-200 border border-gray-300 rounded-lg p-3 md:p-4 print:bg-gray-200 print:border-gray-300 print:p-4 shadow-sm print:shadow-none">
+                                    <h3 class="text-[10px] md:text-xs font-bold text-slate-600 uppercase tracking-widest mb-2 md:mb-4 print:mb-3" data-i18n="photos_title">Site Conditions & Notes (Appendix)</h3>
+                                    <div id="photoGrid" class="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-4 md:gap-6 print:gap-4"></div>
+                                </div>
+                            </td>
+                        </tr>
+        
+                        <tr class="no-print">
+                            <td class="px-4 md:px-8 pb-6 md:pb-8 align-top">
+                                <div class="mb-4 mt-6 flex justify-center md:justify-start">
+                                    <input type="file" id="imageUpload" accept="image/*" class="hidden" onchange="procesarImagen(event)">
+                                    <button onclick="document.getElementById('imageUpload').click()" class="text-xs md:text-sm bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2 md:py-2.5 px-4 md:px-5 rounded md:rounded-lg transition duration-200 border border-slate-300 w-full md:w-auto flex items-center justify-center gap-2 shadow-sm">
+                                        <svg class="w-4 md:w-5 h-4 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                        <span data-i18n="add_photo">Add Photo</span>
+                                    </button>
+                                </div>
+                                <div class="mt-4 border-t border-gray-200 pt-4 md:pt-6 no-print">
+                                    <p id="estimateWorkflowStatus" role="status" class="text-xs text-slate-600 mb-3 text-center"></p>
+                                    <label class="sr-only" for="savedLocalEstimates">Open finalized local estimate / Abrir presupuesto local</label>
+                                    <select id="savedLocalEstimates" onchange="openFinalizedLocalEstimate()" class="w-full border border-slate-300 rounded-lg p-2 mb-4 text-sm"></select>
+                                    <div class="flex flex-col md:flex-row justify-center gap-3">
+                                    <button id="finalizeEstimateButton" onclick="finalizeEstimate()" class="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white font-bold py-3 px-5 rounded-lg w-full md:w-auto" data-i18n="finalize_estimate">Finalize estimate</button>
+
+                                    <button onclick="validarEImprimirPresupuesto()" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2.5 md:py-3 px-8 md:px-10 rounded-lg shadow-lg transition transform hover:-translate-y-0.5 w-full md:w-auto text-sm md:text-lg flex items-center justify-center gap-2" data-i18n="generate_pdf">
+                                        <svg class="w-4 md:w-5 h-4 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                        Generate PDF
+                                    </button>
+                                    <button onclick="clearEstimateContent()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-5 rounded-lg w-full md:w-auto" data-i18n="clear_estimate">Clear content</button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- VISTA 2: DIRECTORIO DE CLIENTES -->
+            <!-- ========================================== -->
+            <div id="customerLedgerContainer" class="max-w-5xl mx-auto hidden no-print">
+                <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden mb-6">
+                    <div class="bg-orange-600 p-4 flex justify-between items-center text-white">
+                        <div class="flex flex-col">
+                            <h3 class="font-black text-lg flex items-center gap-2">📇 Customer Directory</h3>
+                            <p class="text-xs text-orange-200">Manage client contacts and properties</p>
+                        </div>
+                    </div>
+                    <div class="p-4 md:p-6">
+                        <div class="bg-orange-50 p-4 md:p-5 rounded-lg border border-orange-200 mb-6" id="formCustomer">
+                            <h4 class="font-bold text-orange-800 mb-3 text-xs md:text-sm border-b border-orange-200 pb-2" id="customerFormTitle">Add New Customer</h4>
+                            <input type="hidden" id="editCustId" value="">
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4">
+                                <div class="col-span-1 md:col-span-2">
+                                    <label class="block text-[10px] font-bold text-orange-800 uppercase mb-1">Client / Company Name <span class="text-red-500">*</span></label>
+                                    <input type="text" id="newCustName" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-orange-500 border">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-orange-800 uppercase mb-1">Phone Number <span class="text-red-500">*</span></label>
+                                    <input type="text" id="newCustPhone" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-orange-500 border">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-orange-800 uppercase mb-1">Email Address</label>
+                                    <input type="email" id="newCustEmail" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-orange-500 border">
+                                </div>
+                                <div class="col-span-1 md:col-span-4">
+                                    <label class="block text-[10px] font-bold text-orange-800 uppercase mb-1">Default Property Address <span class="text-red-500">*</span></label>
+                                    <input type="text" id="newCustAddr" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-orange-500 border">
+                                </div>
+                            </div>
+                            <div class="mt-4 flex flex-col sm:flex-row justify-end gap-2">
+                                <button onclick="cancelarEdicionCliente()" id="btnCancelEditCust" class="hidden bg-slate-400 hover:bg-slate-500 text-white font-bold py-2 px-6 rounded shadow-sm text-[11px] md:text-sm transition w-full sm:w-auto">Cancel</button>
+                                <button onclick="guardarCliente()" id="btnSaveCust" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-6 rounded shadow-sm text-[11px] md:text-sm transition w-full sm:w-auto">+ Save Customer</button>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto border border-gray-200 rounded-lg">
+                            <table class="w-full text-left border-collapse min-w-[500px]">
+                                <thead>
+                                    <tr class="bg-gray-100 text-gray-600 text-[9px] md:text-[11px] uppercase tracking-wider">
+                                        <th class="p-2 md:p-3 rounded-tl-lg font-bold">Client Name</th>
+                                        <th class="p-2 md:p-3 font-bold">Contact</th>
+                                        <th class="p-2 md:p-3 font-bold">Address</th>
+                                        <th class="p-2 md:p-3 text-center rounded-tr-lg font-bold">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="customerTableBody" class="text-[11px] md:text-sm"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- VISTA 3: CONTRATO SUBCONTRATISTA -->
+            <!-- ========================================== -->
+            <div id="contractContainer" class="max-w-5xl mx-auto bg-white rounded-lg md:rounded-xl shadow-lg container-shadow overflow-hidden hidden print:overflow-visible relative text-xs md:text-sm">
+                <div class="p-4 md:p-10">
+                    <div class="flex flex-row justify-between items-center border-b-2 border-slate-800 pb-3 md:pb-4 mb-4 md:mb-6">
+                        <div class="flex flex-row items-center gap-2 md:gap-6 w-2/3">
+                            <img src="logo.PNG" alt="KN3X Project LLC" class="h-10 md:h-16 object-contain">
+                            <div class="flex flex-col gap-0.5 md:gap-1">
+                                <p class="text-[10px] md:text-xs font-bold text-slate-600 m-0">KN3X Project LLC</p>
+                                <p class="text-[8px] md:text-[10px] text-slate-500 m-0">Austin, TX | 512 999-3239</p>
+                            </div>
+                        </div>
+                        <div class="text-right w-1/3">
+                            <h2 class="text-[11px] md:text-xl font-black text-slate-800 contract-title leading-tight">INDEPENDENT CONTRACTOR<br>AGREEMENT (1099)</h2>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50 p-3 md:p-4 rounded-lg border border-blue-200 mb-6 md:mb-8 no-print">
+                        <h4 class="font-bold text-blue-800 mb-2 md:mb-3 text-[11px] md:text-sm">Contract Details (Link to Ledger)</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                            <div>
+                                <label class="block text-[10px] md:text-xs font-bold text-slate-600 uppercase mb-1">Select Subcontractor <span class="text-red-500">*</span></label>
+                                <select id="subNameSelect" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm font-bold text-slate-700" onchange="updateContract()">
+                                    <option value="">-- Select from Ledger --</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] md:text-xs font-bold text-slate-600 uppercase mb-1">Service Provided <span class="text-red-500">*</span></label>
+                                <input type="text" id="subService" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm" placeholder="e.g., Interior Painting" onkeyup="updateContract()">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] md:text-xs font-bold text-slate-600 uppercase mb-1">Project Compensation ($ Amount) <span class="text-red-500">*</span></label>
+                                <input type="number" id="subPayNum" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm" placeholder="1500" onkeyup="updateContract()">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] md:text-xs font-bold text-slate-600 uppercase mb-1">Date <span class="text-red-500">*</span></label>
+                                <input type="date" id="subDate" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm" onchange="updateContract()">
+                            </div>
+                        </div>
+                        <div class="mt-4 flex justify-end">
+                            <button onclick="guardarPagoYGenerarPDF()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow-sm text-[11px] md:text-sm transition w-full md:w-auto">
+                                ✓ Save Amount to Ledger & Print
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="text-[11px] md:text-sm text-slate-700 space-y-3 md:space-y-4 contract-text text-justify">
+                        <p>This Subcontractor Agreement ("Agreement") is entered into by and between <strong>KN3X Project LLC</strong> ("Contractor") and <strong id="docSubName" class="underline decoration-slate-300">[Subcontractor Name]</strong> ("Subcontractor"), effective as of <strong id="docSubDate" class="underline decoration-slate-300">[Date]</strong>.</p>
+                        <div><h3 class="font-bold text-slate-800 text-xs md:text-base">1. INDEPENDENT CONTRACTOR STATUS</h3><p>The Subcontractor is an independent contractor (1099) and not an employee, partner, or agent of KN3X Project LLC. The Subcontractor is solely responsible for paying their own local, state, and federal taxes. KN3X Project LLC will not withhold any taxes from payments. Subcontractor must provide a completed IRS W-9 form before any payment is issued.</p></div>
+                        <div><h3 class="font-bold text-slate-800 text-xs md:text-base">2. SCOPE OF WORK</h3><p>The Subcontractor agrees to perform the following services: <strong id="docSubService" class="underline decoration-slate-300">[Service Provided]</strong> as assigned by KN3X Project LLC. The specific location and timeline for each project will be provided via Work Orders.</p></div>
+                        <div><h3 class="font-bold text-slate-800 text-xs md:text-base">3. TOOLS & MATERIALS</h3><p>The Subcontractor shall provide their own tools, equipment, vehicles, and standard protective gear required to complete the work safely.</p></div>
+                        <div><h3 class="font-bold text-slate-800 text-xs md:text-base">4. COMPENSATION & PAYMENT TERMS</h3><p>Compensation for this agreement is set at: <strong class="underline decoration-slate-300">$<span id="docSubPay">0.00</span> Flat Fee</strong>. Payment will be made on a per-project or milestone basis, not as an hourly wage. Payments will be processed only after the work is fully completed, inspected by KN3X Project LLC.</p></div>
+                        <div><h3 class="font-bold text-slate-800 text-xs md:text-base">5. LIABILITY</h3><p>The Subcontractor is fully responsible for any damage to the client’s property caused by their negligence. The cost of repairing such damage will be deducted from final payment. Subcontractor agrees not to solicit further direct business from KN3X Project LLC’s clients.</p></div>
+                    </div>
+
+                    <div class="mt-8 md:mt-12 flex justify-between gap-4 md:gap-8 w-full print-avoid-break items-end">
+                        <div class="w-1/2 border-t border-slate-400 pt-2"><p class="font-bold text-[10px] md:text-xs text-slate-800">Emilio Knuth</p><p class="text-[8px] md:text-[10px] text-slate-500 uppercase tracking-wider">KN3X Project LLC</p></div>
+                        
+                        <!-- FIRMA DIGITAL SUBCONTRATISTA -->
+                        <div class="w-1/2">
+                            <div class="signature-pad-container h-20 md:h-28 border-2 border-dashed border-gray-300 rounded mb-1 relative no-print bg-gray-50 cursor-crosshair">
+                                <canvas class="absolute inset-0 w-full h-full signature-canvas"></canvas>
+                                <button onclick="clearSignature(this)" class="absolute top-1 right-1 bg-red-100 text-red-600 text-[8px] md:text-[10px] px-1.5 py-0.5 rounded font-bold hover:bg-red-200">Clear</button>
+                                <span class="absolute bottom-1 left-2 text-[8px] text-gray-400 pointer-events-none">Sign here</span>
+                            </div>
+                            <img src="" class="signature-img hidden h-20 md:h-28 object-contain mb-1 signature-print w-full" alt="Signature">
+                            <div class="border-t border-slate-400 pt-1">
+                                <p class="font-bold text-[10px] md:text-xs text-slate-800">Subcontractor Signature</p><p class="text-[8px] md:text-[10px] text-slate-500 uppercase tracking-wider">Print Name & Date</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- VISTA 4: DIRECTORIO 1099 Y DASHBOARD -->
+            <!-- ========================================== -->
+            <div id="ledgerContainer" class="max-w-5xl mx-auto hidden no-print">
+                
+                <!-- DASHBOARD FINANCIERO -->
+                <div class="grid grid-cols-3 gap-2 md:gap-4 mb-4">
+                    <div class="bg-blue-100 p-3 md:p-5 rounded-lg md:rounded-xl text-center border border-blue-200 shadow-sm">
+                        <p class="text-[8px] md:text-xs text-blue-600 font-bold uppercase tracking-wider">Total YTD Paid</p>
+                        <p class="text-sm md:text-2xl font-black text-blue-900 mt-1" id="dashTotalPaid">$0.00</p>
+                    </div>
+                    <div class="bg-red-100 p-3 md:p-5 rounded-lg md:rounded-xl text-center border border-red-200 shadow-sm">
+                        <p class="text-[8px] md:text-xs text-red-600 font-bold uppercase tracking-wider">Pending W-9s</p>
+                        <p class="text-sm md:text-2xl font-black text-red-900 mt-1" id="dashPendingW9">0</p>
+                    </div>
+                    <div class="bg-green-100 p-3 md:p-5 rounded-lg md:rounded-xl text-center border border-green-200 shadow-sm">
+                        <p class="text-[8px] md:text-xs text-green-600 font-bold uppercase tracking-wider">Active Vendors</p>
+                        <p class="text-sm md:text-2xl font-black text-green-900 mt-1" id="dashActive">0</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden mb-6" id="ledgerDashboard">
+                    <div class="bg-blue-800 p-4 flex justify-between items-center text-white">
+                        <div class="flex flex-col">
+                            <h3 class="font-black text-lg flex items-center gap-2">👷‍♂️ Vendor 1099 Ledger</h3>
+                            <p class="text-[10px] md:text-xs text-blue-200">Track W-9s, Compliance, and Annual Payouts</p>
+                        </div>
+                    </div>
+                    <div class="p-4 md:p-6">
+                        <div class="bg-blue-50 p-4 md:p-5 rounded-lg border border-blue-200 mb-6" id="formVendor">
+                            <h4 class="font-bold text-blue-800 mb-3 text-xs md:text-sm border-b border-blue-200 pb-2" id="vendorFormTitle">Add New Vendor</h4>
+                            <input type="hidden" id="editSubId" value="">
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4">
+                                <div class="col-span-1 md:col-span-2">
+                                    <label class="block text-[10px] font-bold text-blue-800 uppercase mb-1">Full Legal Name / LLC <span class="text-red-500">*</span></label>
+                                    <input type="text" id="newSubName" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-blue-500 border">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-blue-800 uppercase mb-1">Trade / Specialty <span class="text-red-500">*</span></label>
+                                    <input type="text" id="newSubTrade" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-blue-500 border">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-blue-800 uppercase mb-1">Phone Number <span class="text-red-500">*</span></label>
+                                    <input type="text" id="newSubPhone" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-blue-500 border">
+                                </div>
+                                <div class="col-span-1 md:col-span-2">
+                                    <label class="block text-[10px] font-bold text-blue-800 uppercase mb-1">Mailing Address <span class="text-red-500">*</span></label>
+                                    <input type="text" id="newSubAddr" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-blue-500 border">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-blue-800 uppercase mb-1">W-9 Form Status</label>
+                                    <select id="newSubW9" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm font-semibold focus:outline-none focus:border-blue-500 border cursor-pointer">
+                                        <option value="Pending">Pending ⚠️</option>
+                                        <option value="Received">Received ✓</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-blue-800 uppercase mb-1">EIN / SSN <span class="text-red-500">*</span></label>
+                                    <input type="text" id="newSubID" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-blue-500 border" placeholder="XXX-XX-XXXX">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-blue-800 uppercase mb-1">Insured (COI)?</label>
+                                    <select id="newSubCOI" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-blue-500 border cursor-pointer">
+                                        <option value="No">No</option>
+                                        <option value="Yes">Yes</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex flex-col sm:flex-row justify-end gap-2">
+                                <button onclick="cancelarEdicion()" id="btnCancelEdit" class="hidden bg-slate-400 hover:bg-slate-500 text-white font-bold py-2 px-6 rounded shadow-sm text-[11px] md:text-sm transition w-full sm:w-auto">Cancel</button>
+                                <button onclick="guardarSubcontratista()" id="btnSaveVendor" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded shadow-sm text-[11px] md:text-sm transition w-full sm:w-auto">+ Save Vendor</button>
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-x-auto border border-gray-200 rounded-lg">
+                            <table class="w-full text-left border-collapse min-w-[600px]">
+                                <thead>
+                                    <tr class="bg-gray-100 text-gray-600 text-[9px] md:text-[11px] uppercase tracking-wider">
+                                        <th class="p-2 md:p-3 rounded-tl-lg font-bold">Name & Trade</th>
+                                        <th class="p-2 md:p-3 font-bold">Contact Info</th>
+                                        <th class="p-2 md:p-3 font-bold text-center">Compliance</th>
+                                        <th class="p-2 md:p-3 text-right font-bold">YTD Paid</th>
+                                        <th class="p-2 md:p-3 text-center rounded-tr-lg font-bold">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ledgerTableBody" class="text-[11px] md:text-sm"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- VISTA 5: VISOR DE FORMULARIO 1099-NEC -->
+            <!-- ========================================== -->
+            <div id="form1099Container" class="max-w-3xl mx-auto bg-white p-4 md:p-8 hidden print:block border border-gray-200 shadow-xl relative">
+                <button onclick="toggleVista('ledger')" class="absolute top-2 left-2 no-print bg-slate-600 hover:bg-slate-500 text-white text-xs font-bold py-1.5 px-3 rounded transition">← Back</button>
+                <button onclick="window.print()" class="absolute top-2 right-2 no-print bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-1.5 px-3 rounded transition">🖨️ Print Form 1099-NEC</button>
+                <div class="mt-8 border-4 border-red-500 p-1 form-1099-box">
+                    <div class="flex border-b-4 border-red-500 pb-2 mb-2">
+                        <div class="w-2/3 border-r-2 border-red-500 pr-2">
+                            <p class="text-[7px] md:text-[9px] font-bold text-red-600 uppercase">PAYER'S name, street address, city, state, ZIP code</p>
+                            <p class="font-bold text-black text-xs md:text-sm mt-1">KN3X PROJECT LLC</p>
+                            <p class="text-black text-[10px] md:text-xs">Austin, TX</p>
+                            <p class="text-black text-[10px] md:text-xs">Ph: 512 999-3239</p>
+                        </div>
+                        <div class="w-1/3 pl-2 flex flex-col justify-center items-center">
+                            <h1 class="text-xl md:text-3xl font-black text-red-600">1099-NEC</h1>
+                            <p class="font-bold text-red-600 text-[8px] md:text-xs text-center">Nonemployee Compensation</p>
+                            <p class="font-bold text-black text-xs md:text-sm mt-1">2026</p>
+                        </div>
+                    </div>
+                    <div class="flex border-b-2 border-red-500">
+                        <div class="w-1/2 border-r-2 border-red-500 p-1 md:p-2">
+                            <p class="text-[7px] md:text-[9px] font-bold text-red-600 uppercase">RECIPIENT'S TIN (SSN or EIN)</p>
+                            <p class="font-bold text-black text-xs md:text-base" id="print1099TIN">XXX-XX-XXXX</p>
+                        </div>
+                        <div class="w-1/2 p-1 md:p-2">
+                            <p class="text-[7px] md:text-[9px] font-bold text-red-600 uppercase">1 Nonemployee compensation</p>
+                            <p class="font-bold text-black text-sm md:text-lg" id="print1099Amount">$0.00</p>
+                        </div>
+                    </div>
+                    <div class="border-b-2 border-red-500 p-1 md:p-2">
+                        <p class="text-[7px] md:text-[9px] font-bold text-red-600 uppercase">RECIPIENT'S name</p>
+                        <p class="font-bold text-black text-xs md:text-sm" id="print1099Name">Sub Name</p>
+                    </div>
+                    <div class="p-1 md:p-2">
+                        <p class="text-[7px] md:text-[9px] font-bold text-red-600 uppercase">Street address, city, state, and ZIP code</p>
+                        <p class="font-bold text-black text-xs md:text-sm" id="print1099Addr">Address</p>
+                    </div>
+                </div>
+                <p class="text-center text-[8px] md:text-[10px] mt-2 font-bold">Copy B - For Recipient. This is important tax information and is being furnished to the IRS.</p>
+            </div>
+            
+            <div id="radarContainer" class="hidden"><h2 class="text-xl font-bold mb-2">Demo Radar — Austin</h2><p class="mb-4 text-sm text-slate-500">Demo projects only / Solo proyectos de demostración</p><div id="mapView" style="height:60vh;min-height:320px" class="rounded-xl"></div></div>
+
+        </main>
+    </div>
+
+    <!-- MENSAJE DE ÉXITO -->
+    <div id="toastSave" class="fixed bottom-5 right-5 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg font-bold text-sm transform transition-all duration-300 translate-y-20 opacity-0 no-print z-50">
+        <span data-i18n="toast_saved">File downloaded successfully!</span>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SCRIPTS -->
+    <!-- ========================================== -->
+    <script>
+        document.getElementById('fechaActual').value = localDate();
+        document.getElementById('subDate').value = localDate();
+        
+        let currentLang = 'en';
+        let currentTotalGlobal = 0;
+        let mapInstance = null; 
+
+        // BASE DE DATOS LOCALES
+        function localDate() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+        function readDirectory(key) { try { const data = JSON.parse(localStorage.getItem(key) || '[]'); return Array.isArray(data) ? data : []; } catch { return []; } }
+        function escapeHTML(value) { return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+        let subLedger = readDirectory('kn3x_subs_v3');
+        let customerLedger = readDirectory('kn3x_customers_v1');
+
+        // ==========================================
+        // UI & MENU LOGIC
+        // ==========================================
+        window.cambiarSeccion = function(seccion) {
+            toggleVista(seccion);
+            toggleMobileMenu(true); 
+        };
+
+        function toggleMenu(menuId, iconId) {
+            const menu = document.getElementById(menuId);
+            const icon = document.getElementById(iconId);
+            menu.classList.toggle('open');
+            icon.classList.toggle('rotate-180');
+        }
+
+        function toggleMobileMenu(forceClose = false) {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            if(forceClose) {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            } else {
+                sidebar.classList.toggle('-translate-x-full');
+                overlay.classList.toggle('hidden');
+            }
+        }
+
+        let workspaceNavigationReady = false;
+        let workspaceView = 'estimate';
+        function toggleVista(vista, fromHistory = false) {
+            const views = ['estimate', 'radar', 'contract', 'ledger', 'customerLedger', 'form1099'];
+            if (!views.includes(vista)) return;
+            if (workspaceNavigationReady && !fromHistory && vista !== workspaceView) {
+                history.pushState({ kn3xNavigation: 'kn3x-workspace', view: vista }, '', location.href);
+            }
+            workspaceView = vista;
+            ['radarContainer', 'estimateContainer', 'contractContainer', 'ledgerContainer', 'customerLedgerContainer', 'form1099Container'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+                document.getElementById(id).classList.remove('print:block');
+            });
+            
+            const btnSave = document.getElementById('btnSave');
+            const btnLoad = document.getElementById('btnLoad');
+            const topBarTitle = document.getElementById('topBarTitle');
+            
+            btnSave.classList.add('hidden'); 
+            btnLoad.classList.add('hidden');
+            
+            if(vista === 'radar') {
+                document.getElementById('radarContainer').classList.remove('hidden');
+                topBarTitle.innerText = "Demo Bid Radar";
+                initMap(); 
+            } else if (vista === 'contract') {
+                document.getElementById('contractContainer').classList.remove('hidden'); 
+                document.getElementById('contractContainer').classList.add('print:block'); 
+                topBarTitle.innerText = "Subcontractor Agreement";
+                poblarSelectContrato();
+                updateContract();
+            } else if (vista === 'ledger') {
+                document.getElementById('ledgerContainer').classList.remove('hidden');
+                topBarTitle.innerText = "1099 Vendor Ledger";
+                renderLedgerTable(); // Actualiza el dashboard financiero automáticamente
+            } else if (vista === 'customerLedger') {
+                document.getElementById('customerLedgerContainer').classList.remove('hidden');
+                topBarTitle.innerText = "Customer Directory";
+                renderCustomerTable();
+            } else if (vista === 'form1099') {
+                document.getElementById('form1099Container').classList.remove('hidden'); 
+                document.getElementById('form1099Container').classList.add('print:block');
+                topBarTitle.innerText = "Form 1099-NEC";
+            } else {
+                document.getElementById('estimateContainer').classList.remove('hidden'); 
+                document.getElementById('estimateContainer').classList.add('print:block'); 
+                topBarTitle.innerText = "Estimate Tool";
+                btnSave.classList.remove('hidden'); 
+                btnLoad.classList.remove('hidden');
+                poblarSelectCustomerEstimate();
+            }
+        }
+
+        // ==========================================
+        // TEXTOS Y TRADUCCIONES
+        // ==========================================
+        const i18n = {
+            en: {
+                title: "Estimate", est_num: "Est. #:", client: "Client / Project Name", date: "Date",
+                email: "Email Address", phone: "Phone Number", address: "Job Site Address",
+                service: "Service / Material", qty: "Qty", price: "Unit Price", total: "Total",
+                add_item: "+ Add Item", subtotal: "Subtotal:", tax: "Tax (8.25%):", total_usd: "Total USD:",
+                generate_pdf: "Generate PDF", select: "Select a service...", notes: "+ Add notes (optional)",
+                photos_title: "Site Conditions & Notes (Appendix)", add_photo: "Add Photo",
+                photo_title: "Enter title (e.g., Master Bedroom Wall)", photo_desc: "Describe the damage, repair needed, or current state...",
+                info_title: "Project Information", validity_label: "Estimate Validity", 
+                select_plan: "Select Payment Plan (Hidden in PDF)", payment_schedule: "Payment Schedule",
+                duration_label: "Estimated Duration", duration_placeholder: "e.g., 2-3 Weeks (Subject to change)",
+                tc_main_title: "Standard Terms & Conditions",
+                t1_title: "1. Change Orders & Extra Work", t1_text: "Any alteration or deviation from the above specifications involving extra costs will be executed only upon written change orders, and will become an extra charge over and above the estimate.",
+                t2_title: "2. Unforeseen Conditions", t2_text: "This estimate is based on visual inspections. If hidden or unforeseen conditions (e.g., mold, water damage, structural issues, or non-compliant wiring/plumbing) are discovered, work may be halted, and repair costs will be billed as extra work.",
+                t3_title: "3. Client Responsibilities & Access", t3_text: "The client agrees to provide access to the property, water, and electricity during working hours. It is the client's responsibility to remove furniture, valuables, and secure pets. KN3X Project LLC is not liable for damage to items not cleared.",
+                t4_title: "4. Permits & HOA Approvals", t4_text: "Unless otherwise specified, the client is responsible for obtaining and paying for all required city permits and Homeowner Association (HOA) approvals. Delays due to lack of permits are not the contractor's responsibility.",
+                t5_title: "5. Limited Warranty", t5_text: "KN3X Project LLC provides a 1-year limited warranty on workmanship from the date of completion. Materials are subject only to the manufacturer's warranty. This warranty is void if the final payment is not made in full.",
+                t6_title: "6. Texas Mechanic's Lien Warning", t6_text: "WARNING: Under Texas law, if you fail to pay your contractor for work or materials provided, your contractor has the right to file a mechanic's lien against your property, which could result in the forced sale of your property to satisfy the debt.",
+                acceptance_title: "Client Acceptance", acceptance_text: "I have reviewed and approve the scope of work, pricing, and terms above. I authorize KN3X Project LLC to proceed.",
+                digital_sign_note: "* Please return this approved document physically or digitally (e.g., via DocuSign).",
+                sign_signature: "Client Signature", sign_name: "Printed Name", sign_date: "Date",
+                doc_estimate: "Estimate", page_continuation: "Continued Document", valid_doc: "Official Document",
+                finalize_estimate: "Finalize estimate", clear_estimate: "Clear content", btn_save: "Save", btn_open: "Load", btn_radar: "Demo Radar", radar_title: "Demo Bid Radar - Austin Area", toast_saved: "File downloaded successfully!",
+                btn_lang: "🌐 ES", btn_contract: "Subcontractor Doc", btn_estimate_view: "Estimate Tool", btn_ledger: "1099 Ledger",
+                menu_customers: "Customers", menu_team: "Vendors & Team", btn_customer_dir: "Directory"
+            },
+            es: {
+                title: "Presupuesto", est_num: "Folio:", client: "Nombre del Cliente / Proyecto", date: "Fecha",
+                email: "Correo Electrónico", phone: "Teléfono", address: "Dirección de la Obra",
+                service: "Servicio / Material", qty: "Cant.", price: "Precio Unitario", total: "Total",
+                add_item: "+ Añadir Partida", subtotal: "Subtotal:", tax: "Impuesto (8.25%):", total_usd: "Total USD:",
+                generate_pdf: "Generar PDF", select: "Seleccione un servicio...", notes: "+ Agregar notas (opcional)",
+                photos_title: "Condiciones del Sitio y Notas (Anexo)", add_photo: "Añadir Foto",
+                photo_title: "Escriba un título (ej. Pared Cuarto Principal)", photo_desc: "Describa el daño, reparación necesaria o estado actual...",
+                info_title: "Información del Proyecto", validity_label: "Validez del Presupuesto", 
+                select_plan: "Elegir Plan de Pago (Oculto en PDF)", payment_schedule: "Cronograma de Pagos",
+                duration_label: "Tiempo Estimado de Obra", duration_placeholder: "ej. 2 a 3 Semanas (Sujeto a cambios)",
+                tc_main_title: "Términos y Condiciones Estándar",
+                t1_title: "1. Órdenes de Cambio y Trabajo Extra", t1_text: "Cualquier alteración o desviación de las especificaciones que involucre costos adicionales se ejecutará solo mediante órdenes de cambio por escrito, y se facturará por encima del presupuesto original.",
+                t2_title: "2. Condiciones Imprevistas", t2_text: "Este presupuesto se basa en inspecciones visuales. Si se descubren condiciones ocultas (ej. moho, daños por agua, problemas estructurales o cableado/plomería no conforme), el trabajo podrá detenerse y los costos de reparación se facturarán como trabajo extra.",
+                t3_title: "3. Responsabilidades del Cliente y Acceso", t3_text: "El cliente acepta proporcionar acceso a la propiedad, agua y electricidad durante horas hábiles. Es responsabilidad del cliente retirar muebles, objetos de valor y asegurar a las mascotas. KN3X Project LLC no se hace responsable por daños a artículos no retirados.",
+                t4_title: "4. Permisos y Aprobaciones de HOA", t4_text: "A menos que se especifique lo contrario, el cliente es responsable de obtener y pagar todos los permisos de la ciudad y las aprobaciones de la Asociación de Propietarios (HOA). Los retrasos por falta de permisos no son responsabilidad del contratista.",
+                t5_title: "5. Garantía Limitada", t5_text: "KN3X Project LLC ofrece una garantía limitada de 1 año en mano de obra desde la fecha de finalización. Los materiales están sujetos únicamente a la garantía del fabricante. Esta garantía se anula si el pago final no se realiza en su totalidad.",
+                t6_title: "6. Aviso de Gravamen de Texas", t6_text: "AVISO: Según la ley de Texas, si usted no paga a su contratista por el trabajo o materiales proporcionados, el contratista tiene el derecho de presentar un gravamen (Mechanic's Lien) sobre su propiedad, lo que podría resultar en la venta forzada de la misma para saldar la deuda.",
+                acceptance_title: "Aceptación del Cliente", acceptance_text: "He revisado y apruebo el alcance del trabajo, los precios y los términos anteriores. Autorizo a KN3X Project LLC a proceder.",
+                digital_sign_note: "* Por favor, devuelva este documento aprobado en físico o vía digital (ej. DocuSign).",
+                sign_signature: "Firma del Cliente", sign_name: "Nombre en Letra de Molde", sign_date: "Fecha",
+                doc_estimate: "Presupuesto", page_continuation: "Documento Continuo", valid_doc: "Documento Oficial",
+                finalize_estimate: "Finalizar presupuesto", clear_estimate: "Borrar contenido", btn_save: "Guardar", btn_open: "Cargar", btn_radar: "Radar de demostración", radar_title: "Radar de demostración - Austin", toast_saved: "¡Archivo descargado con éxito!",
+                btn_lang: "🌐 EN", btn_contract: "Contrato 1099", btn_estimate_view: "Presupuesto", btn_ledger: "Directorio 1099",
+                menu_customers: "Clientes", menu_team: "Proveedores", btn_customer_dir: "Directorio"
+            }
+        };
+
+        const validezOptions = [{ id: '15d', en: '• Valid for 15 days from date of issue.', es: '• Válido por 15 días a partir de la fecha de emisión.' }, { id: '30d', en: '• Valid for 30 days from date of issue.', es: '• Válido por 30 días a partir de la fecha de emisión.' }];
+        const pagoOptions = [{ id: 'thirds', en: '3-Part Plan (33/33/34)', es: 'Plan en Tercios (33/33/34)' }, { id: '50-50', en: '2-Part Plan (50/50)', es: 'Plan 50 / 50' }, { id: 'milestones', en: 'Milestones (20/30/30/20)', es: 'Por Etapas (20/30/30/20)' }];
+
+        // CATÁLOGO COMPLETO DE SERVICIOS
+        const catalogoPrecios = [
+            { cat_en: 'Painting', cat_es: 'Pintura', id: 'ptg_int', nom_en: 'Interior Walls/Ceilings Painting - SqFt', nom_es: 'Pintura Paredes/Techos Interiores - SqFt', precio: 2.50 },
+            { cat_en: 'Painting', cat_es: 'Pintura', id: 'ptg_ext', nom_en: 'Exterior Siding/Stucco Painting - SqFt', nom_es: 'Pintura Fachadas Exterior - SqFt', precio: 3.00 },
+            { cat_en: 'Painting', cat_es: 'Pintura', id: 'ptg_trim', nom_en: 'Trim & Baseboards Painting - LinFt', nom_es: 'Pintura Molduras y Rodapiés - LinFt', precio: 1.50 },
+            { cat_en: 'Painting', cat_es: 'Pintura', id: 'ptg_cab', nom_en: 'Cabinets Painting/Restoration - Each', nom_es: 'Pintura de Gabinetes - Und', precio: 75.00 },
+            { cat_en: 'Painting', cat_es: 'Pintura', id: 'ptg_epoxy', nom_en: 'Garage/Floor Epoxy Coating - SqFt', nom_es: 'Pintura Epóxica para Pisos - SqFt', precio: 4.50 },
+            { cat_en: 'Landscaping & Walkways', cat_es: 'Jardinería y Exteriores', id: 'lnd_pavers', nom_en: 'Pavers Installation - SqFt', nom_es: 'Instalación de Adoquines/Pavers - SqFt', precio: 12.00 },
+            { cat_en: 'Landscaping & Walkways', cat_es: 'Jardinería y Exteriores', id: 'lnd_sod', nom_en: 'New Sod Installation - SqFt', nom_es: 'Instalación Grama Nueva - SqFt', precio: 1.50 },
+            { cat_en: 'Landscaping & Walkways', cat_es: 'Jardinería y Exteriores', id: 'lnd_wall', nom_en: 'Retaining Walls - Face SqFt', nom_es: 'Muros de Contención - Face SqFt', precio: 35.00 },
+            { cat_en: 'Landscaping & Walkways', cat_es: 'Jardinería y Exteriores', id: 'lnd_mulch', nom_en: 'Mulch or Gravel Beds - CuYd', nom_es: 'Camas de Mantillo o Grava - CuYd', precio: 85.00 },
+            { cat_en: 'Landscaping & Walkways', cat_es: 'Jardinería y Exteriores', id: 'lnd_light', nom_en: 'Outdoor Landscape Lighting - Each', nom_es: 'Instalación Iluminación Exterior - Und', precio: 120.00 },
+            { cat_en: 'Carpentry & Floors', cat_es: 'Carpintería y Pisos', id: 'flr_lam', nom_en: 'Laminate Floor Installation - SqFt', nom_es: 'Instalación Piso Laminado - SqFt', precio: 4.50 },
+            { cat_en: 'Carpentry & Floors', cat_es: 'Carpintería y Pisos', id: 'crp_deck', nom_en: 'Wood/Composite Deck Building - SqFt', nom_es: 'Construcción Decks Madera/Composite - SqFt', precio: 25.00 },
+            { cat_en: 'Carpentry & Floors', cat_es: 'Carpintería y Pisos', id: 'crp_patio', nom_en: 'Pergolas & Patio Covers - SqFt', nom_es: 'Pérgolas y Techos de Exterior - SqFt', precio: 35.00 },
+            { cat_en: 'Carpentry & Floors', cat_es: 'Carpintería y Pisos', id: 'crp_fence', nom_en: 'Wood Fencing Installation - LinFt', nom_es: 'Instalación Cercas de Madera - LinFt', precio: 28.00 },
+            { cat_en: 'Carpentry & Floors', cat_es: 'Carpintería y Pisos', id: 'crp_trim', nom_en: 'Interior Trim/Molding Installation - LinFt', nom_es: 'Instalación Molduras Interiores - LinFt', precio: 4.50 },
+            { cat_en: 'Carpentry & Floors', cat_es: 'Carpintería y Pisos', id: 'crp_cab', nom_en: 'Custom Shelving/Cabinets - LinFt', nom_es: 'Estanterías/Gabinetes a Medida - LinFt', precio: 150.00 },
+            { cat_en: 'Plumbing', cat_es: 'Plomería', id: 'plm_faucet', nom_en: 'Faucet/Toilet Installation - Each', nom_es: 'Instalación Grifería/Inodoro - Und', precio: 150.00 },
+            { cat_en: 'Plumbing', cat_es: 'Plomería', id: 'plm_shower', nom_en: 'Tub/Shower Rough-in - Project', nom_es: 'Prep. Tubería Ducha/Bañera - Proyecto', precio: 500.00 },
+            { cat_en: 'Plumbing', cat_es: 'Plomería', id: 'plm_disp', nom_en: 'Garbage Disposal Replacement - Each', nom_es: 'Reemplazo Triturador Basura - Und', precio: 125.00 },
+            { cat_en: 'Plumbing', cat_es: 'Plomería', id: 'plm_pipe', nom_en: 'Water/Drain Pipe Relocation - LinFt', nom_es: 'Reubicación Tuberías Agua/Drenaje - LinFt', precio: 45.00 },
+            { cat_en: 'Plumbing', cat_es: 'Plomería', id: 'plm_heater', nom_en: 'Water Heater Installation - Project', nom_es: 'Instalación Calentador de Agua - Proyecto', precio: 800.00 },
+            { cat_en: 'Electrical Installations', cat_es: 'Instalaciones Eléctricas', id: 'elec_rec', nom_en: 'Recessed LED Cans Installation - Each', nom_es: 'Instalación Luces Empotradas - Und', precio: 125.00 },
+            { cat_en: 'Electrical Installations', cat_es: 'Instalaciones Eléctricas', id: 'elec_out', nom_en: 'Outlets & Switches Installation - Each', nom_es: 'Instalación Tomacorrientes y Apagadores - Und', precio: 75.00 },
+            { cat_en: 'Electrical Installations', cat_es: 'Instalaciones Eléctricas', id: 'elec_fan', nom_en: 'Ceiling Fan Installation - Each', nom_es: 'Instalación Ventilador de Techo - Und', precio: 150.00 },
+            { cat_en: 'Electrical Installations', cat_es: 'Instalaciones Eléctricas', id: 'elec_panel', nom_en: 'Electrical Panel Upgrade - Project', nom_es: 'Actualización Panel Eléctrico - Proyecto', precio: 1500.00 },
+            { cat_en: 'Network & Smart Home', cat_es: 'Redes y Domótica', id: 'net_drop', nom_en: 'Cat6 Ethernet Drop Installation - Drop', nom_es: 'Instalación Cableado Red Cat6 - Drop', precio: 150.00 },
+            { cat_en: 'Network & Smart Home', cat_es: 'Redes y Domótica', id: 'net_cam', nom_en: 'Security Camera Installation - Each', nom_es: 'Instalación Cámaras de Seguridad - Und', precio: 130.00 },
+            { cat_en: 'Network & Smart Home', cat_es: 'Redes y Domótica', id: 'net_ap', nom_en: 'Wi-Fi Access Point Installation - Each', nom_es: 'Instalación Access Points Wi-Fi - Und', precio: 120.00 },
+            { cat_en: 'Network & Smart Home', cat_es: 'Redes y Domótica', id: 'net_rack', nom_en: 'Network Rack Assembly/Config - Hr', nom_es: 'Armado/Configuración Rack de Red - Hr', precio: 85.00 },
+            { cat_en: 'Network & Smart Home', cat_es: 'Redes y Domótica', id: 'net_cable', nom_en: 'Cable Management - Hr', nom_es: 'Gestión de Cableado - Hr', precio: 65.00 },
+            { cat_en: 'Network & Smart Home', cat_es: 'Redes y Domótica', id: 'elec_smart', nom_en: 'Smart Home Devices/Switches Setup - Each', nom_es: 'Configuración Smart Home/Switches - Und', precio: 85.00 },
+            { cat_en: 'Hourly Labor Rates', cat_es: 'Tarifas por Hora', id: 'hr_helper', nom_en: 'General Laborer / Helper / Demolition (Hr)', nom_es: 'Ayudante General / Limpieza / Demolición (Hr)', precio: 45.00 },
+            { cat_en: 'Hourly Labor Rates', cat_es: 'Tarifas por Hora', id: 'hr_painter', nom_en: 'Specialized Painter (Hr)', nom_es: 'Pintor Especializado (Hr)', precio: 65.00 },
+            { cat_en: 'Hourly Labor Rates', cat_es: 'Tarifas por Hora', id: 'hr_carpenter', nom_en: 'Specialized Carpenter/Installer (Hr)', nom_es: 'Carpintero/Instalador Especializado (Hr)', precio: 75.00 },
+            { cat_en: 'Hourly Labor Rates', cat_es: 'Tarifas por Hora', id: 'hr_tech', nom_en: 'Network / Smart Home Technician (Hr)', nom_es: 'Técnico de Redes / Domótica (Hr)', precio: 85.00 },
+            { cat_en: 'Design, CAD & 3D Printing', cat_es: 'Diseño, CAD e Impresión 3D', id: 'dsn_cad', nom_en: 'AutoCAD Architectural Floor Plan (Hr)', nom_es: 'Plano Arquitectónico AutoCAD (Hr)', precio: 55.00 },
+            { cat_en: 'Design, CAD & 3D Printing', cat_es: 'Diseño, CAD e Impresión 3D', id: 'dsn_sld', nom_en: 'SolidWorks 3D Modeling (Hr)', nom_es: 'Modelado 3D SolidWorks (Hr)', precio: 65.00 },
+            { cat_en: 'Design, CAD & 3D Printing', cat_es: 'Diseño, CAD e Impresión 3D', id: 'dsn_3d', nom_en: '3D Printing Service PLA/TPU (Hr)', nom_es: 'Servicio Impresión 3D PLA/TPU (Hr)', precio: 5.00 },
+            { cat_en: 'Custom Services', cat_es: 'Servicios Personalizados', id: 'custom', nom_en: '-- Enter custom service --', nom_es: '-- Escribir servicio personalizado --', precio: 0.00 }
+        ];
+
+        // ==========================================
+        // LÓGICA DEL DIRECTORIO DE CLIENTES
+        // ==========================================
+        function guardarCliente() {
+            const editId = document.getElementById('editCustId').value;
+            const name = document.getElementById('newCustName').value.trim();
+            const phone = document.getElementById('newCustPhone').value.trim();
+            const email = document.getElementById('newCustEmail').value.trim();
+            const addr = document.getElementById('newCustAddr').value.trim();
+
+            if(!name || !phone || !addr) {
+                alert(currentLang === 'en' ? "Please fill all mandatory fields (*) for the Customer." : "Por favor llena todos los campos obligatorios (*) del Cliente.");
+                return;
+            }
+
+            if (editId) {
+                const index = customerLedger.findIndex(c => c.id === editId);
+                if(index !== -1) {
+                    customerLedger[index].name = name; customerLedger[index].phone = phone;
+                    customerLedger[index].email = email; customerLedger[index].addr = addr;
+                }
+                document.getElementById('editCustId').value = ""; 
+                document.getElementById('customerFormTitle').innerText = "Add New Customer";
+                document.getElementById('btnSaveCust').innerText = "+ Save Customer";
+                document.getElementById('btnCancelEditCust').classList.add('hidden');
+                document.getElementById('formCustomer').classList.remove('bg-yellow-50', 'border-yellow-200');
+                document.getElementById('formCustomer').classList.add('bg-orange-50', 'border-orange-200');
+            } else {
+                customerLedger.push({ id: Date.now().toString(), name: name, phone: phone, email: email, addr: addr });
+            }
+            localStorage.setItem('kn3x_customers_v1', JSON.stringify(customerLedger));
+            limpiarFormularioCliente();
+            renderCustomerTable();
+            poblarSelectCustomerEstimate();
+        }
+
+        function editarCliente(id) {
+            const cust = customerLedger.find(c => c.id === id);
+            if(!cust) return;
+            document.getElementById('editCustId').value = cust.id;
+            document.getElementById('newCustName').value = cust.name;
+            document.getElementById('newCustPhone').value = cust.phone;
+            document.getElementById('newCustEmail').value = cust.email;
+            document.getElementById('newCustAddr').value = cust.addr;
+
+            document.getElementById('customerFormTitle').innerText = `✏️ Editing Customer: ${escapeHTML(cust.name)}`;
+            document.getElementById('btnSaveCust').innerText = "✓ Update Customer";
+            document.getElementById('btnCancelEditCust').classList.remove('hidden');
+            document.getElementById('formCustomer').classList.remove('bg-orange-50', 'border-orange-200');
+            document.getElementById('formCustomer').classList.add('bg-yellow-50', 'border-yellow-200');
+        }
+
+        function eliminarCliente(id) {
+            const cust = customerLedger.find(c => c.id === id);
+            if(confirm(`Are you sure you want to delete ${escapeHTML(cust.name)}?`)) {
+                customerLedger = customerLedger.filter(c => c.id !== id);
+                localStorage.setItem('kn3x_customers_v1', JSON.stringify(customerLedger));
+                renderCustomerTable();
+                poblarSelectCustomerEstimate();
+            }
+        }
+
+        function cancelarEdicionCliente() {
+            document.getElementById('editCustId').value = "";
+            document.getElementById('customerFormTitle').innerText = "Add New Customer";
+            document.getElementById('btnSaveCust').innerText = "+ Save Customer";
+            document.getElementById('btnCancelEditCust').classList.add('hidden');
+            document.getElementById('formCustomer').classList.remove('bg-yellow-50', 'border-yellow-200');
+            document.getElementById('formCustomer').classList.add('bg-orange-50', 'border-orange-200');
+            limpiarFormularioCliente();
+        }
+
+        function limpiarFormularioCliente() {
+            ['newCustName', 'newCustPhone', 'newCustEmail', 'newCustAddr'].forEach(id => document.getElementById(id).value = '');
+        }
+
+        function renderCustomerTable() {
+            const tbody = document.getElementById('customerTableBody');
+            tbody.innerHTML = '';
+            customerLedger.forEach(cust => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-gray-200 hover:bg-orange-50 transition";
+                tr.innerHTML = `
+                    <td class="p-2 md:p-3 font-bold text-slate-800">${escapeHTML(cust.name)}</td>
+                    <td class="p-2 md:p-3 text-[10px] md:text-xs text-slate-600">📞 ${escapeHTML(cust.phone || 'N/A')}<br>✉️ ${escapeHTML(cust.email || 'N/A')}</td>
+                    <td class="p-2 md:p-3 text-[10px] md:text-xs text-slate-600 truncate max-w-[150px] md:max-w-[200px]">📍 ${escapeHTML(cust.addr || 'N/A')}</td>
+                    <td class="p-2 md:p-3 text-center">
+                        <div class="flex items-center justify-center gap-1 md:gap-2">
+                            <button onclick="editarCliente('${cust.id}')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm md:text-lg w-6 h-6 md:w-8 md:h-8 rounded shadow-sm transition">✏️</button>
+                            <button onclick="eliminarCliente('${cust.id}')" class="bg-slate-200 hover:bg-red-100 text-slate-500 hover:text-red-600 text-sm md:text-lg w-6 h-6 md:w-8 md:h-8 rounded shadow-sm transition">🗑️</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function poblarSelectCustomerEstimate() {
+            const select = document.getElementById('selectCustomerDir');
+            if(!select) return;
+            select.innerHTML = '<option value="">-- Load Directory --</option>';
+            customerLedger.forEach(cust => {
+                const opt = document.createElement('option');
+                opt.value = cust.id; opt.text = cust.name; select.appendChild(opt);
+            });
+        }
+
+        function loadCustomerToEstimate() {
+            const select = document.getElementById('selectCustomerDir');
+            if(!select.value) return;
+            const cust = customerLedger.find(c => c.id === select.value);
+            if(cust) {
+                document.getElementById('inputClientName').value = cust.name;
+                syncPrintedName();
+                document.getElementById('inputPhone').value = cust.phone;
+                document.getElementById('inputClientEmail').value = cust.email;
+                document.getElementById('inputAddress').value = cust.addr;
+            }
+        }
+
+
+        // ==========================================
+        // LÓGICA DEL PRESUPUESTO & BUSCADOR
+        // ==========================================
+        function agregarFila() {
+            const tbody = document.getElementById('listaItems');
+            const tr = document.createElement('tr');
+            tr.className = "border-b border-gray-100 hover:bg-slate-50 transition group print:border-gray-200";
+            tr.innerHTML = `
+                <td class="p-1 md:p-2 print:py-1 print:px-0 flex flex-col gap-1 w-full">
+                    <div class="relative w-full mb-1 group no-print">
+                        <input type="text" class="w-full p-1 border border-gray-200 rounded focus:border-slate-500 focus:outline-none bg-white transition text-[9px] md:text-[11px]" placeholder="🔍 Search service..." onkeyup="filtrarServicios(this)">
+                    </div>
+                    <select class="catalogo-select w-full p-1 md:p-1.5 border border-gray-200 rounded focus:border-slate-500 focus:outline-none bg-white transition cursor-pointer text-slate-700 font-medium print:p-0 text-[10px] md:text-xs" onchange="actualizarPrecioDesdeCatalogo(this)">
+                        <option value="0" disabled selected>${i18n[currentLang].select}</option>
+                        ${generarOpcionesCatalogo(null)}
+                    </select>
+                    <input type="text" class="nota-input w-full p-1 md:p-1.5 border border-transparent hover:border-gray-200 focus:border-slate-500 rounded focus:outline-none bg-transparent transition text-[9px] md:text-[11px] text-gray-500 print:p-0 mt-1" placeholder="${i18n[currentLang].notes}">
+                </td>
+                <td class="p-1 md:p-2 print:py-1 print:px-0 align-top pt-2 md:pt-3 print:pt-1">
+                    <input type="number" min="0" step="any" value="1" class="w-full p-1 border border-transparent hover:border-gray-200 focus:border-slate-500 rounded focus:outline-none bg-transparent text-center transition qty text-[10px] md:text-sm print:p-0 print:text-xs mt-5 md:mt-6 print:mt-0" onchange="calcularTotales()" onkeyup="calcularTotales()">
+                </td>
+                <td class="p-1 md:p-2 print:py-1 print:px-0 align-top pt-2 md:pt-3 print:pt-1">
+                    <div class="flex items-center justify-end mt-5 md:mt-6 print:mt-0">
+                        <span class="text-slate-400 mr-0.5 md:mr-1 text-[10px] md:text-sm print:text-xs">$</span>
+                        <input type="number" min="0" value="0.00" step="0.01" class="w-full max-w-[60px] md:max-w-[80px] p-1 border border-transparent hover:border-gray-200 focus:border-slate-500 rounded focus:outline-none bg-transparent text-right transition price text-[10px] md:text-sm print:p-0 print:text-xs" onchange="calcularTotales()" onkeyup="calcularTotales()">
+                    </div>
+                </td>
+                <td class="p-1 md:p-2 print:py-1 print:px-0 align-top pt-2 md:pt-3 print:pt-1">
+                    <div class="flex items-center justify-end mt-5 md:mt-6 print:mt-0">
+                        <span class="row-total block p-1 border border-transparent font-semibold text-slate-700 text-right text-[10px] md:text-sm print:p-0 print:text-xs">$0.00</span>
+                    </div>
+                </td>
+                <td class="p-1 md:p-2 align-top pt-2 md:pt-3 text-center no-print opacity-100 md:opacity-0 group-hover:opacity-100 transition">
+                    <button onclick="eliminarFila(this)" class="mt-5 md:mt-6 text-red-400 hover:text-red-600 font-bold bg-red-50 hover:bg-red-100 rounded-full w-5 h-5 md:w-7 md:h-7 flex items-center justify-center text-sm md:text-lg leading-none">×</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+            calcularTotales();
+        }
+
+        // BUSCADOR INTELIGENTE EN EL SELECT
+        function filtrarServicios(input) {
+            const filter = input.value.toLowerCase();
+            const select = input.parentElement.nextElementSibling; 
+            const options = select.options;
+            let firstVisibleIndex = 0;
+            
+            for (let i = 1; i < options.length; i++) { 
+                const txt = options[i].text.toLowerCase();
+                if (txt.includes(filter)) {
+                    options[i].style.display = '';
+                    if (firstVisibleIndex === 0) firstVisibleIndex = i; 
+                } else {
+                    options[i].style.display = 'none';
+                }
+            }
+            if(filter.length > 2 && firstVisibleIndex !== 0) {
+                select.selectedIndex = firstVisibleIndex;
+                actualizarPrecioDesdeCatalogo(select);
+            }
+        }
+
+        function eliminarFila(btn) { btn.closest('tr').remove(); calcularTotales(); }
+
+        function calcularTotales() {
+            let subtotal = 0;
+            document.querySelectorAll('#listaItems tr').forEach(fila => {
+                const cant = Math.max(0, parseFloat(fila.querySelector('.qty').value) || 0);
+                const precio = Math.max(0, parseFloat(fila.querySelector('.price').value) || 0);
+                const totalFila = cant * precio;
+                fila.querySelector('.row-total').textContent = '$' + totalFila.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                subtotal += totalFila;
+            });
+            const impuesto = subtotal * 0.0825;
+            currentTotalGlobal = subtotal + impuesto; 
+            document.getElementById('subtotal').textContent = '$' + subtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('impuesto').textContent = '$' + impuesto.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('total').textContent = '$' + currentTotalGlobal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            actualizarDesglosePago();
+        }
+
+        function generarOpcionesCatalogo(selectedId = null) {
+            const catKey = currentLang === 'en' ? 'cat_en' : 'cat_es';
+            const nomKey = currentLang === 'en' ? 'nom_en' : 'nom_es';
+            const categorias = [...new Set(catalogoPrecios.map(item => item[catKey]))];
+            let html = '';
+            categorias.forEach(cat => {
+                html += `<optgroup label="${cat}">`;
+                const items = catalogoPrecios.filter(i => i[catKey] === cat);
+                items.forEach(item => {
+                    const isSelected = item.id === selectedId ? 'selected' : '';
+                    html += `<option value="${item.precio}" data-id="${item.id}" ${isSelected}>${item[nomKey]}</option>`;
+                });
+                html += `</optgroup>`;
+            });
+            return html;
+        }
+
+        function actualizarPrecioDesdeCatalogo(selectElement) {
+            const fila = selectElement.closest('tr');
+            const precioInput = fila.querySelector('.price');
+            precioInput.value = parseFloat(selectElement.value).toFixed(2);
+            calcularTotales();
+        }
+
+        function actualizarSelectsTerminos() {
+            const validezSelect = document.getElementById('validezSelect');
+            const pagoSelect = document.getElementById('pagoSelect');
+            const valValidez = validezSelect.value || '15d';
+            const valPago = pagoSelect.value || 'thirds';
+            validezSelect.innerHTML = validezOptions.map(opt => `<option value="${opt.id}">${currentLang === 'en' ? opt.en : opt.es}</option>`).join('');
+            pagoSelect.innerHTML = pagoOptions.map(opt => `<option value="${opt.id}">${currentLang === 'en' ? opt.en : opt.es}</option>`).join('');
+            validezSelect.value = valValidez;
+            pagoSelect.value = valPago;
+            actualizarDesglosePago();
+        }
+
+        function actualizarDesglosePago() {
+            const valPago = document.getElementById('pagoSelect').value || 'thirds';
+            const contenedor = document.getElementById('pagoDesglose');
+            const fmt = (val) => '$' + val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            let html = '';
+            if (valPago === 'thirds') {
+                const t33 = Math.round((currentTotalGlobal * 0.33) * 100) / 100;
+                const t34 = Math.round((currentTotalGlobal - (t33 * 2)) * 100) / 100;
+                const lbl1 = currentLang === 'en' ? 'Deposit / Upon Approval' : 'Anticipo / Al Aprobar';
+                const lbl2 = currentLang === 'en' ? 'Mid-Point / Progress' : 'Medio Término / Avance';
+                const lbl3 = currentLang === 'en' ? 'Upon Completion' : 'Al Finalizar / Entrega';
+                html = `<div class="flex justify-between items-center border-b border-gray-300 print:border-gray-400 pb-1.5 pt-1"><span class="text-slate-600 font-medium">33% - ${lbl1}</span><span class="font-bold text-slate-800">${fmt(t33)}</span></div><div class="flex justify-between items-center border-b border-gray-300 print:border-gray-400 pb-1.5 pt-1.5"><span class="text-slate-600 font-medium">33% - ${lbl2}</span><span class="font-bold text-slate-800">${fmt(t33)}</span></div><div class="flex justify-between items-center pt-1.5"><span class="text-slate-600 font-medium">34% - ${lbl3}</span><span class="font-bold text-slate-800">${fmt(t34)}</span></div>`;
+            } else if (valPago === '50-50') {
+                const t50 = Math.round((currentTotalGlobal * 0.50) * 100) / 100;
+                const t50_2 = Math.round((currentTotalGlobal - t50) * 100) / 100;
+                const lbl1 = currentLang === 'en' ? 'Deposit / Upon Approval' : 'Anticipo / Al Aprobar';
+                const lbl2 = currentLang === 'en' ? 'Upon Completion' : 'Al Finalizar / Entrega';
+                html = `<div class="flex justify-between items-center border-b border-gray-300 print:border-gray-400 pb-1.5 pt-1"><span class="text-slate-600 font-medium">50% - ${lbl1}</span><span class="font-bold text-slate-800">${fmt(t50)}</span></div><div class="flex justify-between items-center pt-1.5"><span class="text-slate-600 font-medium">50% - ${lbl2}</span><span class="font-bold text-slate-800">${fmt(t50_2)}</span></div>`;
+            } else if (valPago === 'milestones') {
+                const t20 = Math.round((currentTotalGlobal * 0.20) * 100) / 100;
+                const t30 = Math.round((currentTotalGlobal * 0.30) * 100) / 100;
+                const t20_final = Math.round((currentTotalGlobal - t20 - t30 - t30) * 100) / 100;
+                const lbl1 = currentLang === 'en' ? 'Deposit / Upon Approval' : 'Anticipo / Al Aprobar';
+                const lbl2 = currentLang === 'en' ? 'Phase 1 Start' : 'Inicio Fase 1';
+                const lbl3 = currentLang === 'en' ? 'Phase 2 Start' : 'Inicio Fase 2';
+                const lbl4 = currentLang === 'en' ? 'Upon Completion' : 'Al Finalizar / Entrega';
+                html = `<div class="flex justify-between items-center border-b border-gray-300 print:border-gray-400 pb-1.5 pt-1"><span class="text-slate-600 font-medium">20% - ${lbl1}</span><span class="font-bold text-slate-800">${fmt(t20)}</span></div><div class="flex justify-between items-center border-b border-gray-300 print:border-gray-400 pb-1.5 pt-1.5"><span class="text-slate-600 font-medium">30% - ${lbl2}</span><span class="font-bold text-slate-800">${fmt(t30)}</span></div><div class="flex justify-between items-center border-b border-gray-300 print:border-gray-400 pb-1.5 pt-1.5"><span class="text-slate-600 font-medium">30% - ${lbl3}</span><span class="font-bold text-slate-800">${fmt(t30)}</span></div><div class="flex justify-between items-center pt-1.5"><span class="text-slate-600 font-medium">20% - ${lbl4}</span><span class="font-bold text-slate-800">${fmt(t20_final)}</span></div>`;
+            }
+            contenedor.innerHTML = html;
+        }
+
+
+        // Temporary local repository; the central server will own this sequence later.
+        const ESTIMATE_STORE = 'kn3x_qa_pn_render_v1';
+        let activeEstimateId = null;
+        let estimateFinalizing = false;
+        function estimateMessage(en, es) { return currentLang === 'es' ? es : en; }
+        function readEstimateStore() {
+            const raw = localStorage.getItem(ESTIMATE_STORE);
+            if (!raw) return {version:1, estimates:[]};
+            const data = JSON.parse(raw);
+            if (!data || data.version !== 1 || !Array.isArray(data.estimates)) throw new Error('Invalid estimate store');
+            const numbers = new Set(), ids = new Set();
+            for (const record of data.estimates) {
+                if (!record || !Number.isSafeInteger(record.number) || record.number < 1 || !record.id || !record.document || numbers.has(record.number) || ids.has(record.id)) throw new Error('Invalid saved estimate');
+                numbers.add(record.number); ids.add(record.id);
+            }
+            return data;
+        }
+        function formatEstimateNumber(number) { return number >= 100001 ? 'PN-' + String(number) : '#' + String(number).padStart(6,'0'); }
+        function nextEstimateNumber(store) {
+            const number = store.estimates.reduce((max, record) => Math.max(max, record.number), 100000) + 1;
+            if (!Number.isSafeInteger(number)) throw new Error('Sequence exhausted');
+            return number;
+        }
+        function setEstimateNumber(number) {
+            document.getElementById('inputEstNum').value = typeof number === 'number' ? formatEstimateNumber(number) : number;
+            document.querySelectorAll('.est-display').forEach(el => el.textContent = document.getElementById('inputEstNum').value);
+        }
+        function collectEstimateDocument() {
+            syncPrintedName();
+            const data = {
+                estNum: document.getElementById('inputEstNum').value, clientName: document.getElementById('inputClientName').value.trim(),
+                fecha: document.getElementById('fechaActual').value, email: document.getElementById('inputClientEmail').value.trim(),
+                phone: document.getElementById('inputPhone').value.trim(), address: document.getElementById('inputAddress').value.trim(),
+                validez: document.getElementById('validezSelect').value, pagoPlan: document.getElementById('pagoSelect').value,
+                duration: document.getElementById('inputDuration').value.trim(), printedName: document.getElementById("inputPrintedName").value, printedNameManual: document.getElementById("inputPrintedName").dataset.manual === "true", items: [], photos: Array.from(document.querySelectorAll('#photoGrid > div')).map(card => ({src: card.querySelector('img').src, title: card.querySelector('.photo-title-input').value, description: card.querySelector('.photo-desc-input').value})), signatures: Array.from(document.querySelectorAll('#estimateContainer .signature-img')).map(img => img.getAttribute('src') || '')
+            };
+            document.querySelectorAll('#listaItems tr').forEach(fila => {
+                const sel = fila.querySelector('.catalogo-select');
+                data.items.push({ serviceId: sel.selectedOptions[0]?.dataset.id, selectIndex: sel.selectedIndex, nota: fila.querySelector('.nota-input').value, qty: fila.querySelector('.qty').value, price: fila.querySelector('.price').value });
+            });
+
+            data.localEstimateId = activeEstimateId;
+            return data;
+        }
+        function validEstimateForFinalizing() {
+            const required = ['inputClientName','fechaActual','inputClientEmail','inputPhone','inputAddress','inputDuration'];
+            if (required.some(id => !document.getElementById(id).value.trim()) || !document.getElementById('inputClientEmail').checkValidity()) {
+                alert(estimateMessage('Complete all required fields and enter a valid email before finalizing.','Completa los campos obligatorios y un correo válido antes de finalizar.'));
+                return false;
+            }
+            const rows = Array.from(document.querySelectorAll('#listaItems tr'));
+            if (!rows.length || rows.some(row => {
+                const selected = row.querySelector('select').selectedOptions[0];
+                const quantity = Number(row.querySelector('.qty').value), price = Number(row.querySelector('.price').value);
+                return !selected?.dataset.id || (selected.dataset.id === 'custom' && !row.querySelector('.nota-input').value.trim()) ||
+                    !Number.isFinite(quantity) || quantity <= 0 || !row.querySelector('.price').value.trim() || !Number.isFinite(price) || price < 0 || !Number.isFinite(quantity * price);
+            })) {
+                alert(estimateMessage('Select a service on every line and check quantities and prices. Describe custom services in Notes.','Selecciona un servicio en cada partida y revisa cantidades y precios. Describe los servicios personalizados en Notas.'));
+                return false;
+            }
+            return true;
+        }
+        function refreshEstimateControls() {
+            const status = document.getElementById('estimateWorkflowStatus'), selector = document.getElementById('savedLocalEstimates');
+            if (!status || !selector) return;
+            try {
+                const store = readEstimateStore();
+                const record = store.estimates.find(record => record.id === activeEstimateId);
+                const selectedId = selector.value;
+                selector.replaceChildren();
+                const empty = document.createElement('option'); empty.value = '';
+                empty.textContent = estimateMessage('Open a finalized estimate on this device','Abrir presupuesto finalizado en este dispositivo');
+                selector.appendChild(empty);
+                [...store.estimates].sort((a,b) => b.number-a.number).forEach(record => {
+                    const option = document.createElement('option'); option.value = record.id;
+                    option.textContent = formatEstimateNumber(record.number) + ' — ' + record.document.clientName;
+                    selector.appendChild(option);
+                });
+                selector.value = selectedId;
+                const changed = record && JSON.stringify(record.document) !== JSON.stringify(collectEstimateDocument());
+                status.textContent = record ? estimateMessage(
+                    formatEstimateNumber(record.number) + (changed ? ' reserved — changes pending. Finalize again before PDF.' : ' finalized and reserved.'),
+                    formatEstimateNumber(record.number) + (changed ? ' reservado — cambios pendientes. Finaliza de nuevo antes del PDF.' : ' finalizado y reservado.')
+                ) : estimateMessage('Draft — number reserved only when you finalize. Saved on this browser only.','Borrador — el número se reserva al finalizar. Se guarda solo en este navegador.');
+            } catch {
+                status.textContent = estimateMessage('Local storage unavailable. Nothing has been reserved. Keep a JSON backup.','Almacenamiento local no disponible. No se ha reservado ningún número. Conserva una copia JSON.');
+            }
+        }
+        async function finalizeEstimate() {
+            if (estimateFinalizing || !validEstimateForFinalizing()) return;
+            estimateFinalizing = true;
+            const button = document.getElementById('finalizeEstimateButton'); button.disabled = true;
+            const operation = () => {
+                if (!validEstimateForFinalizing()) return;
+                const store = readEstimateStore();
+                let record = store.estimates.find(r => r.id === activeEstimateId);
+                const documentData = collectEstimateDocument();
+                if (record && record.document.clientName.trim().toLowerCase() !== documentData.clientName.trim().toLowerCase()) {
+                    alert(estimateMessage('This number is reserved for '+record.document.clientName+'. Use Clear content for a different client.','Este número está reservado para '+record.document.clientName+'. Usa Borrar contenido para otro cliente.'));
+                    return;
+                }
+                const now = new Date().toISOString();
+                const id = record?.id || crypto.randomUUID();
+                let number = record?.number;
+                if (!number) {
+                    const candidate = Number(documentData.estNum.replace(/^(?:PN-|#)/i, ''));
+                    number = Number.isSafeInteger(candidate) && candidate > 0 && !store.estimates.some(r => r.number === candidate)
+                        ? Math.max(candidate,nextEstimateNumber(store)) : nextEstimateNumber(store);
+                }
+                documentData.estNum = formatEstimateNumber(number); documentData.localEstimateId = id;
+                const updated = {id,number,finalizedAt:record?.finalizedAt || now,updatedAt:now,document:documentData};
+                if (record) store.estimates[store.estimates.indexOf(record)] = updated;
+                else store.estimates.push(updated);
+                // Persist before changing the visible ID or claiming a reservation.
+                localStorage.setItem(ESTIMATE_STORE, JSON.stringify(store));
+                activeEstimateId = id; setEstimateNumber(number);
+                refreshEstimateControls();
+                alert(estimateMessage(documentData.estNum+' finalized and saved on this browser. This does not mean client approval.',
+                    documentData.estNum+' finalizado y guardado en este navegador. Esto no significa aprobación del cliente.'));
+            };
+            try {
+                if (navigator.locks?.request) await navigator.locks.request(ESTIMATE_STORE, operation);
+                else operation();
+            } catch(error) {
+                console.error('Estimate finalization failed',error);
+                alert(estimateMessage('Could not save or reserve the estimate. Your form is unchanged. Local storage may be full or unavailable; save a JSON backup.',
+                    'No se pudo guardar ni reservar el presupuesto. Tus datos siguen en pantalla. El almacenamiento local puede estar lleno o no disponible; guarda una copia JSON.'));
+            } finally { estimateFinalizing = false; button.disabled = false; }
+        }
+        function finalizedEstimateReadyForPdf() {
+            try {
+                const record = readEstimateStore().estimates.find(r => r.id === activeEstimateId);
+                if (record && JSON.stringify(record.document) === JSON.stringify(collectEstimateDocument())) return true;
+            } catch {}
+            alert(estimateMessage('Click the green Finalize estimate button before generating the PDF.','Pulsa el botón verde Finalizar presupuesto antes de generar el PDF.'));
+            refreshEstimateControls(); return false;
+        }
+        function clearEstimateContent() {
+            if (estimateFinalizing) return;
+            if (!confirm(estimateMessage('Clear this form and start a new estimate? Unsaved changes will be lost. Finalized estimates and their reserved numbers will remain.',
+                '¿Borrar este formulario e iniciar un presupuesto nuevo? Se perderán los cambios no finalizados. Los presupuestos finalizados y sus números reservados se conservarán.'))) return;
+            let number; try { number = nextEstimateNumber(readEstimateStore()); } catch { alert(estimateMessage('Cannot read local numbering. Save a JSON backup before clearing.','No se puede leer la numeración local. Guarda una copia JSON antes de borrar.')); return; }
+            activeEstimateId = null;
+            ['inputClientName','inputClientEmail','inputPhone','inputAddress','inputDuration','inputPrintedName'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('inputPrintedName').dataset.manual = 'false';
+            document.getElementById('selectCustomerDir').value = '';
+            document.getElementById('savedLocalEstimates').value = '';
+            document.getElementById('fechaActual').value = localDate();
+            document.getElementById('validezSelect').value = '15d'; document.getElementById('pagoSelect').value = 'thirds';
+            document.getElementById('listaItems').replaceChildren(); agregarFila();
+            document.getElementById('photoGrid').replaceChildren();document.getElementById('trFotos').style.display = 'none';
+            document.querySelectorAll('#estimateContainer .signature-canvas').forEach(canvas => canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height));
+            document.querySelectorAll('#estimateContainer .signature-img').forEach(img => {img.removeAttribute('src');img.classList.add('hidden');});
+            document.getElementById('imageUpload').value = '';
+            if (estimatePdfUrl) {URL.revokeObjectURL(estimatePdfUrl); estimatePdfUrl = null; estimatePdfFile = null;}
+            setEstimateNumber(number);calcularTotales();refreshEstimateControls();
+        }
+        function openFinalizedLocalEstimate() {
+            if (estimateFinalizing) return;
+            const selector = document.getElementById('savedLocalEstimates');
+            if (!selector.value) return;
+            if (!confirm(estimateMessage('Replace the current form with this finalized estimate? Save any unfinished changes first.','¿Reemplazar el formulario con este presupuesto finalizado? Guarda antes los cambios pendientes.'))) {selector.value='';return;}
+            try {
+                const record = readEstimateStore().estimates.find(r => r.id === selector.value);
+                if (!record) throw new Error('Estimate not found');
+                importarArchivo({target:{files:[new File([JSON.stringify(record.document)],'estimate.json',{type:'application/json'})],value:''}});
+            } catch {alert(estimateMessage('Unable to open the local estimate.','No se pudo abrir el presupuesto local.'));}
+        }
+        function restoreEstimateWorkflow(data) {
+            activeEstimateId = null;
+            try {
+                const record = readEstimateStore().estimates.find(r => r.id === data.localEstimateId && formatEstimateNumber(r.number) === data.estNum);
+                if (record) activeEstimateId = record.id;
+            } catch {}
+            document.querySelectorAll('.est-display').forEach(el => el.textContent = document.getElementById('inputEstNum').value);
+            refreshEstimateControls();
+        }
+        function initializeEstimateWorkflow() {
+            document.getElementById('inputEstNum').readOnly = true;
+            try {setEstimateNumber(nextEstimateNumber(readEstimateStore()));} catch {}
+            refreshEstimateControls();
+            document.getElementById('estimateContainer').addEventListener('input', refreshEstimateControls);
+            document.getElementById('estimateContainer').addEventListener('change', refreshEstimateControls);
+            window.addEventListener('storage', event => {if(event.key===ESTIMATE_STORE) refreshEstimateControls();});
+        }
+
+        function validarEImprimirPresupuesto() {
+            const name = document.getElementById('inputClientName').value.trim();
+            const email = document.getElementById('inputClientEmail').value.trim();
+            const phone = document.getElementById('inputPhone').value.trim();
+            const addr = document.getElementById('inputAddress').value.trim();
+            const duration = document.getElementById('inputDuration').value.trim();
+            
+            if(!name || !email || !phone || !addr || !duration) {
+                alert(currentLang === 'en' ? "Please fill all mandatory fields (*) in the Estimate before generating the PDF." : "Por favor llena todos los campos obligatorios (*) del presupuesto antes de generar el PDF.");
+                return;
+            }
+            /* Isolated PDF layout fixture; no estimate reservations are written. */
+            createEstimatePdf();
+        }
+
+        
+        let estimatePdfFile = null;
+        let estimatePdfUrl = null;
+        function closeEstimatePdf() {
+            document.getElementById('estimatePdfDialog').close();
+            if (estimatePdfUrl) URL.revokeObjectURL(estimatePdfUrl);
+            estimatePdfUrl = null; estimatePdfFile = null;
+        }
+        async function shareEstimatePdf() {
+            if (!estimatePdfFile) return;
+            try { await navigator.share({ files: [estimatePdfFile], title: estimatePdfFile.name }); }
+            catch (error) {
+                if (error.name !== 'AbortError') alert(currentLang === 'es' ? 'No se pudo compartir. Descarga el PDF y adjúntalo al correo.' : 'Unable to share. Download the PDF and attach it to your email.');
+            }
+        }
+
+        async function renderEstimateLayoutPdf() {
+            if (!window.html2canvas) throw new Error('PDF layout renderer unavailable');
+            const source = document.getElementById('estimateContainer');
+            const frame = document.createElement('iframe');
+            frame.setAttribute('aria-hidden','true');
+            frame.style.cssText = 'position:fixed;left:-10000px;top:0;width:816px;height:1056px;border:0;pointer-events:none';
+            document.body.appendChild(frame);
+            try {
+                const doc = frame.contentDocument;
+                doc.open(); doc.write('<!doctype html><html><head><meta charset="UTF-8"></head><body></body></html>');doc.close();
+                let styles = '';
+                function copyRules(rules) {
+                    for (const rule of rules) {
+                        if (rule.type === 4 && rule.conditionText.includes('print')) styles += Array.from(rule.cssRules).map(r=>r.cssText).join('\n');
+                        else styles += rule.cssText + '\n';
+                    }
+                }
+                for (const sheet of document.styleSheets) { try { copyRules(sheet.cssRules); } catch {} }
+                const style = doc.createElement('style');
+                style.textContent = styles + `
+                    html,body {margin:0!important;padding:0!important;width:744px!important;height:auto!important;overflow:visible!important;background:#fff!important;display:block!important;font-family:Arial,sans-serif}
+                    #estimateContainer {display:block!important;width:744px!important;max-width:none!important;margin:0!important;border-radius:0!important;box-shadow:none!important;overflow:visible!important;font-size:12px}
+                    .no-print {display:none!important}
+                    input,select,textarea {border:0!important;box-shadow:none!important;background:transparent!important}
+                    #estimateContainer > table > thead {display:table-header-group!important}
+                    #estimateContainer > table > tfoot {display:table-footer-group!important}
+                    .signature-pad-container {display:none!important}
+                    .signature-img[src=""] {display:none!important}
+                    .signature-img:not([src=""]) {display:block!important}
+                    .page-break-before {break-before:auto!important}
+                    .pdf-field {white-space:pre-wrap;overflow-wrap:anywhere;min-height:1em}
+                `;
+                doc.head.appendChild(style);
+                const root = source.cloneNode(true);
+                root.classList.add("pdf-export");
+                doc.body.appendChild(root);
+                const originalFields=source.querySelectorAll('input,select,textarea');
+                root.querySelectorAll('input,select,textarea').forEach((field,i)=>{
+                    const original=originalFields[i];
+                    if(original.type==='file'){field.remove();return;}
+                    const span=doc.createElement('span');span.className=field.className+' pdf-field';
+                    span.textContent=original.tagName==='SELECT' ? (original.selectedOptions[0]?.textContent||'') : original.value;
+                    if(original.type==='date' && original.value) span.textContent=original.value.split('-').reverse().join('/');
+                    span.style.display='block';
+                    field.replaceWith(span);
+                });
+                root.querySelectorAll('.no-print').forEach(el=>el.remove());
+                root.querySelectorAll('.signature-img').forEach(img=>{if(!img.getAttribute('src'))img.remove();});
+                await Promise.all(Array.from(root.querySelectorAll('img')).map(img=>img.decode().catch(()=>{throw new Error('An estimate image could not load');})));
+                await doc.fonts.ready;
+                // Flatten print variants after normal/responsive utilities so every device exports the same layout.
+                const printStyle=doc.createElement('style');let printRules='';
+                function collectPrint(rules) {for(const rule of rules){if(rule.type===4 && rule.conditionText.includes('print')) printRules+=Array.from(rule.cssRules).map(r=>r.cssText).join('\n');else if(rule.cssRules)collectPrint(rule.cssRules);}}
+                for(const sheet of document.styleSheets){try{collectPrint(sheet.cssRules);}catch{}}
+                printStyle.textContent=printRules+`
+                    .no-print{display:none!important}.signature-img[src=""]{display:none!important}
+                    #estimateContainer [data-i18n="tc_main_title"] + div {display:block!important}
+                    #estimateContainer [data-i18n="tc_main_title"] + div > div {display:block!important;width:100%!important;margin-bottom:18px!important}
+                    #estimateContainer.pdf-export .pdf-contact-text, #estimateContainer.pdf-export .pdf-contact-text a {color:transparent!important}
+                    #estimateContainer.pdf-export .printed-name-field {position:absolute!important;white-space:nowrap!important}
+                    #estimateContainer.pdf-export .estimate-column-title {min-height:26px!important;transform:none!important;color:transparent!important}
+                    #estimateContainer .pdf-field {border:0!important;box-shadow:none!important;background:transparent!important;white-space:pre-wrap}
+                    #estimateContainer > table > tfoot {display:none!important}
+                `;
+                doc.head.appendChild(printStyle);
+                const pdf=new window.jspdf.jsPDF({unit:'mm',format:'letter'});
+                const rootTop=root.getBoundingClientRect().top;
+                const height=Math.ceil(root.scrollHeight);
+                // Draw export headings as PDF text: no browser/canvas baseline differences on iOS.
+                const headings=Array.from(root.querySelectorAll('#tablaPresupuesto thead th')).filter(th=>th.querySelector('.estimate-column-title')).map((th,index)=>{
+                    const rect=th.getBoundingClientRect(), rr=root.getBoundingClientRect();
+                    return {text:th.textContent.trim(),left:rect.left-rr.left,top:rect.top-rr.top,width:rect.width,height:rect.height,index};
+                });
+                const forced=Array.from(root.querySelectorAll('.page-break-before')).filter(el=>el.getBoundingClientRect().height>0).map(el=>Math.round(el.getBoundingClientRect().top-rootTop)).filter(y=>y>0);
+                const safe=Array.from(root.querySelectorAll('#listaItems tr, #trFotos #photoGrid > div, [data-i18n$="_title"]')).map(el=>Math.floor(el.getBoundingClientRect().top-rootTop)).filter(y=>y>0);
+                const contacts=Array.from(root.querySelectorAll('.estimate-contact-details .pdf-contact-text')).map(span=>{
+                    const icon=span.parentElement.querySelector('svg'), ir=icon.getBoundingClientRect(), tr=span.getBoundingClientRect(), rr=root.getBoundingClientRect();
+                    return {text:span.textContent.trim(), x:tr.left-rr.left, center:ir.top-rr.top+ir.height/2, href:span.querySelector('a')?.getAttribute('href')};
+                });
+
+                const factor=195.9/744;
+                const firstInfoRow=root.querySelector(':scope > table > tbody > tr');
+                const headerHeight=Math.ceil(firstInfoRow.getBoundingClientRect().bottom-rootTop);
+                if(headerHeight>=800) throw new Error('Estimate header is too tall. Shorten the client details.');
+                const headerCanvas=await html2canvas(root,{backgroundColor:'#ffffff',scale:1.5,useCORS:true,logging:false,width:744,height:headerHeight,x:0,y:0,windowWidth:816,windowHeight:1056,scrollX:0,scrollY:0});
+                const headerImage=headerCanvas.toDataURL('image/jpeg',.95);
+                headerCanvas.width=headerCanvas.height=0;
+                const pageHeight=950;let start=0,page=0;
+                while(start<height) {
+                    const continuation=page>0;
+                    const bodyOffset=continuation ? headerHeight+14 : 0;
+                    const available=pageHeight-bodyOffset;
+                    let end=Math.min(start+available,height);
+                    const nextForced=forced.find(y=>y>start+2&&y<=end);
+                    if(nextForced)end=nextForced;
+                    else if(end<height){const candidates=safe.filter(y=>y>start+available*.55&&y<end);if(candidates.length)end=Math.max(...candidates);}
+                    const canvas=await html2canvas(root,{backgroundColor:'#ffffff',scale:1.5,useCORS:true,logging:false,width:744,height:end-start,x:0,y:start,windowWidth:816,windowHeight:1056,scrollX:0,scrollY:0});
+                    if(continuation){pdf.addPage();pdf.addImage(headerImage,'JPEG',10,10,195.9,headerHeight*factor);}
+                    pdf.addImage(canvas.toDataURL('image/jpeg',.95),'JPEG',10,10+bodyOffset*factor,195.9,(end-start)*factor);
+                    pdf.setFont('helvetica','bold');pdf.setFontSize(8);pdf.setTextColor(255,255,255);
+                    for(const heading of headings) {
+                        if(heading.top>=start && heading.top+heading.height<=end+1) {
+                            const align=heading.index===0?'left':heading.index===1?'center':'right';
+                            const x=heading.index===0?heading.left+6:heading.index===1?heading.left+heading.width/2:heading.left+heading.width-6;
+                            pdf.text(heading.text,10+x*factor,10+(bodyOffset+heading.top-start+heading.height/2)*factor,{align,baseline:'middle'});
+                        }
+                    }
+                    pdf.setFont('helvetica','normal');pdf.setFontSize(9);pdf.setTextColor(75,85,99);
+                    for(const contact of contacts) {
+                        const repeated=continuation && contact.center<headerHeight;
+                        if(repeated || (contact.center>=start && contact.center<end)) {
+                            const x=10+contact.x*factor;
+                            const y=10+(repeated?contact.center:bodyOffset+contact.center-start)*factor;
+                            pdf.text(contact.text,x,y,{baseline:'middle'});
+                            if(contact.href)pdf.link(x,y-2,pdf.getTextWidth(contact.text),4,{url:contact.href});
+                        }
+                    }
+                    canvas.width=canvas.height=0;
+                    start=end;page++;
+                }
+                const pages=pdf.getNumberOfPages();
+                for(let i=1;i<=pages;i++){pdf.setPage(i);pdf.setFontSize(8);pdf.setTextColor(100,116,139);pdf.text('KN3X Project LLC | '+document.getElementById('inputEstNum').value,10,274);pdf.text(i+' / '+pages,205,274,{align:'right'});}
+                return pdf;
+            } finally {frame.remove();}
+        }
+
+        async function createEstimatePdf() {
+            syncPrintedName();
+            if (!window.jspdf?.jsPDF) { alert(currentLang === 'es' ? 'No se pudo cargar el generador PDF. Revisa la conexión y recarga la página.' : 'PDF generator unavailable. Check your connection and reload.'); return; }
+            const button = document.querySelector('[onclick="validarEImprimirPresupuesto()"]');
+            button.disabled = true;
+            try {
+                calcularTotales();
+                const pdf = await renderEstimateLayoutPdf();
+                const es = currentLang === 'es';
+                const value = id => document.getElementById(id).value;
+                const name=('KN3X_'+value('inputEstNum')+'_'+value('inputClientName')).replace(/[^a-zA-Z0-9_-]/g,'_').slice(0,110)+'.pdf';
+                if(estimatePdfUrl) URL.revokeObjectURL(estimatePdfUrl);
+                estimatePdfFile=new File([pdf.output('blob')],name,{type:'application/pdf'});
+                estimatePdfUrl=URL.createObjectURL(estimatePdfFile);
+                const dialog=document.getElementById('estimatePdfDialog');
+                document.getElementById('pdfReadyTitle').textContent=es?'Tu PDF está listo':'Your PDF is ready';
+                document.getElementById('pdfReadyHelp').textContent=es?'Descárgalo o pulsa Compartir y elige Mail u otra aplicación para enviarlo.':'Download it or tap Share and choose Mail or another app to send it.';
+                const download=document.getElementById('downloadEstimatePdf');download.href=estimatePdfUrl;download.download=name;download.textContent=es?'Descargar PDF':'Download PDF';
+                const share=document.getElementById('shareEstimatePdf');share.textContent=es?'Compartir PDF':'Share PDF';share.hidden=!(navigator.canShare && navigator.canShare({files:[estimatePdfFile]}));
+                document.getElementById('closeEstimatePdf').textContent=es?'Cerrar':'Close';
+                dialog.showModal();
+            } catch(error) { console.error('PDF generation failed',error);alert(currentLang==='es'?'No se pudo generar el PDF. Tus datos siguen en pantalla. Inténtalo de nuevo.':'Unable to generate PDF. Your information is still on screen. Please try again.'); }
+            finally { button.disabled=false; }
+        }
+
+        function procesarImagen(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader(); reader.onload = () => { agregarTarjetaFoto(reader.result); document.getElementById('trFotos').style.display = 'table-row'; }; reader.readAsDataURL(file); event.target.value = ''; return;
+                agregarTarjetaFoto(imageUrl);
+                document.getElementById('trFotos').style.display = 'table-row';
+                event.target.value = ''; 
+            }
+        }
+
+        function agregarTarjetaFoto(imageUrl) {
+            const grid = document.getElementById('photoGrid');
+            const card = document.createElement('div');
+            
+            card.className = "bg-white border border-gray-300 rounded-lg p-3 shadow-sm flex flex-col gap-2 relative print-avoid-break print:border-gray-300 print:shadow-none";
+            
+            card.innerHTML = `
+                <button onclick="eliminarFoto(this)" class="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold text-sm shadow no-print z-10">×</button>
+                <div class="w-full h-48 print:h-36 bg-gray-50 rounded flex items-center justify-center overflow-hidden">
+                    <img src="${imageUrl}" class="w-full h-full object-contain" alt="Site condition">
+                </div>
+                <input type="text" class="photo-title-input w-full font-bold text-gray-700 text-sm border border-transparent hover:border-gray-300 focus:border-orange-500 rounded p-1 focus:outline-none print:p-0 print:text-xs" placeholder="${i18n[currentLang].photo_title}">
+                <textarea rows="2" class="photo-desc-input w-full text-gray-500 text-xs border border-transparent hover:border-gray-300 focus:border-orange-500 rounded p-1 focus:outline-none resize-none print:p-0" placeholder="${i18n[currentLang].photo_desc}"></textarea>
+            `;
+            grid.appendChild(card);
+        }
+
+        function eliminarFoto(btn) {
+            btn.closest('.bg-white').remove();
+            if (document.getElementById('photoGrid').children.length === 0) {
+                document.getElementById('trFotos').style.display = 'none';
+            }
+        }
+
+
+        // ==========================================
+        // LÓGICA DE LAS FIRMAS TÁCTILES
+        // ==========================================
+        function initSignaturePads() {
+            const canvases = document.querySelectorAll('.signature-canvas');
+            canvases.forEach(canvas => {
+                const ctx = canvas.getContext('2d');
+                let isDrawing = false;
+
+                function resizeCanvas() {
+                    const rect = canvas.parentElement.getBoundingClientRect();
+                    if (!rect.width || !rect.height || (canvas.width === Math.round(rect.width) && canvas.height === Math.round(rect.height))) return;
+                    const saved = canvas.parentElement.nextElementSibling.getAttribute('src');
+                    canvas.width = rect.width; canvas.height = rect.height;
+                    if (saved) { const image = new Image(); image.onload = () => ctx.drawImage(image, 0, 0, canvas.width, canvas.height); image.src = saved; }
+                }
+                new ResizeObserver(resizeCanvas).observe(canvas.parentElement);
+                resizeCanvas();
+
+                const startDrawing = (e) => {
+                    isDrawing = true;
+                    ctx.beginPath();
+                    ctx.moveTo(getX(e), getY(e));
+                    e.preventDefault();
+                };
+                const draw = (e) => {
+                    if (!isDrawing) return;
+                    ctx.lineTo(getX(e), getY(e));
+                    ctx.strokeStyle = '#0f172a'; // Slate-900 color de tinta
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    e.preventDefault();
+                    updateImage(canvas);
+                };
+                const stopDrawing = () => {
+                    isDrawing = false;
+                    ctx.closePath();
+                };
+
+                const getX = (e) => {
+                    const rect = canvas.getBoundingClientRect();
+                    return e.touches ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
+                };
+                const getY = (e) => {
+                    const rect = canvas.getBoundingClientRect();
+                    return e.touches ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
+                };
+
+                // Mouse
+                canvas.addEventListener('mousedown', startDrawing);
+                canvas.addEventListener('mousemove', draw);
+                canvas.addEventListener('mouseup', stopDrawing);
+                canvas.addEventListener('mouseout', stopDrawing);
+                // Touch
+                canvas.addEventListener('touchstart', startDrawing, {passive: false});
+                canvas.addEventListener('touchmove', draw, {passive: false});
+                canvas.addEventListener('touchend', stopDrawing);
+            });
+        }
+
+        function updateImage(canvas) {
+            const img = canvas.parentElement.nextElementSibling;
+            img.src = canvas.toDataURL();
+            img.classList.add('hidden'); // Canvas on screen, image for printing.
+        }
+
+        window.clearSignature = function(btn) {
+            const canvas = btn.previousElementSibling;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const img = canvas.parentElement.nextElementSibling;
+            img.removeAttribute("src");
+            img.classList.add('hidden');
+        };
+
+        // ==========================================
+        // LÓGICA DEL DIRECTORIO 1099
+        // ==========================================
+        function guardarSubcontratista() {
+            const editId = document.getElementById('editSubId').value;
+            const name = document.getElementById('newSubName').value.trim();
+            const trade = document.getElementById('newSubTrade').value.trim();
+            const phone = document.getElementById('newSubPhone').value.trim();
+            const addr = document.getElementById('newSubAddr').value.trim();
+            const w9 = document.getElementById('newSubW9').value;
+            const tin = document.getElementById('newSubID').value.trim();
+            const coi = document.getElementById('newSubCOI').value;
+
+            if(!name || !trade || !phone || !addr || !tin) {
+                alert(currentLang === 'en' ? "Please fill all mandatory fields (*) for the Vendor." : "Por favor llena todos los campos obligatorios (*) del Contratista.");
+                return;
+            }
+
+            if (editId) {
+                const index = subLedger.findIndex(s => s.id === editId);
+                if(index !== -1) {
+                    subLedger[index].name = name; subLedger[index].trade = trade;
+                    subLedger[index].phone = phone; subLedger[index].addr = addr;
+                    subLedger[index].w9 = w9; subLedger[index].tin = tin; subLedger[index].coi = coi;
+                }
+                document.getElementById('editSubId').value = ""; 
+                document.getElementById('vendorFormTitle').innerText = "Add New Vendor";
+                document.getElementById('btnSaveVendor').innerText = "+ Save Vendor to Ledger";
+                document.getElementById('btnCancelEdit').classList.add('hidden');
+                document.getElementById('formVendor').classList.remove('bg-yellow-50', 'border-yellow-200');
+                document.getElementById('formVendor').classList.add('bg-blue-50', 'border-blue-200');
+            } else {
+                const existe = subLedger.find(s => s.name.toLowerCase() === name.toLowerCase());
+                if(existe) return alert("This vendor already exists in the ledger.");
+                subLedger.push({
+                    id: Date.now().toString(), name: name, trade: trade,
+                    phone: phone, addr: addr, w9: w9, tin: tin,
+                    coi: coi, totalPaid: 0.00
+                });
+            }
+            localStorage.setItem('kn3x_subs_v3', JSON.stringify(subLedger));
+            limpiarFormularioVendor();
+            renderLedgerTable();
+        }
+
+        function editarSubcontratista(id) {
+            const sub = subLedger.find(s => s.id === id);
+            if(!sub) return;
+            document.getElementById('editSubId').value = sub.id;
+            document.getElementById('newSubName').value = sub.name;
+            document.getElementById('newSubTrade').value = sub.trade;
+            document.getElementById('newSubPhone').value = sub.phone;
+            document.getElementById('newSubAddr').value = sub.addr;
+            document.getElementById('newSubW9').value = sub.w9;
+            document.getElementById('newSubID').value = sub.tin;
+            document.getElementById('newSubCOI').value = sub.coi;
+
+            document.getElementById('vendorFormTitle').innerText = `✏️ Editing Vendor: ${escapeHTML(sub.name)}`;
+            document.getElementById('btnSaveVendor').innerText = "✓ Update Vendor";
+            document.getElementById('btnCancelEdit').classList.remove('hidden');
+            document.getElementById('formVendor').classList.remove('bg-blue-50', 'border-blue-200');
+            document.getElementById('formVendor').classList.add('bg-yellow-50', 'border-yellow-200');
+            document.getElementById('mainContent').scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function eliminarSubcontratista(id) {
+            const sub = subLedger.find(s => s.id === id);
+            if(confirm(`Are you sure you want to delete ${escapeHTML(sub.name)}? This will erase their YTD payment history.`)) {
+                subLedger = subLedger.filter(s => s.id !== id);
+                localStorage.setItem('kn3x_subs_v3', JSON.stringify(subLedger));
+                renderLedgerTable();
+            }
+        }
+
+        function cancelarEdicion() {
+            document.getElementById('editSubId').value = "";
+            document.getElementById('vendorFormTitle').innerText = "Add New Vendor";
+            document.getElementById('btnSaveVendor').innerText = "+ Save Vendor to Ledger";
+            document.getElementById('btnCancelEdit').classList.add('hidden');
+            document.getElementById('formVendor').classList.remove('bg-yellow-50', 'border-yellow-200');
+            document.getElementById('formVendor').classList.add('bg-blue-50', 'border-blue-200');
+            limpiarFormularioVendor();
+        }
+
+        function limpiarFormularioVendor() {
+            ['newSubName', 'newSubTrade', 'newSubPhone', 'newSubAddr', 'newSubID'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('newSubW9').value = 'Pending'; document.getElementById('newSubCOI').value = 'No';
+        }
+
+        function renderLedgerTable() {
+            const tbody = document.getElementById('ledgerTableBody');
+            tbody.innerHTML = '';
+            
+            // ACTUALIZACIÓN DEL DASHBOARD FINANCIERO 📊
+            let totalYTD = 0;
+            let pendingW9s = 0;
+            
+            subLedger.forEach(sub => {
+                totalYTD += sub.totalPaid;
+                if(sub.w9 === 'Pending') pendingW9s++;
+                
+                const w9Badge = sub.w9 === 'Received' ? `<span class="bg-green-100 text-green-800 text-[9px] md:text-[10px] font-bold px-1.5 py-0.5 md:py-1 rounded">W-9 ✓</span>` : `<span class="bg-red-100 text-red-800 text-[9px] md:text-[10px] font-bold px-1.5 py-0.5 md:py-1 rounded animate-pulse">W-9 ⚠️</span>`;
+                const coiBadge = sub.coi === 'Yes' ? `<span class="bg-blue-100 text-blue-800 text-[9px] md:text-[10px] font-bold px-1.5 py-0.5 md:py-1 rounded">COI ✓</span>` : `<span class="bg-gray-100 text-gray-500 text-[9px] md:text-[10px] font-bold px-1.5 py-0.5 md:py-1 rounded">No COI</span>`;
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-gray-200 hover:bg-blue-50 transition";
+                tr.innerHTML = `
+                    <td class="p-2 md:p-3"><p class="font-bold text-slate-800">${escapeHTML(sub.name)}</p><p class="text-[9px] md:text-[10px] text-slate-500 uppercase tracking-wider">${escapeHTML(sub.trade)}</p></td>
+                    <td class="p-2 md:p-3"><p class="text-[10px] md:text-xs text-slate-700 font-medium">📞 ${escapeHTML(sub.phone)}</p><p class="text-[9px] md:text-[10px] text-slate-500 truncate max-w-[120px] md:max-w-[150px]">📍 ${escapeHTML(sub.addr)}</p></td>
+                    <td class="p-2 md:p-3 text-center flex flex-col gap-1 items-center justify-center pt-3 md:pt-4">${w9Badge}${coiBadge}</td>
+                    <td class="p-2 md:p-3 text-right font-black text-green-600">$${sub.totalPaid.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                    <td class="p-2 md:p-3 text-center">
+                        <div class="flex items-center justify-center gap-1 md:gap-2">
+                            <button onclick="editarSubcontratista('${sub.id}')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm md:text-lg w-6 h-6 md:w-8 md:h-8 rounded shadow-sm transition">✏️</button>
+                            <button onclick="eliminarSubcontratista('${sub.id}')" class="bg-slate-200 hover:bg-red-100 text-slate-500 hover:text-red-600 text-sm md:text-lg w-6 h-6 md:w-8 md:h-8 rounded shadow-sm transition">🗑️</button>
+                            <button onclick="generar1099('${sub.id}')" class="block bg-red-500 hover:bg-red-600 text-white text-[10px] font-bold py-1.5 px-3 rounded shadow-sm transition uppercase">1099 PDF</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Inyectar números al Dashboard
+            document.getElementById('dashTotalPaid').innerText = '$' + totalYTD.toLocaleString('en-US', { minimumFractionDigits: 2 });
+            document.getElementById('dashPendingW9').innerText = pendingW9s;
+            document.getElementById('dashActive').innerText = subLedger.length;
+        }
+
+        function generar1099(id) {
+            const sub = subLedger.find(s => s.id === id);
+            if(!sub) return;
+            document.getElementById('print1099Name').innerText = sub.name;
+            document.getElementById('print1099TIN').innerText = sub.tin || "MISSING TIN/SSN";
+            document.getElementById('print1099Addr').innerText = sub.addr;
+            document.getElementById('print1099Amount').innerText = '$' + sub.totalPaid.toLocaleString('en-US', { minimumFractionDigits: 2 });
+            toggleVista('form1099');
+        }
+
+        // ==========================================
+        // LÓGICA DE CONTRATOS (INTEGRACIÓN)
+        // ==========================================
+        function poblarSelectContrato() {
+            const select = document.getElementById('subNameSelect');
+            select.innerHTML = '<option value="">-- Select from Ledger --</option>';
+            subLedger.forEach(sub => {
+                const opt = document.createElement('option');
+                opt.value = sub.id;
+                opt.text = sub.w9 === 'Pending' ? `⚠️ ${escapeHTML(sub.name)} (W-9 Pending)` : `${escapeHTML(sub.name)} - ${escapeHTML(sub.trade)}`;
+                select.appendChild(opt);
+            });
+        }
+
+        function updateContract() {
+            const select = document.getElementById('subNameSelect');
+            let name = "[Subcontractor Name]";
+            if(select.value) { const sub = subLedger.find(s => s.id === select.value); if(sub) name = sub.name; }
+            const service = document.getElementById('subService').value || "[Service Provided]";
+            const payNum = parseFloat(document.getElementById('subPayNum').value) || 0;
+            const date = document.getElementById('subDate').value || "[Date]";
+            
+            document.getElementById('docSubName').innerText = name;
+            document.getElementById('docSubService').innerText = service;
+            document.getElementById('docSubPay').innerText = payNum.toLocaleString('en-US', { minimumFractionDigits: 2 });
+            document.getElementById('docSubDate').innerText = date;
+        }
+
+        function guardarPagoYGenerarPDF() {
+            const select = document.getElementById('subNameSelect');
+            const service = document.getElementById('subService').value.trim();
+            const date = document.getElementById('subDate').value.trim();
+            const payNum = parseFloat(document.getElementById('subPayNum').value) || 0;
+            
+            if(!select.value || !service || !date || payNum <= 0) {
+                alert(currentLang === 'en' ? "Please fill all mandatory fields (*) to generate the contract." : "Por favor llena todos los campos obligatorios (*) para generar el contrato.");
+                return;
+            }
+            
+            const subIndex = subLedger.findIndex(s => s.id === select.value);
+            if(subIndex !== -1) {
+                if(subLedger[subIndex].w9 === 'Pending') alert(`🛑 LEGAL WARNING: ${subLedger[subIndex].name}'s W-9 Form is still PENDING.\nYou may print this contract, but DO NOT issue any payment until you receive their signed W-9.`);
+                const paymentKey = JSON.stringify([select.value, service, date, payNum]);
+                const payments = subLedger[subIndex].payments || [];
+                if (payments.some(p => p.key === paymentKey)) { window.print(); return; }
+                if (!confirm(currentLang === 'es' ? '¿Registrar este importe como pago realizado? Cancelar permite imprimir sin registrar un pago.' : 'Record this amount as a payment made? Cancel to print without recording payment.')) { window.print(); return; }
+                subLedger[subIndex].payments = [...payments, {key: paymentKey, service, date, amount: payNum}];
+                subLedger[subIndex].totalPaid = (Number(subLedger[subIndex].totalPaid) || 0) + payNum;
+                localStorage.setItem('kn3x_subs_v3', JSON.stringify(subLedger));
+                if(subLedger[subIndex].w9 !== 'Pending') alert(`$${payNum} successfully added to ${subLedger[subIndex].name}'s ledger!`);
+            }
+            
+            window.print();
+        }
+
+        // ==========================================
+        // TRADUCCIONES Y SISTEMA DE ARCHIVOS (.json)
+        // ==========================================
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'es' : 'en';
+            document.documentElement.lang = currentLang;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if(i18n[currentLang][key]) el.innerText = i18n[currentLang][key];
+            });
+            document.getElementById('langBtn').innerHTML = currentLang === 'en' ? '🇪🇸 <span class="hidden sm:inline">ES</span>' : '🇺🇸 <span class="hidden sm:inline">EN</span>';
+            document.getElementById('inputDuration').placeholder = i18n[currentLang].duration_placeholder;
+            
+            const selects = document.querySelectorAll('select.catalogo-select');
+            selects.forEach(select => {
+                const currentVal = select.value;
+                const serviceId = select.selectedOptions[0]?.dataset.id;
+                const optgroupData = generarOpcionesCatalogo(serviceId);
+                select.innerHTML = `<option value="0" disabled ${currentVal === "0" ? "selected" : ""}>${i18n[currentLang].select}</option>${optgroupData}`;
+                if (!serviceId) select.selectedIndex = 0;
+            });
+            document.querySelectorAll('.nota-input').forEach(input => input.placeholder = i18n[currentLang].notes);
+            actualizarSelectsTerminos();
+            refreshEstimateControls();
+        }
+
+        // VALIDACIÓN PARA EXPORTAR (GUARDAR JSON)
+        function exportarArchivo() {
+            syncPrintedName();
+            const num = document.getElementById('inputEstNum').value.trim().replace('#', '');
+            const client = document.getElementById('inputClientName').value.trim();
+            const email = document.getElementById('inputClientEmail').value.trim();
+            const phone = document.getElementById('inputPhone').value.trim();
+            const addr = document.getElementById('inputAddress').value.trim();
+            const duration = document.getElementById('inputDuration').value.trim();
+            
+            if(!client || !email || !phone || !addr || !duration) {
+                alert(currentLang === 'en' ? "Please fill all mandatory fields (*) before saving." : "Por favor llena todos los campos obligatorios (*) antes de guardar.");
+                return;
+            }
+
+            const cleanClient = client.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+            const data = collectEstimateDocument();
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = `KN3X_${num}_${cleanClient}.json`;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+            const toast = document.getElementById('toastSave');
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => { toast.classList.add('translate-y-20', 'opacity-0'); }, 3000);
+        }
+
+        function importarArchivo(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (!data || !Array.isArray(data.items) || data.items.length > 1000 || data.items.some(item => !item || !Number.isFinite(Number(item.qty)) || Number(item.qty) < 0 || !Number.isFinite(Number(item.price)) || Number(item.price) < 0)) throw new Error('Invalid estimate');
+                    if (data.photos && (!Array.isArray(data.photos) || data.photos.some(p => !p || !/^data:image\/(png|jpeg|webp|gif);base64,[A-Za-z0-9+/=]+$/.test(p.src)))) throw new Error('Invalid photos');
+                    if (data.signatures && (!Array.isArray(data.signatures) || data.signatures.some(src => src && !/^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(src)))) throw new Error('Invalid signatures');
+                    document.getElementById('inputEstNum').value = data.estNum || ''; document.querySelectorAll('.est-display').forEach(el => el.innerText = data.estNum || '');
+                    document.getElementById('inputClientName').value = data.clientName || '';
+                    document.getElementById('inputPrintedName').value = typeof data.printedName === 'string' ? data.printedName : (data.clientName || '');
+                    document.getElementById('inputPrintedName').dataset.manual = String(data.printedNameManual === true || (typeof data.printedName === 'string' && data.printedName !== data.clientName)); document.getElementById('fechaActual').value = data.fecha || '';
+                    document.getElementById('inputClientEmail').value = data.email || ''; document.getElementById('inputPhone').value = data.phone || '';
+                    document.getElementById('inputAddress').value = data.address || ''; document.getElementById('validezSelect').value = data.validez || '15d';
+                    document.getElementById('pagoSelect').value = data.pagoPlan || 'thirds'; document.getElementById('inputDuration').value = data.duration || '';
+                    const tbody = document.getElementById('listaItems'); tbody.innerHTML = '';
+                    (data.items.length ? data.items : [{}]).forEach(item => {
+                        agregarFila(); const tr = tbody.lastElementChild; const sel = tr.querySelector('select');
+                        if (item.serviceId) { const option = Array.from(sel.options).find(o => o.dataset.id === item.serviceId); sel.selectedIndex = option ? option.index : 0; }
+                        else sel.selectedIndex = Number.isInteger(item.selectIndex) ? Math.max(0, Math.min(item.selectIndex, sel.options.length - 1)) : 0;
+                        tr.querySelector('.nota-input').value = item.nota || '';
+                        tr.querySelector('.qty').value = item.qty ?? 1; tr.querySelector('.price').value = item.price ?? 0;
+                    });
+                    document.getElementById('photoGrid').innerHTML = '';
+                    (data.photos || []).forEach(photo => { agregarTarjetaFoto(photo.src); const card = document.getElementById('photoGrid').lastElementChild; card.querySelector('.photo-title-input').value = photo.title || ''; card.querySelector('.photo-desc-input').value = photo.description || ''; });
+                    document.getElementById('trFotos').style.display = data.photos?.length ? 'table-row' : 'none';
+                    document.querySelectorAll('#estimateContainer .signature-img').forEach((img, index) => { if (data.signatures?.[index]) img.src = data.signatures[index]; else img.removeAttribute("src"); const canvas = img.previousElementSibling.querySelector('canvas'); const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height); if (data.signatures?.[index]) { const image = new Image(); image.onload = () => ctx.drawImage(image,0,0,canvas.width,canvas.height); image.src = data.signatures[index]; } });
+                    calcularTotales();
+                    restoreEstimateWorkflow(data);
+                } catch(error) { alert("Error al cargar el archivo."); }
+            };
+            reader.readAsText(file); event.target.value = ''; 
+        }
+
+        // ==========================================
+        // MAPA RADAR (IA Simulación)
+        // ==========================================
+        function initMap() {
+            if(mapInstance) { setTimeout(() => mapInstance.invalidateSize(), 0); return; }
+            if (!window.L) { document.getElementById('mapView').textContent = 'Map unavailable. Please check your connection and reload.'; return; } 
+            mapInstance = L.map('mapView').setView([30.2672, -97.7431], 10);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap contributors' }).addTo(mapInstance);
+            window.radarProjects = [{ id: "B-101", name: "The Domain Office Remodel", address: "11200 Domain Dr, Austin, TX", lat: 30.395, lng: -97.727, client: "Domain Mgmt Group", duration: "3 Weeks", items: [{ id: 'ptg_int', qty: 2500, price: 2.50, nota: 'Interior Painting Extracted from PDF' }, { id: 'crp_trim', qty: 450, price: 4.50, nota: 'Baseboards around open office' }] }, { id: "B-102", name: "Lake Travis Cabin Upgrades", address: "123 Travis View, Lakeway, TX", lat: 30.365, lng: -97.975, client: "Lake Rentals LLC", duration: "1 Week", items: [{ id: 'net_drop', qty: 4, price: 150.00, nota: 'Cat6 Drops' }] }];
+            window.radarProjects.forEach(proj => {
+                const marker = L.marker([proj.lat, proj.lng]).addTo(mapInstance);
+                marker.bindPopup(`<div class="p-2 w-48"><h3 class="font-bold text-orange-600 text-sm mb-1">${proj.name}</h3><p class="text-[10px] text-gray-500 mb-1"><strong>ITB:</strong> ${proj.id}</p><p class="text-xs text-gray-700 mb-3">${proj.address}</p><button onclick="cargarProyectoDesdeRadar('${proj.id}')" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold py-2 px-3 rounded w-full transition shadow">Generate Estimate</button></div>`);
+            });
+        }
+        window.cargarProyectoDesdeRadar = function(id) {
+            const project = window.radarProjects?.find(p => p.id === id); if (!project) return;
+            if (!confirm(currentLang === 'es' ? 'Cargar este ejemplo reemplazará el presupuesto en pantalla. ¿Continuar?' : 'Load this demo and replace the current estimate?')) return;
+            activeEstimateId = null;
+            document.getElementById('inputClientName').value = project.client;
+            document.getElementById('inputPrintedName').dataset.manual = 'false'; syncPrintedName();
+            document.getElementById('inputAddress').value = project.address;
+            document.getElementById('inputDuration').value = project.duration;
+            document.getElementById('inputEstNum').value = project.id;
+            document.getElementById('inputClientEmail').value = ''; document.getElementById('inputPhone').value = '';
+            document.getElementById('listaItems').innerHTML = '';
+            project.items.forEach(item => { agregarFila(); const row = document.getElementById('listaItems').lastElementChild; row.querySelector('select').innerHTML = `<option value="0" disabled>Select service</option>${generarOpcionesCatalogo(item.id)}`; row.querySelector('.qty').value = item.qty; row.querySelector('.price').value = item.price; row.querySelector('.nota-input').value = item.nota; }); calcularTotales();
+            toggleVista('estimate'); 
+        };
+
+        // Keep ordinary Back navigation inside this workspace without resetting forms.
+        function protectWorkspaceNavigation() {
+            const marker = 'kn3x-workspace';
+            const views = ['estimate', 'radar', 'contract', 'ledger', 'customerLedger', 'form1099'];
+            const savedView = history.state?.kn3xNavigation === marker && views.includes(history.state.view)
+                ? history.state.view : 'estimate';
+            if (!history.state?.view || history.state.kn3xNavigation !== marker) {
+                history.replaceState({ kn3xNavigation: marker, boundary: true }, '', location.href);
+                history.pushState({ kn3xNavigation: marker, view: savedView }, '', location.href);
+            }
+            workspaceNavigationReady = true;
+            toggleVista(savedView, true);
+            window.addEventListener('popstate', event => {
+                const view = event.state?.kn3xNavigation === marker && views.includes(event.state.view)
+                    ? event.state.view : 'estimate';
+                if (!event.state?.view || event.state.kn3xNavigation !== marker) {
+                    history.pushState({ kn3xNavigation: marker, view }, '', location.href);
+                }
+                toggleVista(view, true);
+                toggleMobileMenu(true);
+            });
+        }
+
+        function syncPrintedName() {
+            const field = document.getElementById('inputPrintedName');
+            if (field.dataset.manual !== 'true') field.value = document.getElementById('inputClientName').value;
+        }
+        window.addEventListener('beforeprint', syncPrintedName);
+        window.onload = () => {
+            document.getElementById('inputClientName').addEventListener('input', syncPrintedName);
+            document.getElementById('inputPrintedName').addEventListener('input', event => { event.target.dataset.manual = 'true'; });
+            syncPrintedName();
+
+            actualizarSelectsTerminos();
+            agregarFila();
+            protectWorkspaceNavigation();
+            renderCustomerTable();
+            initSignaturePads(); // Inicia los paneles de firma táctil
+            initializeEstimateWorkflow();
+        };
+    </script>
+<dialog id="estimatePdfDialog" class="rounded-xl p-6 shadow-xl max-w-md w-[90%] backdrop:bg-black/50">
+<h2 id="pdfReadyTitle" class="text-xl font-bold mb-3">Your PDF is ready</h2>
+<p id="pdfReadyHelp" class="mb-5 text-sm text-slate-600"></p>
+<div class="flex flex-wrap gap-3">
+<a id="downloadEstimatePdf" class="bg-slate-800 text-white rounded-lg px-4 py-3 font-bold">Download PDF</a>
+<button id="shareEstimatePdf" onclick="shareEstimatePdf()" class="bg-orange-500 text-white rounded-lg px-4 py-3 font-bold">Share PDF</button>
+<button id="closeEstimatePdf" onclick="closeEstimatePdf()" class="border rounded-lg px-4 py-3">Close</button>
+</div></dialog>
+</body>
+</html>
+
