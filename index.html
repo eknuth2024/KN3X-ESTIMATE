@@ -266,14 +266,15 @@
                                 </div>
         
                                 <div class="mx-3 md:mx-0 mt-4 md:mt-6 w-auto md:w-full bg-gray-200 border border-gray-300 rounded-lg p-3 md:p-4 print:bg-gray-200 print:border-gray-300 print:p-3 shadow-sm print:shadow-none print-avoid-break">
-                                    <h3 class="text-[10px] md:text-xs font-bold text-slate-600 uppercase tracking-widest mb-2" data-i18n="info_title">Project Information</h3>
+                                    
                                     <div class="grid grid-cols-2 gap-3 md:gap-4">
                                         <div class="relative w-full">
-                                            <label class="block text-[8px] md:text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-0.5 no-print" data-i18n="validity_label">Estimate Validity</label>
+                                            <h3 class="text-[10px] md:text-xs font-bold text-slate-600 uppercase tracking-widest mb-2" data-i18n="info_title">Project Information</h3>
+                                            <label class="sr-only no-print" for="validezSelect" data-i18n="validity_label">Estimate Validity</label>
                                             <select id="validezSelect" class="w-full text-[10px] md:text-sm font-medium text-slate-800 bg-transparent print:font-semibold focus:outline-none focus:border-orange-500 cursor-pointer print:border-none print:p-0 print:text-xs border border-gray-300 bg-white rounded p-1 md:p-2"></select>
                                         </div>
                                         <div class="relative w-full">
-                                            <label class="block text-[8px] md:text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-0.5 print:text-slate-600 print:mb-1"><span data-i18n="duration_label">Estimated Duration</span> <span class="text-red-500 no-print">*</span></label>
+                                            <label for="inputDuration" class="block text-[10px] md:text-xs font-bold text-slate-600 uppercase tracking-widest mb-2"><span data-i18n="duration_label">Estimated Duration</span> <span class="text-red-500 no-print">*</span></label>
                                             <div class="flex items-center gap-2 w-full text-[10px] md:text-sm font-medium text-slate-800 bg-transparent print:font-semibold print:text-xs">
                                                 <input type="text" id="inputDuration" class="w-full focus:outline-none focus:border-orange-500 bg-white border border-gray-300 rounded p-1 md:p-2 print:border-none print:p-0 print:bg-transparent" placeholder="2-3 Weeks">
                                             </div>
