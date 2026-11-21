@@ -848,198 +848,198 @@
         const legacyCatalogIds = catalogoPrecios.map(item => item.id);
         catalogoPrecios.filter(item => ['ptg_int','ptg_trim'].includes(item.id)).forEach(item => { item.legacy = true; });
         const interiorPaintingCatalog = [
-    {
-        "cat_en": "Interior Painting · Vacant home",
-        "cat_es": "Pintura interior · Casa vacía",
-        "id": "ptg_smooth_wall_vacant",
-        "nom_en": "Previously painted smooth wall · Basic prep and 2 coats — Vacant home — SqFt",
-        "nom_es": "Pared lisa previamente pintada · Preparación básica y 2 manos — Casa vacía — ft²",
-        "precio": 1.5
-    },
-    {
-        "cat_en": "Interior Painting · Vacant home",
-        "cat_es": "Pintura interior · Casa vacía",
-        "id": "ptg_textured_wall_vacant",
-        "nom_en": "Existing textured wall · Basic prep and 2 coats — Vacant home — SqFt",
-        "nom_es": "Pared con textura existente · Preparación básica y 2 manos — Casa vacía — ft²",
-        "precio": 1.6
-    },
-    {
-        "cat_en": "Interior Painting · Vacant home",
-        "cat_es": "Pintura interior · Casa vacía",
-        "id": "ptg_flat_ceiling_vacant",
-        "nom_en": "Flat ceiling up to 10 ft · Basic prep and 2 coats — Vacant home — SqFt",
-        "nom_es": "Techo plano hasta 10 pies · Preparación básica y 2 manos — Casa vacía — ft²",
-        "precio": 1.5
-    },
-    {
-        "cat_en": "Interior Painting · Vacant home",
-        "cat_es": "Pintura interior · Casa vacía",
-        "id": "ptg_sloped_ceiling_vacant",
-        "nom_en": "Sloped ceiling up to 10 ft, easy access · Basic prep and 2 coats — Vacant home — SqFt",
-        "nom_es": "Techo inclinado hasta 10 pies, acceso sencillo · Preparación básica y 2 manos — Casa vacía — ft²",
-        "precio": 2
-    },
-    {
-        "cat_en": "Interior Painting · Vacant home",
-        "cat_es": "Pintura interior · Casa vacía",
-        "id": "ptg_baseboard_vacant",
-        "nom_en": "Installed simple-profile baseboard · Basic prep and 2 enamel coats — Vacant home — LinFt",
-        "nom_es": "Zócalo instalado, perfil sencillo · Preparación básica y 2 manos de esmalte — Casa vacía — pie lineal",
-        "precio": 2.5
-    },
-    {
-        "cat_en": "Interior Painting · Vacant home",
-        "cat_es": "Pintura interior · Casa vacía",
-        "id": "ptg_crown_vacant",
-        "nom_en": "Simple-profile crown molding · Basic prep and 2 enamel coats — Vacant home — LinFt",
-        "nom_es": "Moldura de corona, perfil sencillo · Preparación básica y 2 manos de esmalte — Casa vacía — pie lineal",
-        "precio": 3
-    },
-    {
-        "cat_en": "Interior Painting · Vacant home",
-        "cat_es": "Pintura interior · Casa vacía",
-        "id": "ptg_door_one_vacant",
-        "nom_en": "Door and frame, one side · Basic prep and 2 enamel coats — Vacant home — Each",
-        "nom_es": "Puerta y marco, una cara · Preparación básica y 2 manos de esmalte — Casa vacía — unidad",
-        "precio": 85
-    },
-    {
-        "cat_en": "Interior Painting · Vacant home",
-        "cat_es": "Pintura interior · Casa vacía",
-        "id": "ptg_door_both_vacant",
-        "nom_en": "Door and frame, both sides and edges · Basic prep and 2 enamel coats — Vacant home — Each",
-        "nom_es": "Puerta y marco, ambas caras y cantos · Preparación básica y 2 manos de esmalte — Casa vacía — unidad",
-        "precio": 150
-    },
-    {
-        "cat_en": "Interior Painting · Vacant home",
-        "cat_es": "Pintura interior · Casa vacía",
-        "id": "ptg_closet_vacant",
-        "nom_en": "Cleared closet, walls and ceiling · 2 coats, one color, previously painted — Vacant home — SqFt",
-        "nom_es": "Clóset despejado, paredes y techo · 2 manos, un color, superficies ya pintadas — Casa vacía — ft²",
-        "precio": 1.5
-    },
-    {
-        "cat_en": "Interior Painting · Vacant home",
-        "cat_es": "Pintura interior · Casa vacía",
-        "id": "ptg_garage_vacant",
-        "nom_en": "Cleared garage, walls and ceiling · 2 coats, one color, previously painted — Vacant home — SqFt",
-        "nom_es": "Garaje despejado, paredes y techo · 2 manos, un color, superficies ya pintadas — Casa vacía — ft²",
-        "precio": 1.25
-    },
-    {
-        "cat_en": "Interior Painting · Vacant home",
-        "cat_es": "Pintura interior · Casa vacía",
-        "id": "ptg_primer_vacant",
-        "nom_en": "Additional preparation: full primer, one coat over sound drywall — Vacant home — SqFt",
-        "nom_es": "Preparación adicional: primer completo, una mano sobre drywall sano — Casa vacía — ft²",
-        "precio": 0.5
-    },
-    {
-        "cat_en": "Interior Painting · Vacant home",
-        "cat_es": "Pintura interior · Casa vacía",
-        "id": "ptg_extra_coat_vacant",
-        "nom_en": "Additional preparation: extra coat on standard wall or ceiling — Vacant home — SqFt",
-        "nom_es": "Preparación adicional: mano adicional en pared o techo estándar — Casa vacía — ft²",
-        "precio": 0.6
-    },
-    {
-        "cat_en": "Interior Painting · Occupied home",
-        "cat_es": "Pintura interior · Casa habitada",
-        "id": "ptg_smooth_wall_occupied",
-        "nom_en": "Previously painted smooth wall · Basic prep and 2 coats — Occupied home — SqFt",
-        "nom_es": "Pared lisa previamente pintada · Preparación básica y 2 manos — Casa habitada — ft²",
-        "precio": 1.75
-    },
-    {
-        "cat_en": "Interior Painting · Occupied home",
-        "cat_es": "Pintura interior · Casa habitada",
-        "id": "ptg_textured_wall_occupied",
-        "nom_en": "Existing textured wall · Basic prep and 2 coats — Occupied home — SqFt",
-        "nom_es": "Pared con textura existente · Preparación básica y 2 manos — Casa habitada — ft²",
-        "precio": 1.85
-    },
-    {
-        "cat_en": "Interior Painting · Occupied home",
-        "cat_es": "Pintura interior · Casa habitada",
-        "id": "ptg_flat_ceiling_occupied",
-        "nom_en": "Flat ceiling up to 10 ft · Basic prep and 2 coats — Occupied home — SqFt",
-        "nom_es": "Techo plano hasta 10 pies · Preparación básica y 2 manos — Casa habitada — ft²",
-        "precio": 1.75
-    },
-    {
-        "cat_en": "Interior Painting · Occupied home",
-        "cat_es": "Pintura interior · Casa habitada",
-        "id": "ptg_sloped_ceiling_occupied",
-        "nom_en": "Sloped ceiling up to 10 ft, easy access · Basic prep and 2 coats — Occupied home — SqFt",
-        "nom_es": "Techo inclinado hasta 10 pies, acceso sencillo · Preparación básica y 2 manos — Casa habitada — ft²",
-        "precio": 2.25
-    },
-    {
-        "cat_en": "Interior Painting · Occupied home",
-        "cat_es": "Pintura interior · Casa habitada",
-        "id": "ptg_baseboard_occupied",
-        "nom_en": "Installed simple-profile baseboard · Basic prep and 2 enamel coats — Occupied home — LinFt",
-        "nom_es": "Zócalo instalado, perfil sencillo · Preparación básica y 2 manos de esmalte — Casa habitada — pie lineal",
-        "precio": 2.75
-    },
-    {
-        "cat_en": "Interior Painting · Occupied home",
-        "cat_es": "Pintura interior · Casa habitada",
-        "id": "ptg_crown_occupied",
-        "nom_en": "Simple-profile crown molding · Basic prep and 2 enamel coats — Occupied home — LinFt",
-        "nom_es": "Moldura de corona, perfil sencillo · Preparación básica y 2 manos de esmalte — Casa habitada — pie lineal",
-        "precio": 3.5
-    },
-    {
-        "cat_en": "Interior Painting · Occupied home",
-        "cat_es": "Pintura interior · Casa habitada",
-        "id": "ptg_door_one_occupied",
-        "nom_en": "Door and frame, one side · Basic prep and 2 enamel coats — Occupied home — Each",
-        "nom_es": "Puerta y marco, una cara · Preparación básica y 2 manos de esmalte — Casa habitada — unidad",
-        "precio": 100
-    },
-    {
-        "cat_en": "Interior Painting · Occupied home",
-        "cat_es": "Pintura interior · Casa habitada",
-        "id": "ptg_door_both_occupied",
-        "nom_en": "Door and frame, both sides and edges · Basic prep and 2 enamel coats — Occupied home — Each",
-        "nom_es": "Puerta y marco, ambas caras y cantos · Preparación básica y 2 manos de esmalte — Casa habitada — unidad",
-        "precio": 175
-    },
-    {
-        "cat_en": "Interior Painting · Occupied home",
-        "cat_es": "Pintura interior · Casa habitada",
-        "id": "ptg_closet_occupied",
-        "nom_en": "Cleared closet, walls and ceiling · 2 coats, one color, previously painted — Occupied home — SqFt",
-        "nom_es": "Clóset despejado, paredes y techo · 2 manos, un color, superficies ya pintadas — Casa habitada — ft²",
-        "precio": 1.75
-    },
-    {
-        "cat_en": "Interior Painting · Occupied home",
-        "cat_es": "Pintura interior · Casa habitada",
-        "id": "ptg_garage_occupied",
-        "nom_en": "Cleared garage, walls and ceiling · 2 coats, one color, previously painted — Occupied home — SqFt",
-        "nom_es": "Garaje despejado, paredes y techo · 2 manos, un color, superficies ya pintadas — Casa habitada — ft²",
-        "precio": 1.5
-    },
-    {
-        "cat_en": "Interior Painting · Occupied home",
-        "cat_es": "Pintura interior · Casa habitada",
-        "id": "ptg_primer_occupied",
-        "nom_en": "Additional preparation: full primer, one coat over sound drywall — Occupied home — SqFt",
-        "nom_es": "Preparación adicional: primer completo, una mano sobre drywall sano — Casa habitada — ft²",
-        "precio": 0.6
-    },
-    {
-        "cat_en": "Interior Painting · Occupied home",
-        "cat_es": "Pintura interior · Casa habitada",
-        "id": "ptg_extra_coat_occupied",
-        "nom_en": "Additional preparation: extra coat on standard wall or ceiling — Occupied home — SqFt",
-        "nom_es": "Preparación adicional: mano adicional en pared o techo estándar — Casa habitada — ft²",
-        "precio": 0.7
-    }
+  {
+    "cat_en": "Interior Painting · Vacant home",
+    "cat_es": "Pintura interior · Casa vacía",
+    "id": "ptg_smooth_wall_vacant",
+    "nom_en": "Previously painted smooth wall · Basic prep and 2 coats — Vacant home — SqFt",
+    "nom_es": "Pared lisa previamente pintada · Preparación básica y 2 manos — Casa vacía — ft²",
+    "precio": 2.14
+  },
+  {
+    "cat_en": "Interior Painting · Vacant home",
+    "cat_es": "Pintura interior · Casa vacía",
+    "id": "ptg_textured_wall_vacant",
+    "nom_en": "Existing textured wall · Basic prep and 2 coats — Vacant home — SqFt",
+    "nom_es": "Pared con textura existente · Preparación básica y 2 manos — Casa vacía — ft²",
+    "precio": 2.19
+  },
+  {
+    "cat_en": "Interior Painting · Vacant home",
+    "cat_es": "Pintura interior · Casa vacía",
+    "id": "ptg_flat_ceiling_vacant",
+    "nom_en": "Flat ceiling up to 10 ft · Basic prep and 2 coats — Vacant home — SqFt",
+    "nom_es": "Techo plano hasta 10 pies · Preparación básica y 2 manos — Casa vacía — ft²",
+    "precio": 2.25
+  },
+  {
+    "cat_en": "Interior Painting · Vacant home",
+    "cat_es": "Pintura interior · Casa vacía",
+    "id": "ptg_sloped_ceiling_vacant",
+    "nom_en": "Sloped ceiling up to 10 ft, easy access · Basic prep and 2 coats — Vacant home — SqFt",
+    "nom_es": "Techo inclinado hasta 10 pies, acceso sencillo · Preparación básica y 2 manos — Casa vacía — ft²",
+    "precio": 2.5
+  },
+  {
+    "cat_en": "Interior Painting · Vacant home",
+    "cat_es": "Pintura interior · Casa vacía",
+    "id": "ptg_baseboard_vacant",
+    "nom_en": "Installed simple-profile baseboard · Basic prep and 2 enamel coats — Vacant home — LinFt",
+    "nom_es": "Zócalo instalado, perfil sencillo · Preparación básica y 2 manos de esmalte — Casa vacía — pie lineal",
+    "precio": 3.75
+  },
+  {
+    "cat_en": "Interior Painting · Vacant home",
+    "cat_es": "Pintura interior · Casa vacía",
+    "id": "ptg_crown_vacant",
+    "nom_en": "Simple-profile crown molding · Basic prep and 2 enamel coats — Vacant home — LinFt",
+    "nom_es": "Moldura de corona, perfil sencillo · Preparación básica y 2 manos de esmalte — Casa vacía — pie lineal",
+    "precio": 3
+  },
+  {
+    "cat_en": "Interior Painting · Vacant home",
+    "cat_es": "Pintura interior · Casa vacía",
+    "id": "ptg_door_one_vacant",
+    "nom_en": "Door and frame, one side · Basic prep and 2 enamel coats — Vacant home — Each",
+    "nom_es": "Puerta y marco, una cara · Preparación básica y 2 manos de esmalte — Casa vacía — unidad",
+    "precio": 85
+  },
+  {
+    "cat_en": "Interior Painting · Vacant home",
+    "cat_es": "Pintura interior · Casa vacía",
+    "id": "ptg_door_both_vacant",
+    "nom_en": "Door and frame, both sides and edges · Basic prep and 2 enamel coats — Vacant home — Each",
+    "nom_es": "Puerta y marco, ambas caras y cantos · Preparación básica y 2 manos de esmalte — Casa vacía — unidad",
+    "precio": 225
+  },
+  {
+    "cat_en": "Interior Painting · Vacant home",
+    "cat_es": "Pintura interior · Casa vacía",
+    "id": "ptg_closet_vacant",
+    "nom_en": "Cleared closet, walls and ceiling · 2 coats, one color, previously painted — Vacant home — SqFt",
+    "nom_es": "Clóset despejado, paredes y techo · 2 manos, un color, superficies ya pintadas — Casa vacía — ft²",
+    "precio": 1.5
+  },
+  {
+    "cat_en": "Interior Painting · Vacant home",
+    "cat_es": "Pintura interior · Casa vacía",
+    "id": "ptg_garage_vacant",
+    "nom_en": "Cleared garage, walls and ceiling · 2 coats, one color, previously painted — Vacant home — SqFt",
+    "nom_es": "Garaje despejado, paredes y techo · 2 manos, un color, superficies ya pintadas — Casa vacía — ft²",
+    "precio": 1.25
+  },
+  {
+    "cat_en": "Interior Painting · Vacant home",
+    "cat_es": "Pintura interior · Casa vacía",
+    "id": "ptg_primer_vacant",
+    "nom_en": "Additional preparation: full primer, one coat over sound drywall — Vacant home — SqFt",
+    "nom_es": "Preparación adicional: primer completo, una mano sobre drywall sano — Casa vacía — ft²",
+    "precio": 0.5
+  },
+  {
+    "cat_en": "Interior Painting · Vacant home",
+    "cat_es": "Pintura interior · Casa vacía",
+    "id": "ptg_extra_coat_vacant",
+    "nom_en": "Additional preparation: extra coat on standard wall or ceiling — Vacant home — SqFt",
+    "nom_es": "Preparación adicional: mano adicional en pared o techo estándar — Casa vacía — ft²",
+    "precio": 0.6
+  },
+  {
+    "cat_en": "Interior Painting · Occupied home",
+    "cat_es": "Pintura interior · Casa habitada",
+    "id": "ptg_smooth_wall_occupied",
+    "nom_en": "Previously painted smooth wall · Basic prep and 2 coats — Occupied home — SqFt",
+    "nom_es": "Pared lisa previamente pintada · Preparación básica y 2 manos — Casa habitada — ft²",
+    "precio": 2.27
+  },
+  {
+    "cat_en": "Interior Painting · Occupied home",
+    "cat_es": "Pintura interior · Casa habitada",
+    "id": "ptg_textured_wall_occupied",
+    "nom_en": "Existing textured wall · Basic prep and 2 coats — Occupied home — SqFt",
+    "nom_es": "Pared con textura existente · Preparación básica y 2 manos — Casa habitada — ft²",
+    "precio": 2.32
+  },
+  {
+    "cat_en": "Interior Painting · Occupied home",
+    "cat_es": "Pintura interior · Casa habitada",
+    "id": "ptg_flat_ceiling_occupied",
+    "nom_en": "Flat ceiling up to 10 ft · Basic prep and 2 coats — Occupied home — SqFt",
+    "nom_es": "Techo plano hasta 10 pies · Preparación básica y 2 manos — Casa habitada — ft²",
+    "precio": 2.38
+  },
+  {
+    "cat_en": "Interior Painting · Occupied home",
+    "cat_es": "Pintura interior · Casa habitada",
+    "id": "ptg_sloped_ceiling_occupied",
+    "nom_en": "Sloped ceiling up to 10 ft, easy access · Basic prep and 2 coats — Occupied home — SqFt",
+    "nom_es": "Techo inclinado hasta 10 pies, acceso sencillo · Preparación básica y 2 manos — Casa habitada — ft²",
+    "precio": 2.63
+  },
+  {
+    "cat_en": "Interior Painting · Occupied home",
+    "cat_es": "Pintura interior · Casa habitada",
+    "id": "ptg_baseboard_occupied",
+    "nom_en": "Installed simple-profile baseboard · Basic prep and 2 enamel coats — Occupied home — LinFt",
+    "nom_es": "Zócalo instalado, perfil sencillo · Preparación básica y 2 manos de esmalte — Casa habitada — pie lineal",
+    "precio": 3.88
+  },
+  {
+    "cat_en": "Interior Painting · Occupied home",
+    "cat_es": "Pintura interior · Casa habitada",
+    "id": "ptg_crown_occupied",
+    "nom_en": "Simple-profile crown molding · Basic prep and 2 enamel coats — Occupied home — LinFt",
+    "nom_es": "Moldura de corona, perfil sencillo · Preparación básica y 2 manos de esmalte — Casa habitada — pie lineal",
+    "precio": 3.5
+  },
+  {
+    "cat_en": "Interior Painting · Occupied home",
+    "cat_es": "Pintura interior · Casa habitada",
+    "id": "ptg_door_one_occupied",
+    "nom_en": "Door and frame, one side · Basic prep and 2 enamel coats — Occupied home — Each",
+    "nom_es": "Puerta y marco, una cara · Preparación básica y 2 manos de esmalte — Casa habitada — unidad",
+    "precio": 100
+  },
+  {
+    "cat_en": "Interior Painting · Occupied home",
+    "cat_es": "Pintura interior · Casa habitada",
+    "id": "ptg_door_both_occupied",
+    "nom_en": "Door and frame, both sides and edges · Basic prep and 2 enamel coats — Occupied home — Each",
+    "nom_es": "Puerta y marco, ambas caras y cantos · Preparación básica y 2 manos de esmalte — Casa habitada — unidad",
+    "precio": 237.5
+  },
+  {
+    "cat_en": "Interior Painting · Occupied home",
+    "cat_es": "Pintura interior · Casa habitada",
+    "id": "ptg_closet_occupied",
+    "nom_en": "Cleared closet, walls and ceiling · 2 coats, one color, previously painted — Occupied home — SqFt",
+    "nom_es": "Clóset despejado, paredes y techo · 2 manos, un color, superficies ya pintadas — Casa habitada — ft²",
+    "precio": 1.75
+  },
+  {
+    "cat_en": "Interior Painting · Occupied home",
+    "cat_es": "Pintura interior · Casa habitada",
+    "id": "ptg_garage_occupied",
+    "nom_en": "Cleared garage, walls and ceiling · 2 coats, one color, previously painted — Occupied home — SqFt",
+    "nom_es": "Garaje despejado, paredes y techo · 2 manos, un color, superficies ya pintadas — Casa habitada — ft²",
+    "precio": 1.5
+  },
+  {
+    "cat_en": "Interior Painting · Occupied home",
+    "cat_es": "Pintura interior · Casa habitada",
+    "id": "ptg_primer_occupied",
+    "nom_en": "Additional preparation: full primer, one coat over sound drywall — Occupied home — SqFt",
+    "nom_es": "Preparación adicional: primer completo, una mano sobre drywall sano — Casa habitada — ft²",
+    "precio": 0.6
+  },
+  {
+    "cat_en": "Interior Painting · Occupied home",
+    "cat_es": "Pintura interior · Casa habitada",
+    "id": "ptg_extra_coat_occupied",
+    "nom_en": "Additional preparation: extra coat on standard wall or ceiling — Occupied home — SqFt",
+    "nom_es": "Preparación adicional: mano adicional en pared o techo estándar — Casa habitada — ft²",
+    "precio": 0.7
+  }
 ];
         catalogoPrecios.push(...interiorPaintingCatalog);
         function estimateDocumentFingerprint(data) {
