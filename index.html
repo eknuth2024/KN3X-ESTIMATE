@@ -320,6 +320,40 @@
             #estimateContainer:not(.pdf-export) .estimate-project-panel { margin-left:0; margin-right:0; }
             #estimateContainer:not(.pdf-export) .estimate-services-section > div:first-child > div:last-child { padding-left:0; padding-right:0; }
         }
+    
+        /* Inset the service header and fields using the Customer card's padding. */
+        @media screen {
+            #estimateContainer:not(.pdf-export) .service-editor-panel {
+                background:#728092; border-radius:8px; padding:16px;
+            }
+            #estimateContainer:not(.pdf-export) #tablaPresupuesto thead tr { background:transparent; }
+            #estimateContainer:not(.pdf-export) #tablaPresupuesto thead th { background:#f97316; border-radius:0; }
+            #estimateContainer:not(.pdf-export) #tablaPresupuesto thead th:first-child { border-radius:8px 0 0 8px; }
+            #estimateContainer:not(.pdf-export) #tablaPresupuesto thead th:last-child { border-radius:0 8px 8px 0; }
+            #estimateContainer:not(.pdf-export) #tablaPresupuesto .estimate-column-title { min-height:40px; }
+            #estimateContainer:not(.pdf-export) .service-editor-panel > div:last-child { padding-left:0; padding-right:0; }
+        }
+        @media screen and (max-width:1023px) {
+            #mainWrapper { padding-top:env(safe-area-inset-top,0px); }
+        }
+        @media screen and (max-width:767px) {
+            #estimateContainer:not(.pdf-export) .service-editor-panel { padding:12px; }
+            #estimateContainer:not(.pdf-export) #listaItems td,
+            #estimateContainer:not(.pdf-export) #listaItems td:first-child,
+            #estimateContainer:not(.pdf-export) #listaItems td:not(:first-child),
+            #estimateContainer:not(.pdf-export) #listaItems td:last-child {
+                padding-top:12px; padding-bottom:12px; padding-left:3px; padding-right:3px;
+            }
+            #estimateContainer:not(.pdf-export) #listaItems td:first-child { padding-left:0; }
+            #estimateContainer:not(.pdf-export) #listaItems td:last-child { padding-right:0; }
+            #estimateContainer:not(.pdf-export) #listaItems td:first-child > div { margin-bottom:12px; }
+            #estimateContainer:not(.pdf-export) #listaItems .catalogo-select { height:36px; }
+            #estimateContainer:not(.pdf-export) #listaItems .nota-input { margin-top:12px; height:32px; }
+            #estimateContainer:not(.pdf-export) #listaItems .qty { margin-top:40px; }
+            #estimateContainer:not(.pdf-export) #listaItems td:nth-child(3) > div,
+            #estimateContainer:not(.pdf-export) #listaItems td:nth-child(4) > div { margin-top:40px; min-height:36px; }
+            #estimateContainer:not(.pdf-export) #listaItems td:last-child button { margin-top:46px; }
+        }
     </style>
 
     <!-- KN3X Estimate browser and iPhone/iPad home-screen icons -->
@@ -488,7 +522,7 @@
                         <!-- TABLA DE ITEMS CON BUSCADOR INTELIGENTE -->
                         <tr>
                             <td class="estimate-services-section px-2 md:px-8 print:px-0 align-top">
-                                <div class="overflow-x-auto mb-4 md:mb-6 min-h-[100px] print:mb-2 overflow-visible">
+                                <div class="service-editor-panel overflow-x-auto mb-4 md:mb-6 min-h-[100px] print:mb-2 overflow-visible">
                                     <table class="w-full text-left border-collapse" id="tablaPresupuesto">
                                         <thead>
                                             <tr class="bg-orange-500 text-white text-[9px] md:text-[11px] uppercase tracking-wider">
