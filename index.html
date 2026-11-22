@@ -253,6 +253,24 @@
             #estimateContainer:not(.pdf-export) #listaItems td:last-child { padding:2px; }
             #estimateContainer:not(.pdf-export) #listaItems td:last-child button { margin-top:38px; width:18px; height:24px; }
         }
+    
+        @media screen {
+            #topHeader { background:#596675; border-color:#7b8796; }
+            #estimateContainer:not(.pdf-export) .workspace-dark-panel,
+            #formCustomer,#formVendor,
+            #estimateContainer:not(.pdf-export) #listaItems { background:#596675; border-color:#8290a1; }
+            #estimateContainer:not(.pdf-export) #listaItems tr:hover { background:#647284; }
+            #estimateContainer:not(.pdf-export) #listaItems button[onclick="eliminarFila(this)"] {
+                color:#fff; background:transparent; border:0; box-shadow:none;
+                font-size:22px; font-weight:600; border-radius:6px;
+            }
+            #estimateContainer:not(.pdf-export) #listaItems button[onclick="eliminarFila(this)"]:hover {
+                color:#fff; background:rgba(255,255,255,.14);
+            }
+            #estimateContainer:not(.pdf-export) #listaItems button[onclick="eliminarFila(this)"]:focus-visible {
+                outline:2px solid #fff; outline-offset:1px;
+            }
+        }
     </style>
 
     <!-- KN3X Estimate browser and iPhone/iPad home-screen icons -->
