@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Acceso privado | KN3X Estimate</title>
+  <link rel="icon" href="favicon.ico"><link rel="stylesheet" href="access.css?v=1">
+  <script src="login.js?v=1" defer></script>
+</head>
+<body>
+<main class="login-shell"><section class="card" aria-labelledby="login-title">
+  <img class="brand" src="logo.PNG" alt="KN3X Project LLC">
+  <p class="eyebrow">KN3X Estimate · Acceso privado</p>
+  <h1 id="login-title">Bienvenido a tu espacio de trabajo</h1>
+  <p class="muted">Entra con la cuenta que te asignó el administrador.</p>
+  <form id="login-form">
+    <label for="username">Usuario</label>
+    <input id="username" name="username" autocomplete="username" autocapitalize="none" spellcheck="false" required maxlength="64">
+    <label for="password">Contraseña</label>
+    <input id="password" name="password" type="password" autocomplete="current-password" required maxlength="128">
+    <button id="login-submit" class="primary wide" type="submit">Iniciar sesión</button>
+  </form>
+  <p class="status" id="login-status" role="status" aria-live="polite"></p>
+  <p class="footer-note">Solo el administrador puede agregar usuarios. Si necesitas recuperar tu acceso, comunícate con él.</p>
+  <a class="login-return" href="index.html">Volver a KN3X Estimate</a>
+</section></main>
+</body></html>

@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="es"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mi cuenta y usuarios | KN3X Estimate</title>
+<link rel="icon" href="favicon.ico"><link rel="stylesheet" href="access.css?v=1">
+<script src="account.js?v=1" defer></script>
+</head><body>
+<main class="account-shell">
+  <header class="account-top"><img class="brand" src="logo.PNG" alt="KN3X Project LLC"><div class="actions"><a id="workspace-link" href="index.html">Volver a presupuestos</a><button id="logout" class="secondary" type="button">Cerrar sesión</button></div></header>
+  <p class="eyebrow">Acceso privado</p><h1>Mi cuenta</h1>
+  <p id="identity" class="muted account-identity" role="status">Comprobando sesión…</p>
+  <p id="temporary-note" class="note" hidden>Tu contraseña es temporal. Cámbiala antes de entrar a los presupuestos.</p>
+  <div class="account-grid">
+    <section class="card"><h2>Cambiar mi contraseña</h2><p class="muted">Al cambiarla, se cerrarán tus sesiones en los demás dispositivos.</p>
+      <form id="password-form">
+        <label for="current-password">Contraseña actual</label><input id="current-password" name="currentPassword" type="password" autocomplete="current-password" required maxlength="128">
+        <label for="new-password">Nueva contraseña</label><input id="new-password" name="newPassword" type="password" autocomplete="new-password" required minlength="12" maxlength="128" aria-describedby="password-help">
+        <p id="password-help" class="muted">Usa al menos 12 caracteres.</p>
+        <label for="confirm-password">Confirmar nueva contraseña</label><input id="confirm-password" name="confirmPassword" type="password" autocomplete="new-password" required minlength="12" maxlength="128">
+        <button class="primary wide" type="submit">Guardar contraseña</button>
+      </form><p id="password-status" class="status" role="status" aria-live="polite"></p>
+    </section>
+    <section id="create-user-panel" class="card" hidden><h2>Agregar usuario</h2><p class="muted">La cuenta será de usuario normal. No podrá crear ni administrar otras cuentas.</p>
+      <form id="user-form">
+        <label for="user-name">Nombre</label><input id="user-name" name="displayName" autocomplete="off" required maxlength="100">
+        <label for="user-login">Usuario</label><input id="user-login" name="login" autocomplete="off" autocapitalize="none" spellcheck="false" required minlength="3" maxlength="64" pattern="[a-zA-Z0-9][a-zA-Z0-9._-]{2,63}">
+        <label for="user-password">Contraseña temporal</label><input id="user-password" name="password" type="password" autocomplete="new-password" required minlength="12" maxlength="128">
+        <p class="muted">Deberá cambiarla en su primer acceso. Compártela con esa persona por un medio privado.</p>
+        <button class="primary wide" type="submit">Crear usuario normal</button>
+      </form><p id="user-status" class="status" role="status" aria-live="polite"></p>
+    </section>
+    <section id="users-panel" class="card span-all" hidden><h2>Usuarios autorizados</h2><p class="muted">Puedes suspender o reactivar el acceso. Desactivar una cuenta cierra sus sesiones.</p><div id="users-list" class="user-list"></div><p id="users-status" class="status" role="status" aria-live="polite"></p></section>
+  </div>
+</main></body></html>
