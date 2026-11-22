@@ -53,14 +53,14 @@
     
         /* Reserve the iPhone status/island region before the entire mobile toolbar. */
         @media screen and (max-width:1023px) {
-            body { --mobile-safe-top:max(48px, env(safe-area-inset-top,0px)); }
+            body { --mobile-safe-top:max(32px, env(safe-area-inset-top,0px)); }
             body, #mainWrapper { height:100vh; height:100dvh; }
             #topHeader {
                 box-sizing:border-box;
-                height:calc(var(--mobile-safe-top) + 68px);
-                min-height:calc(var(--mobile-safe-top) + 68px);
-                padding-top:calc(var(--mobile-safe-top) + 12px);
-                padding-bottom:12px;
+                height:calc(var(--mobile-safe-top) + 60px);
+                min-height:calc(var(--mobile-safe-top) + 60px);
+                padding-top:calc(var(--mobile-safe-top) + 8px);
+                padding-bottom:8px;
             }
             #mobileMenuToggle {
                 display:flex; align-items:center; justify-content:center; flex-shrink:0;
@@ -136,6 +136,25 @@
         }
         @media print { .estimate-mobile-dock,.estimate-team-panel { display:none!important; } }
 
+    
+        /* Dark workspace toolbar; preserve print layout and iPhone safe area. */
+        @media screen {
+            #topHeader { background:#303741; border-color:#4b5563; }
+            #topHeader #topBarTitle { color:#f5f7fa; }
+            #topHeader #btnLoad,#topHeader #langBtn {
+                background:#465366; border-color:#667387; color:#fff;
+            }
+            #topHeader #btnSave { background:#202733; color:#fff; }
+            #topHeader #btnLoad:hover,#topHeader #langBtn:hover { background:#56657b; }
+            #topHeader #btnSave:hover { background:#151c27; }
+            #topHeader .bg-gray-300 { background:#647084; }
+            #topHeader button:focus-visible { outline:2px solid #ffad7e; outline-offset:2px; }
+        }
+        @media screen and (max-width:1023px) {
+            #topHeader #btnLoad,#topHeader #btnSave,#topHeader #langBtn {
+                min-height:36px; padding:6px 10px;
+            }
+        }
     </style>
 
     <!-- KN3X Estimate browser and iPhone/iPad home-screen icons -->
