@@ -278,6 +278,18 @@
             #topHeader #btnSave .toolbar-action-icon { color:#60a5fa; }
             #topHeader #langBtn { color:#fff; font-size:13px; font-weight:800; letter-spacing:.03em; justify-content:center; }
         }
+    
+        /* Darker workspace canvas behind the lighter form panels. */
+        @media screen {
+            body,#mainWrapper,#mainContent { background-color:#37414e; }
+            #estimateContainer:not(.pdf-export) { background-color:#37414e; color:#f1f5f9; }
+            #estimateContainer:not(.pdf-export) .estimate-final-actions { color:#fff; }
+            #estimateContainer:not(.pdf-export) #estimateWorkflowStatus { color:#dbe3ed; }
+            #estimateContainer:not(.pdf-export) [data-i18n="tc_main_title"],
+            #estimateContainer:not(.pdf-export) [data-i18n^="t"][data-i18n$="_title"],
+            #estimateContainer:not(.pdf-export) [data-i18n^="t"][data-i18n$="_text"],
+            #estimateContainer:not(.pdf-export) [data-i18n="add_photo"] { color:#f1f5f9; }
+        }
     </style>
 
     <!-- KN3X Estimate browser and iPhone/iPad home-screen icons -->
