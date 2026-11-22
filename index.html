@@ -306,6 +306,20 @@
                 font-size:16px; line-height:1.25; min-height:36px;
             }
         }
+    
+        @media screen {
+            #estimateContainer:not(.pdf-export) #customerPickerBar {
+                background:#2563eb; border:0; border-radius:8px; padding:8px 10px;
+                margin-bottom:12px; gap:10px;
+            }
+            #estimateContainer:not(.pdf-export) #customerPickerBar label { color:#fff; font-size:11px; font-weight:800; }
+        }
+        @media screen and (max-width:767px) {
+            #estimateContainer:not(.pdf-export) .estimate-services-section { padding-left:12px; padding-right:12px; }
+            #estimateContainer:not(.pdf-export) .estimate-summary-grid { padding-left:0; padding-right:0; }
+            #estimateContainer:not(.pdf-export) .estimate-project-panel { margin-left:0; margin-right:0; }
+            #estimateContainer:not(.pdf-export) .estimate-services-section > div:first-child > div:last-child { padding-left:0; padding-right:0; }
+        }
     </style>
 
     <!-- KN3X Estimate browser and iPhone/iPad home-screen icons -->
@@ -439,8 +453,8 @@
         
                                 <div class="px-3 md:px-8 pt-3 md:pt-6 print:px-0 print:pt-4">
                                     <div class="workspace-dark-panel flex flex-wrap bg-slate-50 p-3 md:p-4 rounded-lg print:bg-transparent print:p-0 print-border-none">
-                                        <div class="w-full mb-2 pb-2 border-b border-gray-200 print:hidden flex justify-between items-center">
-                                            <label class="text-[9px] md:text-xs font-bold text-slate-500 uppercase">Load Directory</label>
+                                        <div id="customerPickerBar" class="w-full mb-2 pb-2 border-b border-gray-200 print:hidden flex justify-between items-center">
+                                            <label for="selectCustomerDir" class="text-[9px] md:text-xs font-bold text-slate-500 uppercase" data-i18n="customer_picker">Customer</label>
                                             <select id="selectCustomerDir" onchange="loadCustomerToEstimate()" class="border-gray-300 rounded text-[10px] md:text-sm p-1 max-w-[150px] md:max-w-[200px] border focus:outline-none focus:border-orange-500">
                                                 <option value="">-- Select --</option>
                                             </select>
@@ -473,7 +487,7 @@
         
                         <!-- TABLA DE ITEMS CON BUSCADOR INTELIGENTE -->
                         <tr>
-                            <td class="px-2 md:px-8 print:px-0 align-top">
+                            <td class="estimate-services-section px-2 md:px-8 print:px-0 align-top">
                                 <div class="overflow-x-auto mb-4 md:mb-6 min-h-[100px] print:mb-2 overflow-visible">
                                     <table class="w-full text-left border-collapse" id="tablaPresupuesto">
                                         <thead>
@@ -492,7 +506,7 @@
                                     </div>
                                 </div>
         
-                                <div class="px-3 md:px-0 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 print:grid-cols-2 print:gap-4 pt-2 md:pt-4 border-t border-gray-200 print:border-t-2">
+                                <div class="estimate-summary-grid px-3 md:px-0 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 print:grid-cols-2 print:gap-4 pt-2 md:pt-4 border-t border-gray-200 print:border-t-2">
                                     <div class="flex flex-col gap-3 md:gap-4">
                                         <div class="workspace-dark-panel no-print bg-slate-50 p-3 md:p-4 rounded-lg border border-slate-200">
                                             <label class="block text-[9px] md:text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5" data-i18n="select_plan">Select Payment Plan</label>
@@ -521,7 +535,7 @@
                                     </div>
                                 </div>
         
-                                <div class="workspace-dark-panel mx-3 md:mx-0 mt-4 md:mt-6 w-auto md:w-full bg-gray-200 border border-gray-300 rounded-lg p-3 md:p-4 print:bg-gray-200 print:border-gray-300 print:p-3 shadow-sm print:shadow-none print-avoid-break">
+                                <div class="estimate-project-panel workspace-dark-panel mx-3 md:mx-0 mt-4 md:mt-6 w-auto md:w-full bg-gray-200 border border-gray-300 rounded-lg p-3 md:p-4 print:bg-gray-200 print:border-gray-300 print:p-3 shadow-sm print:shadow-none print-avoid-break">
                                     
                                     <div class="grid grid-cols-2 gap-3 md:gap-4">
                                         <div class="relative w-full">
@@ -1020,7 +1034,7 @@
                 doc_estimate: "Estimate", page_continuation: "Continued Document", valid_doc: "Official Document",
                 finalize_estimate: "Finalize estimate", clear_estimate: "Clear content", btn_save: "Save", btn_open: "Load", btn_radar: "Demo Radar", radar_title: "Demo Bid Radar - Austin Area", toast_saved: "File downloaded successfully!",
                 btn_lang: "🌐 ES", btn_contract: "Subcontractor Doc", btn_estimate_view: "Estimate Tool", btn_ledger: "1099 Ledger",
-                menu_customers: "Customers", menu_team: "Vendors & Team", btn_customer_dir: "Directory"
+                customer_picker: "Customer", menu_customers: "Customers", menu_team: "Vendors & Team", btn_customer_dir: "Directory"
             },
             es: {
                 title: "Presupuesto", est_num: "Folio:", client: "Nombre del Cliente / Proyecto", date: "Fecha",
@@ -1046,7 +1060,7 @@
                 doc_estimate: "Presupuesto", page_continuation: "Documento Continuo", valid_doc: "Documento Oficial",
                 finalize_estimate: "Finalizar presupuesto", clear_estimate: "Borrar contenido", btn_save: "Guardar", btn_open: "Cargar", btn_radar: "Radar de demostración", radar_title: "Radar de demostración - Austin", toast_saved: "¡Archivo descargado con éxito!",
                 btn_lang: "🌐 EN", btn_contract: "Contrato 1099", btn_estimate_view: "Presupuesto", btn_ledger: "Directorio 1099",
-                menu_customers: "Clientes", menu_team: "Proveedores", btn_customer_dir: "Directorio"
+                customer_picker: "Cliente", menu_customers: "Clientes", menu_team: "Proveedores", btn_customer_dir: "Directorio"
             }
         };
 
@@ -1403,7 +1417,7 @@
         function poblarSelectCustomerEstimate() {
             const select = document.getElementById('selectCustomerDir');
             if(!select) return;
-            select.innerHTML = '<option value="">-- Load Directory --</option>';
+            select.innerHTML = '<option value="">' + (currentLang === 'es' ? '-- Seleccionar cliente --' : '-- Select customer --') + '</option>';
             customerLedger.forEach(cust => {
                 const opt = document.createElement('option');
                 opt.value = cust.id; opt.text = cust.name; select.appendChild(opt);
@@ -2272,6 +2286,8 @@
             document.querySelectorAll('.nota-input').forEach(input => input.placeholder = i18n[currentLang].notes);
             actualizarSelectsTerminos();
             refreshEstimateControls();
+            const customerPlaceholder = document.getElementById('selectCustomerDir')?.options[0];
+            if (customerPlaceholder) customerPlaceholder.textContent = currentLang === 'es' ? '-- Seleccionar cliente --' : '-- Select customer --';
         }
 
         // VALIDACIÓN PARA EXPORTAR (GUARDAR JSON)
