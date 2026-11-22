@@ -192,6 +192,11 @@
             #topBarTitle { font-size:16px; line-height:1.2; }
             #topHeader #btnLoad,#topHeader #btnSave,#topHeader #langBtn { height:36px; min-height:36px; }
         }
+    
+        @media screen and (max-width:1023px) {
+            #addServiceButton { display:inline-flex; width:auto; max-width:100%; margin-left:0; margin-right:auto; justify-content:center; }
+            #addServiceButton[onclick] { min-height:36px; padding:8px 14px; }
+        }
     </style>
 
     <!-- KN3X Estimate browser and iPhone/iPad home-screen icons -->
@@ -374,7 +379,7 @@
                                         <tbody id="listaItems" class="text-[10px] md:text-sm"></tbody>
                                     </table>
                                     <div class="px-2 md:px-0">
-                                        <button onclick="agregarFila()" class="mt-3 no-print text-[11px] md:text-sm bg-green-500 hover:bg-green-600 text-white font-bold py-1.5 md:py-2.5 px-4 md:px-5 rounded md:rounded-lg shadow transition transform hover:-translate-y-0.5 w-full md:w-auto" data-i18n="add_item">+ Add Item</button>
+                                        <button onclick="agregarFila()" class="mt-3 no-print text-[11px] md:text-sm bg-green-500 hover:bg-green-600 text-white font-bold py-1.5 md:py-2.5 px-4 md:px-5 rounded md:rounded-lg shadow transition transform hover:-translate-y-0.5 w-full md:w-auto" id="addServiceButton" data-i18n="add_item">+ Add Service</button>
                                     </div>
                                 </div>
         
@@ -886,7 +891,7 @@
                 title: "Estimate", est_num: "Est. #:", client: "Client / Project Name", date: "Date",
                 email: "Email Address", phone: "Phone Number", address: "Job Site Address",
                 service: "Service / Material", qty: "Qty", price: "Unit Price", total: "Total",
-                add_item: "+ Add Item", subtotal: "Subtotal:", tax: "Tax (8.25%):", total_usd: "Total USD:",
+                add_item: "+ Add Service", subtotal: "Subtotal:", tax: "Tax (8.25%):", total_usd: "Total USD:",
                 generate_pdf: "Generate PDF", select: "Select a service...", notes: "+ Add notes (optional)",
                 photos_title: "Site Conditions & Notes (Appendix)", add_photo: "Add Photo",
                 photo_title: "Enter title (e.g., Master Bedroom Wall)", photo_desc: "Describe the damage, repair needed, or current state...",
@@ -912,7 +917,7 @@
                 title: "Presupuesto", est_num: "Folio:", client: "Nombre del Cliente / Proyecto", date: "Fecha",
                 email: "Correo Electrónico", phone: "Teléfono", address: "Dirección de la Obra",
                 service: "Servicio / Material", qty: "Cant.", price: "Precio Unitario", total: "Total",
-                add_item: "+ Añadir Partida", subtotal: "Subtotal:", tax: "Impuesto (8.25%):", total_usd: "Total USD:",
+                add_item: "+ Añadir Servicio", subtotal: "Subtotal:", tax: "Impuesto (8.25%):", total_usd: "Total USD:",
                 generate_pdf: "Generar PDF", select: "Seleccione un servicio...", notes: "+ Agregar notas (opcional)",
                 photos_title: "Condiciones del Sitio y Notas (Anexo)", add_photo: "Añadir Foto",
                 photo_title: "Escriba un título (ej. Pared Cuarto Principal)", photo_desc: "Describa el daño, reparación necesaria o estado actual...",
