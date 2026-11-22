@@ -197,6 +197,62 @@
             #addServiceButton { display:inline-flex; width:auto; max-width:100%; margin-left:0; margin-right:auto; justify-content:center; }
             #addServiceButton[onclick] { min-height:36px; padding:8px 14px; }
         }
+    
+        /* Lighter gray editing panels and consistent final-action typography. */
+        @media screen {
+            #topHeader { background:#46515f; border-color:#657184; }
+            #estimateContainer:not(.pdf-export) .workspace-dark-panel,
+            #formCustomer,#formVendor,
+            #estimateContainer:not(.pdf-export) #listaItems { background:#46515f; border-color:#718096; }
+            #estimateContainer:not(.pdf-export) #listaItems tr:hover { background:#526071; }
+            #estimateContainer:not(.pdf-export) .estimate-final-actions > button {
+                font-size:16px; line-height:1.25; min-height:48px;
+                font-weight:700; padding:12px 20px;
+                display:flex; align-items:center; justify-content:center; gap:8px;
+            }
+        }
+        @media screen and (max-width:1023px) {
+            #mainWrapper { padding-top:calc(max(32px,env(safe-area-inset-top,0px)) + 12px); }
+        }
+        @media screen and (max-width:767px) {
+            #estimateContainer:not(.pdf-export) #inputClientName,
+            #estimateContainer:not(.pdf-export) #fechaActual {
+                box-sizing:border-box; display:block; width:100%; min-width:0; max-width:100%;
+                height:34px; min-height:34px; padding:6px 8px;
+            }
+            #estimateContainer:not(.pdf-export) #fechaActual { -webkit-appearance:none; appearance:none; }
+            #fechaActual::-webkit-date-and-time-value { text-align:left; }
+            #fechaActual::-webkit-datetime-edit { min-width:0; max-width:100%; }
+            #estimateContainer:not(.pdf-export) #tablaPresupuesto { table-layout:fixed; width:100%; }
+            #estimateContainer:not(.pdf-export) #tablaPresupuesto th:nth-child(1) { width:40%; }
+            #estimateContainer:not(.pdf-export) #tablaPresupuesto th:nth-child(2) { width:20%; }
+            #estimateContainer:not(.pdf-export) #tablaPresupuesto th:nth-child(3) { width:18%; }
+            #estimateContainer:not(.pdf-export) #tablaPresupuesto th:nth-child(4) { width:16%; }
+            #estimateContainer:not(.pdf-export) #tablaPresupuesto th:nth-child(5) { width:6%; padding:2px; }
+            #estimateContainer:not(.pdf-export) #listaItems td:first-child {
+                display:table-cell; width:auto; min-width:0; padding:4px; vertical-align:top;
+            }
+            #estimateContainer:not(.pdf-export) #listaItems td:first-child > div {
+                width:100%; margin-bottom:8px;
+            }
+            #estimateContainer:not(.pdf-export) #listaItems td:first-child > div > input {
+                width:90%; max-width:140px; height:28px;
+            }
+            #estimateContainer:not(.pdf-export) #listaItems .catalogo-select {
+                display:block; width:100%; min-width:0; height:32px;
+            }
+            #estimateContainer:not(.pdf-export) #listaItems .nota-input { display:block; width:100%; min-width:0; height:28px; }
+            #estimateContainer:not(.pdf-export) #listaItems td:not(:first-child) { padding:4px; vertical-align:top; }
+            #estimateContainer:not(.pdf-export) #listaItems .qty {
+                width:100%; min-width:0; min-height:32px; padding:3px;
+                font-size:14px; margin-top:36px;
+            }
+            #estimateContainer:not(.pdf-export) #listaItems td:nth-child(3) > div,
+            #estimateContainer:not(.pdf-export) #listaItems td:nth-child(4) > div { margin-top:36px; min-height:32px; align-items:center; }
+            #estimateContainer:not(.pdf-export) #listaItems .price { min-height:32px; min-width:0; font-size:12px; }
+            #estimateContainer:not(.pdf-export) #listaItems td:last-child { padding:2px; }
+            #estimateContainer:not(.pdf-export) #listaItems td:last-child button { margin-top:38px; width:18px; height:24px; }
+        }
     </style>
 
     <!-- KN3X Estimate browser and iPhone/iPad home-screen icons -->
@@ -493,7 +549,7 @@
                                     <p id="estimateWorkflowStatus" role="status" class="text-xs text-slate-600 mb-3 text-center"></p>
                                     <label class="sr-only" for="savedLocalEstimates">Open finalized local estimate / Abrir presupuesto local</label>
                                     <select id="savedLocalEstimates" onchange="openFinalizedLocalEstimate()" class="w-full border border-slate-300 rounded-lg p-2 mb-4 text-sm"></select>
-                                    <div class="flex flex-col md:flex-row justify-center gap-3">
+                                    <div class="estimate-final-actions flex flex-col md:flex-row justify-center gap-3">
                                     <button id="finalizeEstimateButton" onclick="finalizeEstimate()" class="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white font-bold py-3 px-5 rounded-lg w-full md:w-auto" data-i18n="finalize_estimate">Finalize estimate</button>
 
                                     <button onclick="validarEImprimirPresupuesto()" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2.5 md:py-3 px-8 md:px-10 rounded-lg shadow-lg transition transform hover:-translate-y-0.5 w-full md:w-auto text-sm md:text-lg flex items-center justify-center gap-2" data-i18n="generate_pdf">
