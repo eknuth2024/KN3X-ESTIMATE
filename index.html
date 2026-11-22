@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="kn3x-workspace-shell">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -390,6 +390,31 @@
             }
             #estimateContainer:not(.pdf-export) .estimate-clause-notice h4,
             #estimateContainer:not(.pdf-export) .estimate-clause-notice p { color:#f1f5f9; }
+        }
+    
+        /* Keep the page shell still; only the form scrolls when the iPhone keyboard opens. */
+        @media screen and (max-width:1023px) {
+            html.kn3x-workspace-shell {
+                height:100%; overflow:hidden; overscroll-behavior:none;
+            }
+            .kn3x-workspace-shell body {
+                position:fixed; left:0; right:0; bottom:auto;
+                top:var(--workspace-viewport-top,0px);
+                width:100%; height:var(--workspace-viewport-height,100dvh);
+                min-height:0; margin:0; overflow:hidden; overscroll-behavior:none;
+            }
+            .kn3x-workspace-shell #mainWrapper { height:100%; min-height:0; }
+            .kn3x-workspace-shell #mainContent {
+                min-height:0; overflow-y:auto; overscroll-behavior-y:contain;
+                -webkit-overflow-scrolling:touch; scroll-padding-top:12px;
+                scroll-padding-bottom:110px;
+            }
+            .kn3x-workspace-shell .estimate-mobile-dock {
+                bottom:calc(10px + env(safe-area-inset-bottom,0px) + var(--workspace-keyboard-inset,0px));
+            }
+            .kn3x-workspace-shell .estimate-team-panel:not([hidden]) {
+                bottom:calc(91px + env(safe-area-inset-bottom,0px) + var(--workspace-keyboard-inset,0px));
+            }
         }
     </style>
 
@@ -2557,6 +2582,47 @@
     }
     new MutationObserver(translateDock).observe(document.documentElement,{ attributes:true,attributeFilter:['lang'] });
     translateDock();
+})();
+
+</script>
+<script>
+
+(() => {
+    const root = document.documentElement;
+    const viewport = window.visualViewport;
+    const mobile = window.matchMedia('(max-width:1023px)');
+    let pendingFrame = 0;
+    function syncViewport() {
+        pendingFrame = 0;
+        if (!mobile.matches) {
+            ['--workspace-viewport-height','--workspace-viewport-top','--workspace-keyboard-inset'].forEach(key => root.style.removeProperty(key));
+            return;
+        }
+        // Preserve manual pinch zoom; compensate only the normal keyboard viewport.
+        if (viewport && Math.abs(viewport.scale - 1) > .05) return;
+        const height = viewport ? viewport.height : window.innerHeight;
+        const top = viewport ? Math.max(0,viewport.offsetTop) : 0;
+        root.style.setProperty('--workspace-viewport-height', height + 'px');
+        root.style.setProperty('--workspace-viewport-top', top + 'px');
+        root.style.setProperty('--workspace-keyboard-inset', Math.max(0,window.innerHeight - height - top) + 'px');
+    }
+    function scheduleViewport() {
+        if (!pendingFrame) pendingFrame = requestAnimationFrame(syncViewport);
+    }
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    window.addEventListener('resize',scheduleViewport,{ passive:true });
+    if (viewport) {
+        viewport.addEventListener('resize',scheduleViewport,{ passive:true });
+        viewport.addEventListener('scroll',scheduleViewport,{ passive:true });
+    }
+    window.addEventListener('pageshow',event => {
+        if (mobile.matches) {
+            window.scrollTo(0,0);
+            if (!event.persisted) document.getElementById('mainContent').scrollTop = 0;
+        }
+        scheduleViewport();
+    });
+    syncViewport();
 })();
 
 </script>
