@@ -437,7 +437,20 @@
             .kn3x-workspace-shell .estimate-mobile-dock,
             .kn3x-workspace-shell.workspace-keyboard-open .estimate-mobile-dock { transition:none; }
         }
-    </style>
+    
+/* Filled fields are a visual cue, independent of saving or validation. */
+@media screen {
+    #mainContent :is(input,select,textarea).field-has-value {
+        background-color:#fff3c4 !important;
+        color:#1f2937 !important;
+        border-color:#d8bd69 !important;
+    }
+    #mainContent input.field-has-value:-webkit-autofill {
+        -webkit-box-shadow:0 0 0 1000px #fff3c4 inset !important;
+        -webkit-text-fill-color:#1f2937 !important;
+    }
+}
+</style>
 
     <!-- KN3X Estimate browser and iPhone/iPad home-screen icons -->
     <link rel="icon" href="./favicon.ico?v=20261119" sizes="any">
@@ -2666,6 +2679,39 @@
     syncViewport();
 })();
 
+</script>
+
+<script>
+(() => {
+    const main = document.getElementById('mainContent');
+    if (!main) return;
+    let pending = false;
+    function refreshFilledFields() {
+        pending = false;
+        main.querySelectorAll('input,select,textarea').forEach(field => {
+            const editable = !field.disabled && !field.readOnly &&
+                !['hidden','file','checkbox','radio','button','submit','reset','image','range','color'].includes(field.type);
+            const placeholder = field.tagName === 'SELECT' &&
+                (!field.selectedOptions.length || field.selectedOptions[0].disabled);
+            field.classList.toggle('field-has-value',
+                editable && !placeholder && String(field.value).trim() !== '');
+        });
+    }
+    function scheduleRefresh() {
+        if (!pending) {
+            pending = true;
+            requestAnimationFrame(refreshFilledFields);
+        }
+    }
+    ['input','change','focusin','focusout','click','reset'].forEach(event =>
+        main.addEventListener(event,scheduleRefresh));
+    // Rendered rows, loaded records and translated options also refresh the cue.
+    new MutationObserver(scheduleRefresh).observe(main,{childList:true,subtree:true,characterData:true});
+    window.addEventListener('load',scheduleRefresh);
+    window.addEventListener('pageshow',scheduleRefresh);
+    window.addEventListener('kn3x:viewchange',scheduleRefresh);
+    scheduleRefresh();
+})();
 </script>
 <script src="workspace-account.js?v=mobile-dock-1" defer></script>
 </body>
