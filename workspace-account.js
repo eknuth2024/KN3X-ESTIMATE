@@ -10,7 +10,9 @@
     if (!user) { location.replace('/login.html'); return; }
     if (user.mustChangePassword) { location.replace('/account.html'); return; }
     link.href = 'account.html';
-    link.textContent = user.role === 'admin' ? 'Mi cuenta y usuarios' : 'Mi cuenta';
+    link.textContent = 'Usuario';
+    const mobileLink = document.getElementById('mobile-account-link');
+    if (mobileLink) mobileLink.href = 'account.html';
     const label = document.getElementById('workspace-account-user');
     label.textContent = user.name;
     label.hidden = false;
