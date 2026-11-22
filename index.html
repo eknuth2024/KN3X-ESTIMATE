@@ -298,6 +298,14 @@
             #estimateContainer:not(.pdf-export) #listaItems { background:#728092; border-color:#95a2b2; }
             #estimateContainer:not(.pdf-export) #listaItems tr:hover { background:#7c8a9c; }
         }
+    
+        /* Prevent iPhone focus zoom on numeric line-item fields without disabling pinch zoom. */
+        @media screen and (max-width:1023px) {
+            #estimateContainer:not(.pdf-export) #listaItems .qty,
+            #estimateContainer:not(.pdf-export) #listaItems .price {
+                font-size:16px; line-height:1.25; min-height:36px;
+            }
+        }
     </style>
 
     <!-- KN3X Estimate browser and iPhone/iPad home-screen icons -->
@@ -1435,12 +1443,12 @@
                     <input type="text" class="nota-input w-full p-1 md:p-1.5 border border-transparent hover:border-gray-200 focus:border-slate-500 rounded focus:outline-none bg-transparent transition text-[9px] md:text-[11px] text-gray-500 print:p-0 mt-1" placeholder="${i18n[currentLang].notes}">
                 </td>
                 <td class="p-1 md:p-2 print:py-1 print:px-0 align-top pt-2 md:pt-3 print:pt-1">
-                    <input type="number" min="0" step="any" value="1" class="w-full p-1 border border-transparent hover:border-gray-200 focus:border-slate-500 rounded focus:outline-none bg-transparent text-center transition qty text-[10px] md:text-sm print:p-0 print:text-xs mt-5 md:mt-6 print:mt-0" onchange="calcularTotales()" onkeyup="calcularTotales()">
+                    <input type="number" inputmode="decimal" aria-label="Cantidad / Quantity" min="0" step="any" value="1" class="w-full p-1 border border-transparent hover:border-gray-200 focus:border-slate-500 rounded focus:outline-none bg-transparent text-center transition qty text-[10px] md:text-sm print:p-0 print:text-xs mt-5 md:mt-6 print:mt-0" onchange="calcularTotales()" onkeyup="calcularTotales()">
                 </td>
                 <td class="p-1 md:p-2 print:py-1 print:px-0 align-top pt-2 md:pt-3 print:pt-1">
                     <div class="flex items-center justify-end mt-5 md:mt-6 print:mt-0">
                         <span class="text-slate-400 mr-0.5 md:mr-1 text-[10px] md:text-sm print:text-xs">$</span>
-                        <input type="number" min="0" value="0.00" step="0.01" class="w-full max-w-[60px] md:max-w-[80px] p-1 border border-transparent hover:border-gray-200 focus:border-slate-500 rounded focus:outline-none bg-transparent text-right transition price text-[10px] md:text-sm print:p-0 print:text-xs" onchange="calcularTotales()" onkeyup="calcularTotales()">
+                        <input type="number" inputmode="decimal" aria-label="Precio unitario / Unit price" min="0" value="0.00" step="0.01" class="w-full max-w-[60px] md:max-w-[80px] p-1 border border-transparent hover:border-gray-200 focus:border-slate-500 rounded focus:outline-none bg-transparent text-right transition price text-[10px] md:text-sm print:p-0 print:text-xs" onchange="calcularTotales()" onkeyup="calcularTotales()">
                     </div>
                 </td>
                 <td class="p-1 md:p-2 print:py-1 print:px-0 align-top pt-2 md:pt-3 print:pt-1">
