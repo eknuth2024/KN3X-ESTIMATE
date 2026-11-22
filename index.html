@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>KN3X Command Center</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/jspdf@4.2.1/dist/jspdf.umd.min.js" defer></script>
@@ -51,13 +51,15 @@
         #mobileOverlay { z-index: 1900; }
         .signature-canvas { touch-action: none; } /* Previene que la pantalla se mueva al firmar en celular */
     
-        /* Lower, comfortable mobile navigation with iPhone safe-area spacing. */
+        /* Reserve the iPhone status/island region before the entire mobile toolbar. */
         @media screen and (max-width:1023px) {
+            body { --mobile-safe-top:max(48px, env(safe-area-inset-top,0px)); }
             body, #mainWrapper { height:100vh; height:100dvh; }
             #topHeader {
                 box-sizing:border-box;
-                height:calc(76px + env(safe-area-inset-top,0px));
-                padding-top:calc(20px + env(safe-area-inset-top,0px));
+                height:calc(var(--mobile-safe-top) + 68px);
+                min-height:calc(var(--mobile-safe-top) + 68px);
+                padding-top:calc(var(--mobile-safe-top) + 12px);
                 padding-bottom:12px;
             }
             #mobileMenuToggle {
@@ -69,10 +71,10 @@
             #mobileMenuToggle:hover { background:#465366; }
             #mobileMenuToggle:active { background:#293240; }
             #mobileMenuToggle:focus-visible { outline:3px solid #f97316; outline-offset:3px; }
-            #sidebar { background:#303741; padding-top:calc(12px + env(safe-area-inset-top,0px)); }
+            #sidebar { background:#303741; padding-top:calc(var(--mobile-safe-top) + 12px); }
             #sidebar > div:first-child, #sidebar .submenu { background:#252b33; }
             #sidebar .mobile-menu-close {
-                top:calc(20px + env(safe-area-inset-top,0px)); right:12px;
+                top:calc(var(--mobile-safe-top) + 20px); right:12px;
                 display:flex; align-items:center; justify-content:center;
                 width:44px; height:44px; color:#fff;
             }
