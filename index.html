@@ -271,6 +271,13 @@
                 outline:2px solid #fff; outline-offset:1px;
             }
         }
+    
+        @media screen {
+            #topHeader .toolbar-action-icon { display:block; width:21px; height:21px; flex-shrink:0; }
+            #topHeader #btnLoad .toolbar-action-icon { color:#facc15; }
+            #topHeader #btnSave .toolbar-action-icon { color:#60a5fa; }
+            #topHeader #langBtn { color:#fff; font-size:13px; font-weight:800; letter-spacing:.03em; justify-content:center; }
+        }
     </style>
 
     <!-- KN3X Estimate browser and iPhone/iPad home-screen icons -->
@@ -343,10 +350,10 @@
             <h1 id="topBarTitle" class="text-[13px] md:text-lg font-black text-slate-800 ml-3 lg:ml-0 truncate">KN3X Workspace</h1>
             <div class="flex items-center gap-1.5 md:gap-2">
                 <input type="file" id="fileImport" accept=".json" class="hidden" onchange="importarArchivo(event)">
-                <button onclick="document.getElementById('fileImport').click()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] md:text-sm font-bold py-1 md:py-2 px-2 md:px-4 rounded transition border border-slate-300 flex items-center gap-1 shadow-sm" id="btnLoad">📂 <span class="hidden md:inline" data-i18n="btn_open">Load</span></button>
-                <button onclick="exportarArchivo()" class="bg-slate-800 hover:bg-slate-900 text-white text-[10px] md:text-sm font-bold py-1 md:py-2 px-2 md:px-4 rounded transition flex items-center gap-1 shadow-sm" id="btnSave">💾 <span class="hidden md:inline" data-i18n="btn_save">Save</span></button>
+                <button onclick="document.getElementById('fileImport').click()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] md:text-sm font-bold py-1 md:py-2 px-2 md:px-4 rounded transition border border-slate-300 flex items-center gap-1 shadow-sm" id="btnLoad" aria-label="Abrir archivo / Open file" title="Abrir / Open"><svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" class="toolbar-action-icon"><path d="M3 5a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v1H7a3 3 0 0 0-2.85 2.05L2 17.5V5h1Z"/><path d="M7 10h14a1 1 0 0 1 .95 1.32l-2.4 7.2A2 2 0 0 1 17.65 20H4a1 1 0 0 1-.95-1.32l2.4-7.2A1.64 1.64 0 0 1 7 10Z"/></svg> <span class="hidden md:inline" data-i18n="btn_open">Load</span></button>
+                <button onclick="exportarArchivo()" class="bg-slate-800 hover:bg-slate-900 text-white text-[10px] md:text-sm font-bold py-1 md:py-2 px-2 md:px-4 rounded transition flex items-center gap-1 shadow-sm" id="btnSave" aria-label="Guardar archivo / Save file" title="Guardar / Save"><svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" class="toolbar-action-icon"><path fill-rule="evenodd" d="M5 2a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V7l-5-5H5Zm2 1h9v6H7V3Zm1 10a2 2 0 0 0-2 2v6h12v-6a2 2 0 0 0-2-2H8Zm2 2h4v4h-4v-4Z" clip-rule="evenodd"/></svg> <span class="hidden md:inline" data-i18n="btn_save">Save</span></button>
                 <div class="w-px h-4 md:h-6 bg-gray-300 mx-0.5 md:mx-1"></div>
-                <button onclick="toggleLanguage()" id="langBtn" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] md:text-xs font-bold py-1 md:py-2 px-2 md:px-3 rounded flex items-center gap-1 transition border border-slate-300 shadow-sm">🇪🇸 <span class="hidden sm:inline">ES</span></button>
+                <button onclick="toggleLanguage()" id="langBtn" aria-label="Language: English. Cambiar a español" title="English / Cambiar a español" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] md:text-xs font-bold py-1 md:py-2 px-2 md:px-3 rounded flex items-center gap-1 transition border border-slate-300 shadow-sm">EN</button>
             </div>
         </header>
 
@@ -2219,7 +2226,11 @@
                 const key = el.getAttribute('data-i18n');
                 if(i18n[currentLang][key]) el.innerText = i18n[currentLang][key];
             });
-            document.getElementById('langBtn').innerHTML = currentLang === 'en' ? '🇪🇸 <span class="hidden sm:inline">ES</span>' : '🇺🇸 <span class="hidden sm:inline">EN</span>';
+            const languageButton = document.getElementById('langBtn');
+            languageButton.textContent = currentLang.toUpperCase();
+            const languageHelp = currentLang === 'es' ? 'Idioma: Español. Switch to English' : 'Language: English. Cambiar a español';
+            languageButton.setAttribute('aria-label', languageHelp);
+            languageButton.title = languageHelp;
             document.getElementById('inputDuration').placeholder = i18n[currentLang].duration_placeholder;
             
             const selects = document.querySelectorAll('select.catalogo-select');
