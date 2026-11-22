@@ -369,6 +369,28 @@
             }
             #estimateContainer:not(.pdf-export) #pagoSelect { box-sizing:border-box; min-height:34px; }
         }
+    
+        /* All mobile editing controls use an unscaled 16px font for iPhone focus. */
+        @media screen and (max-width:1023px) {
+            #mainContent :is(input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]),select,textarea) {
+                font-size:16px!important;
+            }
+            #estimateContainer:not(.pdf-export) #customerPickerBar {
+                padding:5px 10px; min-height:40px;
+            }
+            #estimateContainer:not(.pdf-export) #selectCustomerDir {
+                box-sizing:border-box; width:70%; max-width:70%; min-width:0;
+                height:30px; min-height:30px; line-height:20px; padding:4px 6px;
+            }
+            #estimateContainer:not(.pdf-export) #inputEstNum { width:112px; max-width:100%; }
+        }
+        @media screen {
+            #estimateContainer:not(.pdf-export) .estimate-clause-notice {
+                background:transparent; border:0; padding:0;
+            }
+            #estimateContainer:not(.pdf-export) .estimate-clause-notice h4,
+            #estimateContainer:not(.pdf-export) .estimate-clause-notice p { color:#f1f5f9; }
+        }
     </style>
 
     <!-- KN3X Estimate browser and iPhone/iPad home-screen icons -->
@@ -613,7 +635,7 @@
                                         <div><h4 class="font-bold text-slate-800 mb-0.5 md:mb-1" data-i18n="t2_title">2. Unforeseen Conditions</h4><p class="text-justify leading-relaxed" data-i18n="t2_text">This estimate is based on visual inspections. If hidden or unforeseen conditions are discovered, work may be halted, and repair costs will be billed as extra work.</p></div>
                                         <div><h4 class="font-bold text-slate-800 mb-0.5 md:mb-1" data-i18n="t3_title">3. Client Responsibilities</h4><p class="text-justify leading-relaxed" data-i18n="t3_text">The client agrees to provide access to the property, water, and electricity during working hours. KN3X Project LLC is not liable for damage to items not cleared.</p></div>
                                         <div><h4 class="font-bold text-slate-800 mb-0.5 md:mb-1" data-i18n="t4_title">4. Permits & HOA</h4><p class="text-justify leading-relaxed" data-i18n="t4_text">Unless specified, the client is responsible for obtaining all required city permits and HOA approvals.</p></div>
-                                        <div class="bg-red-50 border-l-2 md:border-l-4 border-red-500 p-2 md:p-3 print:bg-transparent print:border-l-2 print:border-slate-800 md:col-span-2"><h4 class="font-bold text-red-700 print:text-slate-800 mb-0.5 md:mb-1" data-i18n="t6_title">5. Texas Mechanic's Lien Warning</h4><p class="text-red-900 print:text-slate-700 text-justify leading-relaxed" data-i18n="t6_text">WARNING: Under Texas law, if you fail to pay your contractor for work or materials provided, your contractor has the right to file a mechanic's lien against your property.</p></div>
+                                        <div class="estimate-clause-notice bg-red-50 border-l-2 md:border-l-4 border-red-500 p-2 md:p-3 print:bg-transparent print:border-l-2 print:border-slate-800 md:col-span-2"><h4 class="font-bold text-red-700 print:text-slate-800 mb-0.5 md:mb-1" data-i18n="t6_title">5. Texas Mechanic's Lien Warning</h4><p class="text-red-900 print:text-slate-700 text-justify leading-relaxed" data-i18n="t6_text">WARNING: Under Texas law, if you fail to pay your contractor for work or materials provided, your contractor has the right to file a mechanic's lien against your property.</p></div>
                                     </div>
                                 </div>
         
