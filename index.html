@@ -155,6 +155,43 @@
                 min-height:36px; padding:6px 10px;
             }
         }
+    
+        /* Compact toolbar and high-contrast editing surfaces. PDF clones retain document colors. */
+        @media screen {
+            #topBarTitle { text-transform:uppercase; font-size:20px; letter-spacing:.035em; font-weight:900; }
+            #topHeader #btnLoad,#topHeader #btnSave,#topHeader #langBtn {
+                background:#465366; border:1px solid #667387; color:#fff;
+            }
+            #topHeader #btnLoad:hover,#topHeader #btnSave:hover,#topHeader #langBtn:hover { background:#56657b; }
+            #estimateContainer:not(.pdf-export) .workspace-dark-panel,
+            #formCustomer,#formVendor {
+                background:#303741; border-color:#596575; color:#f1f5f9;
+            }
+            #estimateContainer:not(.pdf-export) .workspace-dark-panel :is(label,h3,h4,.text-slate-400,.text-slate-500,.text-slate-600,.text-slate-700,.text-slate-800),
+            #formCustomer :is(label,h4),#formVendor :is(label,h4) { color:#eef2f7; }
+            #estimateContainer:not(.pdf-export) .workspace-dark-panel [class*="border-gray"],
+            #estimateContainer:not(.pdf-export) .workspace-dark-panel [class*="border-slate"] { border-color:#647184; }
+            #estimateContainer:not(.pdf-export) :is(input:not([type="hidden"]),select,textarea),
+            #formCustomer input:not([type="hidden"]),#formVendor :is(input:not([type="hidden"]),select) {
+                background:#fff; color:#1f2937; border-color:#cbd5e1; color-scheme:light;
+            }
+            #estimateContainer:not(.pdf-export) #inputEstNum { background:transparent; color:#fff; }
+            #estimateContainer:not(.pdf-export) input::placeholder { color:#687588; opacity:1; }
+            #estimateContainer:not(.pdf-export) #listaItems { background:#303741; color:#f1f5f9; }
+            #estimateContainer:not(.pdf-export) #listaItems tr:hover { background:#3c4655; }
+            #estimateContainer:not(.pdf-export) #listaItems tr { border-color:#596575; }
+            #estimateContainer:not(.pdf-export) #listaItems .row-total { color:#fff; }
+            #estimateContainer:not(.pdf-export) #listaItems .nota-input { border:1px solid #cbd5e1; }
+            #estimateContainer:not(.pdf-export) .workspace-dark-panel :is(input,select,textarea):focus-visible {
+                outline:2px solid #ff944d; outline-offset:2px;
+            }
+        }
+        @media screen and (max-width:1023px) {
+            #mainWrapper { box-sizing:border-box; padding-top:max(16px,env(safe-area-inset-top,0px)); }
+            #topHeader { height:44px; min-height:44px; padding-top:4px; padding-bottom:4px; }
+            #topBarTitle { font-size:16px; line-height:1.2; }
+            #topHeader #btnLoad,#topHeader #btnSave,#topHeader #langBtn { height:36px; min-height:36px; }
+        }
     </style>
 
     <!-- KN3X Estimate browser and iPhone/iPad home-screen icons -->
@@ -287,7 +324,7 @@
                                 </div>
         
                                 <div class="px-3 md:px-8 pt-3 md:pt-6 print:px-0 print:pt-4">
-                                    <div class="flex flex-wrap bg-slate-50 p-3 md:p-4 rounded-lg print:bg-transparent print:p-0 print-border-none">
+                                    <div class="workspace-dark-panel flex flex-wrap bg-slate-50 p-3 md:p-4 rounded-lg print:bg-transparent print:p-0 print-border-none">
                                         <div class="w-full mb-2 pb-2 border-b border-gray-200 print:hidden flex justify-between items-center">
                                             <label class="text-[9px] md:text-xs font-bold text-slate-500 uppercase">Load Directory</label>
                                             <select id="selectCustomerDir" onchange="loadCustomerToEstimate()" class="border-gray-300 rounded text-[10px] md:text-sm p-1 max-w-[150px] md:max-w-[200px] border focus:outline-none focus:border-orange-500">
@@ -343,17 +380,17 @@
         
                                 <div class="px-3 md:px-0 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 print:grid-cols-2 print:gap-4 pt-2 md:pt-4 border-t border-gray-200 print:border-t-2">
                                     <div class="flex flex-col gap-3 md:gap-4">
-                                        <div class="no-print bg-slate-50 p-3 md:p-4 rounded-lg border border-slate-200">
+                                        <div class="workspace-dark-panel no-print bg-slate-50 p-3 md:p-4 rounded-lg border border-slate-200">
                                             <label class="block text-[9px] md:text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5" data-i18n="select_plan">Select Payment Plan</label>
                                             <select id="pagoSelect" onchange="actualizarDesglosePago()" class="w-full text-xs md:text-sm font-medium text-slate-700 bg-white border border-gray-300 rounded p-1.5 md:p-2 focus:outline-none focus:border-orange-500 cursor-pointer"></select>
                                         </div>
-                                        <div class="bg-gray-200 border border-gray-300 rounded-lg p-3 md:p-4 print:bg-gray-200 print:border-gray-300 print:p-3 shadow-sm print:shadow-none w-full">
+                                        <div class="workspace-dark-panel bg-gray-200 border border-gray-300 rounded-lg p-3 md:p-4 print:bg-gray-200 print:border-gray-300 print:p-3 shadow-sm print:shadow-none w-full">
                                             <h4 class="text-[9px] md:text-[10px] font-bold text-slate-600 uppercase tracking-widest mb-2" data-i18n="payment_schedule">Payment Schedule</h4>
                                             <div id="pagoDesglose" class="text-[10px] md:text-sm text-slate-800 flex flex-col print:text-xs"></div>
                                         </div>
                                     </div>
                                     <div class="flex flex-col gap-3 md:gap-4">
-                                        <div class="space-y-1.5 md:space-y-2 bg-slate-50 p-3 md:p-4 rounded-lg border border-slate-200 print:border-gray-300 print:bg-slate-50 print:p-3 shadow-sm print:shadow-none w-full">
+                                        <div class="workspace-dark-panel space-y-1.5 md:space-y-2 bg-slate-50 p-3 md:p-4 rounded-lg border border-slate-200 print:border-gray-300 print:bg-slate-50 print:p-3 shadow-sm print:shadow-none w-full">
                                             <div class="flex justify-between text-slate-600 text-[11px] md:text-sm">
                                                 <span class="font-medium" data-i18n="subtotal">Subtotal:</span>
                                                 <span id="subtotal" class="font-semibold">$0.00</span>
@@ -370,7 +407,7 @@
                                     </div>
                                 </div>
         
-                                <div class="mx-3 md:mx-0 mt-4 md:mt-6 w-auto md:w-full bg-gray-200 border border-gray-300 rounded-lg p-3 md:p-4 print:bg-gray-200 print:border-gray-300 print:p-3 shadow-sm print:shadow-none print-avoid-break">
+                                <div class="workspace-dark-panel mx-3 md:mx-0 mt-4 md:mt-6 w-auto md:w-full bg-gray-200 border border-gray-300 rounded-lg p-3 md:p-4 print:bg-gray-200 print:border-gray-300 print:p-3 shadow-sm print:shadow-none print-avoid-break">
                                     
                                     <div class="grid grid-cols-2 gap-3 md:gap-4">
                                         <div class="relative w-full">
