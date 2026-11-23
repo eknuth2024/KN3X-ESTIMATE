@@ -729,23 +729,23 @@
  #estimateContainer:not(.pdf-export) #trFotos [data-i18n="photos_title"] {color:#eef2f7;}
  #estimateContainer:not(.pdf-export) .estimate-acceptance-panel .signature-pad-container {background:#718096;border-color:#94a3b8;}
  #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) :is(input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not(#inputEstNum),select,textarea):is(input,select,textarea) {
-   background:var(--field-solid-tint,#718096) !important;
-   color:#020916 !important;border:1px solid #94a3b8 !important;
-   -webkit-backdrop-filter:none !important;backdrop-filter:none !important;
-   box-shadow:none !important;
+   background:linear-gradient(155deg,rgba(255,255,255,.98),rgba(255,255,255,.78)) !important;
+   color:#111827 !important;border:1px solid rgba(255,255,255,.85) !important;
+   -webkit-backdrop-filter:blur(16px) saturate(150%) !important;backdrop-filter:blur(16px) saturate(150%) !important;
+   box-shadow:inset 0 1px 1px rgba(255,255,255,.95),inset 0 -1px 2px rgba(148,163,184,.18),0 2px 5px rgba(15,23,42,.12) !important;
  }
  #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) :is(input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not(#inputEstNum),select,textarea):focus-visible {
    box-shadow:none !important;outline:2px solid #fb923c;outline-offset:2px;
  }
- #mainContent .field-has-value {--field-solid-tint:#d1c18d;}
- #mainContent #listaItems input[onkeyup="filtrarServicios(this)"] {--field-solid-tint:#93c5fd;}
+ #mainContent .field-has-value {--field-solid-tint:#ffffff;}
+ #mainContent #listaItems input[onkeyup="filtrarServicios(this)"] {--field-solid-tint:#ffffff;}
  #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) :is(input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not(#inputEstNum),select,textarea):is(select) {
    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%2327364c' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E") !important;
-   background-color:var(--field-solid-tint,#718096) !important;
+   background-color:var(--field-solid-tint,#ffffff) !important;
    background-size:14px 14px !important;background-position:right 12px center !important;background-repeat:no-repeat !important;
  }
  #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) :is(input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not(#inputEstNum),select,textarea):is(input):-webkit-autofill {
-   -webkit-box-shadow:inset 0 0 0 1000px var(--field-solid-tint,#718096) !important;
+   -webkit-box-shadow:inset 0 0 0 1000px var(--field-solid-tint,#ffffff) !important;
    -webkit-text-fill-color:#020916 !important;
  }
 }
@@ -759,8 +759,8 @@
  #estimateContainer:not(.pdf-export) #listaItems .qty {font-size:12px;}
 }
 @media screen {
- body,#mainWrapper,#mainContent,
- #estimateContainer:not(.pdf-export) {background-color:#333333;}
+ html.kn3x-workspace-shell body,#mainWrapper,#mainContent,
+ #estimateContainer:not(.pdf-export) {background-color:#eef0f3;}
 }
 @media screen {
  #estimateContainer:not(.pdf-export) :is(.workspace-dark-panel,.service-editor-panel,#paymentPlanPanel) {
