@@ -920,15 +920,15 @@
                 <!-- DASHBOARD FINANCIERO -->
                 <div class="grid grid-cols-3 gap-2 md:gap-4 mb-4">
                     <div class="bg-blue-100 p-3 md:p-5 rounded-lg md:rounded-xl text-center border border-blue-200 shadow-sm">
-                        <p class="text-[8px] md:text-xs text-blue-600 font-bold uppercase tracking-wider">Total YTD Paid</p>
+                        <p class="text-[8px] md:text-xs text-blue-600 font-bold uppercase tracking-wider"><span data-ledger-en="Total YTD Paid" data-ledger-es="Total pagado en el año">Total YTD Paid</span></p>
                         <p class="text-sm md:text-2xl font-black text-blue-900 mt-1" id="dashTotalPaid">$0.00</p>
                     </div>
                     <div class="bg-red-100 p-3 md:p-5 rounded-lg md:rounded-xl text-center border border-red-200 shadow-sm">
-                        <p class="text-[8px] md:text-xs text-red-600 font-bold uppercase tracking-wider">Pending W-9s</p>
+                        <p class="text-[8px] md:text-xs text-red-600 font-bold uppercase tracking-wider"><span data-ledger-en="Pending W-9s" data-ledger-es="W-9 pendientes">Pending W-9s</span></p>
                         <p class="text-sm md:text-2xl font-black text-red-900 mt-1" id="dashPendingW9">0</p>
                     </div>
                     <div class="bg-green-100 p-3 md:p-5 rounded-lg md:rounded-xl text-center border border-green-200 shadow-sm">
-                        <p class="text-[8px] md:text-xs text-green-600 font-bold uppercase tracking-wider">Active Vendors</p>
+                        <p class="text-[8px] md:text-xs text-green-600 font-bold uppercase tracking-wider"><span data-ledger-en="Active Vendors" data-ledger-es="Proveedores activos">Active Vendors</span></p>
                         <p class="text-sm md:text-2xl font-black text-green-900 mt-1" id="dashActive">0</p>
                     </div>
                 </div>
@@ -936,8 +936,8 @@
                 <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden mb-6" id="ledgerDashboard">
                     <div class="bg-blue-800 p-4 flex justify-between items-center text-white">
                         <div class="flex flex-col">
-                            <h3 class="font-black text-lg flex items-center gap-2">👷‍♂️ Vendor 1099 Ledger</h3>
-                            <p class="text-[10px] md:text-xs text-blue-200">Track W-9s, Compliance, and Annual Payouts</p>
+                            <h3 class="font-black text-lg flex items-center gap-2"><span data-ledger-en="👷‍♂️ Vendor 1099 Ledger" data-ledger-es="👷‍♂️ Libro de proveedores 1099">👷‍♂️ Vendor 1099 Ledger</span></h3>
+                            <p class="text-[10px] md:text-xs text-blue-200"><span data-ledger-en="Track W-9s, Compliance, and Annual Payouts" data-ledger-es="Control de W-9, cumplimiento y pagos anuales">Track W-9s, Compliance, and Annual Payouts</span></p>
                         </div>
                     </div>
                     <div class="p-4 md:p-6">
@@ -946,42 +946,42 @@
                             <input type="hidden" id="editSubId" value="">
                             <div class="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4">
                                 <div class="col-span-1 md:col-span-2">
-                                    <label class="block text-[10px] font-bold text-blue-800 uppercase mb-1">Full Legal Name / LLC <span class="text-red-500">*</span></label>
+                                    <label class="block text-[10px] font-bold text-blue-800 uppercase mb-1"><span data-ledger-en="Full Legal Name / LLC" data-ledger-es="Nombre legal completo / LLC">Full Legal Name / LLC</span> <span class="text-red-500">*</span></label>
                                     <input type="text" id="newSubName" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-blue-500 border">
                                 </div>
                                 <div>
-                                    <label class="block text-[10px] font-bold text-blue-800 uppercase mb-1">Trade / Specialty <span class="text-red-500">*</span></label>
+                                    <label class="block text-[10px] font-bold text-blue-800 uppercase mb-1"><span data-ledger-en="Trade / Specialty" data-ledger-es="Oficio / Especialidad">Trade / Specialty</span> <span class="text-red-500">*</span></label>
                                     <input type="text" id="newSubTrade" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-blue-500 border">
                                 </div>
                                 <div>
-                                    <label class="block text-[10px] font-bold text-blue-800 uppercase mb-1">Phone Number <span class="text-red-500">*</span></label>
+                                    <label class="block text-[10px] font-bold text-blue-800 uppercase mb-1"><span data-ledger-en="Phone Number" data-ledger-es="Número de teléfono">Phone Number</span> <span class="text-red-500">*</span></label>
                                     <input type="text" id="newSubPhone" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-blue-500 border">
                                 </div>
                                 <div class="col-span-1 md:col-span-2">
-                                    <label class="block text-[10px] font-bold text-blue-800 uppercase mb-1">Mailing Address <span class="text-red-500">*</span></label>
+                                    <label class="block text-[10px] font-bold text-blue-800 uppercase mb-1"><span data-ledger-en="Mailing Address" data-ledger-es="Dirección postal">Mailing Address</span> <span class="text-red-500">*</span></label>
                                     <input type="text" id="newSubAddr" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-blue-500 border">
                                 </div>
                                 <div>
-                                    <label class="block text-[10px] font-bold text-blue-800 uppercase mb-1">W-9 Form Status</label>
+                                    <label class="block text-[10px] font-bold text-blue-800 uppercase mb-1"><span data-ledger-en="W-9 Form Status" data-ledger-es="Estado del formulario W-9">W-9 Form Status</span></label>
                                     <select id="newSubW9" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm font-semibold focus:outline-none focus:border-blue-500 border cursor-pointer">
-                                        <option value="Pending">Pending ⚠️</option>
-                                        <option value="Received">Received ✓</option>
+                                        <option value="Pending" data-ledger-en="Pending ⚠️" data-ledger-es="Pendiente ⚠️">Pending ⚠️</option>
+                                        <option value="Received" data-ledger-en="Received ✓" data-ledger-es="Recibido ✓">Received ✓</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-[10px] font-bold text-blue-800 uppercase mb-1">EIN / SSN <span class="text-red-500">*</span></label>
+                                    <label class="block text-[10px] font-bold text-blue-800 uppercase mb-1"><span data-ledger-en="EIN / SSN" data-ledger-es="EIN / SSN">EIN / SSN</span> <span class="text-red-500">*</span></label>
                                     <input type="text" id="newSubID" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-blue-500 border" placeholder="XXX-XX-XXXX">
                                 </div>
                                 <div>
-                                    <label class="block text-[10px] font-bold text-blue-800 uppercase mb-1">Insured (COI)?</label>
+                                    <label class="block text-[10px] font-bold text-blue-800 uppercase mb-1"><span data-ledger-en="Insured (COI)?" data-ledger-es="¿Tiene seguro (COI)?">Insured (COI)?</span></label>
                                     <select id="newSubCOI" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-blue-500 border cursor-pointer">
-                                        <option value="No">No</option>
-                                        <option value="Yes">Yes</option>
+                                        <option value="No" data-ledger-en="No" data-ledger-es="No">No</option>
+                                        <option value="Yes" data-ledger-en="Yes" data-ledger-es="Sí">Yes</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="mt-4 flex flex-col sm:flex-row justify-end gap-2">
-                                <button onclick="cancelarEdicion()" id="btnCancelEdit" class="hidden bg-slate-400 hover:bg-slate-500 text-white font-bold py-2 px-6 rounded shadow-sm text-[11px] md:text-sm transition w-full sm:w-auto">Cancel</button>
+                                <button onclick="cancelarEdicion()" id="btnCancelEdit" class="hidden bg-slate-400 hover:bg-slate-500 text-white font-bold py-2 px-6 rounded shadow-sm text-[11px] md:text-sm transition w-full sm:w-auto"><span data-ledger-en="Cancel" data-ledger-es="Cancelar">Cancel</span></button>
                                 <button onclick="guardarSubcontratista()" id="btnSaveVendor" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded shadow-sm text-[11px] md:text-sm transition w-full sm:w-auto">+ Save Vendor</button>
                             </div>
                         </div>
@@ -990,11 +990,11 @@
                             <table class="w-full text-left border-collapse min-w-[600px]">
                                 <thead>
                                     <tr class="bg-gray-100 text-gray-600 text-[9px] md:text-[11px] uppercase tracking-wider">
-                                        <th class="p-2 md:p-3 rounded-tl-lg font-bold">Name & Trade</th>
-                                        <th class="p-2 md:p-3 font-bold">Contact Info</th>
-                                        <th class="p-2 md:p-3 font-bold text-center">Compliance</th>
-                                        <th class="p-2 md:p-3 text-right font-bold">YTD Paid</th>
-                                        <th class="p-2 md:p-3 text-center rounded-tr-lg font-bold">Actions</th>
+                                        <th class="p-2 md:p-3 rounded-tl-lg font-bold"><span data-ledger-en="Name &amp; Trade" data-ledger-es="Nombre y oficio">Name & Trade</span></th>
+                                        <th class="p-2 md:p-3 font-bold"><span data-ledger-en="Contact Info" data-ledger-es="Datos de contacto">Contact Info</span></th>
+                                        <th class="p-2 md:p-3 font-bold text-center"><span data-ledger-en="Compliance" data-ledger-es="Cumplimiento">Compliance</span></th>
+                                        <th class="p-2 md:p-3 text-right font-bold"><span data-ledger-en="YTD Paid" data-ledger-es="Pagado en el año">YTD Paid</span></th>
+                                        <th class="p-2 md:p-3 text-center rounded-tr-lg font-bold"><span data-ledger-en="Actions" data-ledger-es="Acciones">Actions</span></th>
                                     </tr>
                                 </thead>
                                 <tbody id="ledgerTableBody" class="text-[11px] md:text-sm"></tbody>
@@ -1135,7 +1135,7 @@
                 updateContract();
             } else if (vista === 'ledger') {
                 document.getElementById('ledgerContainer').classList.remove('hidden');
-                topBarTitle.innerText = "1099 Vendor Ledger";
+                topBarTitle.innerText = currentLang === 'es' ? "Libro de proveedores 1099" : "1099 Vendor Ledger";
                 renderLedgerTable(); // Actualiza el dashboard financiero automáticamente
             } else if (vista === 'customerLedger') {
                 document.getElementById('customerLedgerContainer').classList.remove('hidden');
@@ -1555,8 +1555,8 @@
                     <td class="p-2 md:p-3 text-[10px] md:text-xs text-slate-600 truncate max-w-[150px] md:max-w-[200px]">📍 ${escapeHTML(cust.addr || 'N/A')}</td>
                     <td class="p-2 md:p-3 text-center">
                         <div class="flex items-center justify-center gap-1 md:gap-2">
-                            <button onclick="editarCliente('${cust.id}')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm md:text-lg w-6 h-6 md:w-8 md:h-8 rounded shadow-sm transition">✏️</button>
-                            <button onclick="eliminarCliente('${cust.id}')" class="bg-slate-200 hover:bg-red-100 text-slate-500 hover:text-red-600 text-sm md:text-lg w-6 h-6 md:w-8 md:h-8 rounded shadow-sm transition">🗑️</button>
+                            <button onclick="editarCliente('${cust.id}')" aria-label="${currentLang === 'es' ? 'Editar proveedor' : 'Edit vendor'}" title="${currentLang === 'es' ? 'Editar proveedor' : 'Edit vendor'}" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm md:text-lg w-6 h-6 md:w-8 md:h-8 rounded shadow-sm transition">✏️</button>
+                            <button onclick="eliminarCliente('${cust.id}')" aria-label="${currentLang === 'es' ? 'Eliminar proveedor' : 'Delete vendor'}" title="${currentLang === 'es' ? 'Eliminar proveedor' : 'Delete vendor'}" class="bg-slate-200 hover:bg-red-100 text-slate-500 hover:text-red-600 text-sm md:text-lg w-6 h-6 md:w-8 md:h-8 rounded shadow-sm transition">🗑️</button>
                         </div>
                     </td>
                 `;
@@ -2249,7 +2249,7 @@
                 document.getElementById('formVendor').classList.add('bg-blue-50', 'border-blue-200');
             } else {
                 const existe = subLedger.find(s => s.name.toLowerCase() === name.toLowerCase());
-                if(existe) return alert("This vendor already exists in the ledger.");
+                if(existe) return alert(currentLang === 'es' ? "Este proveedor ya existe en el libro." : "This vendor already exists in the ledger.");
                 subLedger.push({
                     id: Date.now().toString(), name: name, trade: trade,
                     phone: phone, addr: addr, w9: w9, tin: tin,
@@ -2278,12 +2278,13 @@
             document.getElementById('btnCancelEdit').classList.remove('hidden');
             document.getElementById('formVendor').classList.remove('bg-blue-50', 'border-blue-200');
             document.getElementById('formVendor').classList.add('bg-yellow-50', 'border-yellow-200');
+            syncLedgerLanguage();
             document.getElementById('mainContent').scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function eliminarSubcontratista(id) {
             const sub = subLedger.find(s => s.id === id);
-            if(confirm(`Are you sure you want to delete ${escapeHTML(sub.name)}? This will erase their YTD payment history.`)) {
+            if(confirm(currentLang === 'es' ? `¿Seguro que desea eliminar a ${sub.name}? Se borrará su historial de pagos del año.` : `Are you sure you want to delete ${sub.name}? This will erase their YTD payment history.`)) {
                 subLedger = subLedger.filter(s => s.id !== id);
                 localStorage.setItem('kn3x_subs_v3', JSON.stringify(subLedger));
                 renderLedgerTable();
@@ -2298,6 +2299,7 @@
             document.getElementById('formVendor').classList.remove('bg-yellow-50', 'border-yellow-200');
             document.getElementById('formVendor').classList.add('bg-blue-50', 'border-blue-200');
             limpiarFormularioVendor();
+            syncLedgerLanguage();
         }
 
         function limpiarFormularioVendor() {
@@ -2305,7 +2307,22 @@
             document.getElementById('newSubW9').value = 'Pending'; document.getElementById('newSubCOI').value = 'No';
         }
 
+        function syncLedgerLanguage() {
+            const es = currentLang === 'es';
+            document.querySelectorAll('[data-ledger-en]').forEach(el => { el.textContent = es ? el.dataset.ledgerEs : el.dataset.ledgerEn; });
+            const editing = document.getElementById('editSubId').value;
+            const sub = subLedger.find(s => s.id === editing);
+            document.getElementById('vendorFormTitle').textContent = sub
+                ? (es ? '✏️ Editando proveedor: ' : '✏️ Editing Vendor: ') + sub.name
+                : (es ? 'Agregar proveedor' : 'Add New Vendor');
+            document.getElementById('btnSaveVendor').textContent = editing
+                ? (es ? '✓ Actualizar proveedor' : '✓ Update Vendor')
+                : (es ? '+ Guardar proveedor en el libro' : '+ Save Vendor to Ledger');
+            if (workspaceView === 'ledger') document.getElementById('topBarTitle').textContent = es ? 'Libro de proveedores 1099' : '1099 Vendor Ledger';
+        }
+
         function renderLedgerTable() {
+            syncLedgerLanguage();
             const tbody = document.getElementById('ledgerTableBody');
             tbody.innerHTML = '';
             
@@ -2318,7 +2335,7 @@
                 if(sub.w9 === 'Pending') pendingW9s++;
                 
                 const w9Badge = sub.w9 === 'Received' ? `<span class="bg-green-100 text-green-800 text-[9px] md:text-[10px] font-bold px-1.5 py-0.5 md:py-1 rounded">W-9 ✓</span>` : `<span class="bg-red-100 text-red-800 text-[9px] md:text-[10px] font-bold px-1.5 py-0.5 md:py-1 rounded animate-pulse">W-9 ⚠️</span>`;
-                const coiBadge = sub.coi === 'Yes' ? `<span class="bg-blue-100 text-blue-800 text-[9px] md:text-[10px] font-bold px-1.5 py-0.5 md:py-1 rounded">COI ✓</span>` : `<span class="bg-gray-100 text-gray-500 text-[9px] md:text-[10px] font-bold px-1.5 py-0.5 md:py-1 rounded">No COI</span>`;
+                const coiBadge = sub.coi === 'Yes' ? `<span class="bg-blue-100 text-blue-800 text-[9px] md:text-[10px] font-bold px-1.5 py-0.5 md:py-1 rounded">COI ✓</span>` : `<span class="bg-gray-100 text-gray-500 text-[9px] md:text-[10px] font-bold px-1.5 py-0.5 md:py-1 rounded">${currentLang === 'es' ? 'Sin COI' : 'No COI'}</span>`;
                 const tr = document.createElement('tr');
                 tr.className = "border-b border-gray-200 hover:bg-blue-50 transition";
                 tr.innerHTML = `
@@ -2330,7 +2347,7 @@
                         <div class="flex items-center justify-center gap-1 md:gap-2">
                             <button onclick="editarSubcontratista('${sub.id}')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm md:text-lg w-6 h-6 md:w-8 md:h-8 rounded shadow-sm transition">✏️</button>
                             <button onclick="eliminarSubcontratista('${sub.id}')" class="bg-slate-200 hover:bg-red-100 text-slate-500 hover:text-red-600 text-sm md:text-lg w-6 h-6 md:w-8 md:h-8 rounded shadow-sm transition">🗑️</button>
-                            <button onclick="generar1099('${sub.id}')" class="block bg-red-500 hover:bg-red-600 text-white text-[10px] font-bold py-1.5 px-3 rounded shadow-sm transition uppercase">1099 PDF</button>
+                            <button onclick="generar1099('${sub.id}')" class="block bg-red-500 hover:bg-red-600 text-white text-[10px] font-bold py-1.5 px-3 rounded shadow-sm transition uppercase">${currentLang === 'es' ? 'PDF 1099' : '1099 PDF'}</button>
                         </div>
                     </td>
                 `;
@@ -2453,6 +2470,8 @@
             const customerPlaceholder = document.getElementById('selectCustomerDir')?.options[0];
             if (customerPlaceholder) customerPlaceholder.textContent = currentLang === 'es' ? '-- Seleccionar cliente --' : '-- Select customer --';
             syncContractLanguage();
+            syncLedgerLanguage();
+            renderLedgerTable();
         }
 
         // VALIDACIÓN PARA EXPORTAR (GUARDAR JSON)
