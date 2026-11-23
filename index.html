@@ -716,6 +716,39 @@
    font-size:11px;min-height:44px;font-weight:800;line-height:1.2;letter-spacing:.025em;
  }
 }
+
+@media screen {
+ #estimateContainer:not(.pdf-export) :is(.workspace-dark-panel,.service-editor-panel,.estimate-acceptance-panel),
+ #estimateContainer:not(.pdf-export) #listaItems,
+ #estimateContainer:not(.pdf-export) #trFotos > td > div,
+ #estimateContainer:not(.pdf-export) #photoGrid > div,
+ #mainContent :is(#formCustomer,#formVendor) {
+   background:#4b5869;border-color:#748296;
+ }
+ #estimateContainer:not(.pdf-export) #listaItems tr:hover {background:#536174;}
+ #estimateContainer:not(.pdf-export) #trFotos [data-i18n="photos_title"] {color:#eef2f7;}
+ #estimateContainer:not(.pdf-export) .estimate-acceptance-panel .signature-pad-container {background:#718096;border-color:#94a3b8;}
+ #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) :is(input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not(#inputEstNum),select,textarea):is(input,select,textarea) {
+   background:var(--field-solid-tint,#718096) !important;
+   color:#020916 !important;border:1px solid #94a3b8 !important;
+   -webkit-backdrop-filter:none !important;backdrop-filter:none !important;
+   box-shadow:none !important;
+ }
+ #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) :is(input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not(#inputEstNum),select,textarea):focus-visible {
+   box-shadow:none !important;outline:2px solid #fb923c;outline-offset:2px;
+ }
+ #mainContent .field-has-value {--field-solid-tint:#d1c18d;}
+ #mainContent #listaItems input[onkeyup="filtrarServicios(this)"] {--field-solid-tint:#93c5fd;}
+ #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) :is(input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not(#inputEstNum),select,textarea):is(select) {
+   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%2327364c' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E") !important;
+   background-color:var(--field-solid-tint,#718096) !important;
+   background-size:14px 14px !important;background-position:right 12px center !important;background-repeat:no-repeat !important;
+ }
+ #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) :is(input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not(#inputEstNum),select,textarea):is(input):-webkit-autofill {
+   -webkit-box-shadow:inset 0 0 0 1000px var(--field-solid-tint,#718096) !important;
+   -webkit-text-fill-color:#020916 !important;
+ }
+}
 </style>
 
     <!-- KN3X Estimate browser and iPhone/iPad home-screen icons -->
