@@ -11,6 +11,7 @@ test('private access, member permissions, password change, suspension and persis
   const directory = await mkdtemp(join(tmpdir(),'kn3x-auth-test-'));
   const origin = 'http://127.0.0.1:3080';
   await writeFile(join(directory,'index.html'),'<h1>Private workspace</h1>');
+  await writeFile(join(directory,'estimate-storage.js'),'// estimate storage');
   await writeFile(join(directory,'login.html'),'<h1>Login</h1>');
   await writeFile(join(directory,'account.html'),'<h1>Account</h1>');
   const app = await buildServer({ dataDir:directory,root:directory,origin });
@@ -32,6 +33,7 @@ test('private access, member permissions, password change, suspension and persis
   assert.equal((await request('/')).status,303);
   assert.equal((await request('/index.html')).headers.get('location'),'/login.html');
   assert.equal((await request('/account.html')).status,303);
+  assert.equal((await request('/estimate-storage.js')).headers.get('location'),'/login.html');
   assert.equal((await request('/server/store.mjs')).status,404);
   assert.equal((await request('/users.json')).status,404);
   assert.equal((await request('/api/users')).status,401);
@@ -43,6 +45,7 @@ test('private access, member permissions, password change, suspension and persis
   const setCookie = login.headers.get('set-cookie'), adminCookie = setCookie.split(';')[0];
   assert.match(setCookie,/HttpOnly/); assert.match(setCookie,/SameSite=Strict/);
   assert.equal((await request('/',{ cookie:adminCookie })).status,200);
+  assert.equal(await (await request('/estimate-storage.js',{ cookie:adminCookie })).text(),'// estimate storage');
   assert.equal((await request('/api/users',{ method:'POST',cookie:adminCookie,data:{ name:'Helper',username:'helper',password:'temporary-test-123',role:'admin' } })).status,400);
   const create = await request('/api/users',{ method:'POST',cookie:adminCookie,data:{ name:'Helper',username:'helper',password:'temporary-test-123' } });
   assert.equal(create.status,201);

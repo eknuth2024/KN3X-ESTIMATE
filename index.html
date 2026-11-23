@@ -1145,7 +1145,8 @@
     <!-- ========================================== -->
     <!-- SCRIPTS -->
     <!-- ========================================== -->
-    <script>
+    <script src="estimate-storage.js?v=1"></script>
+<script>
         document.getElementById('fechaActual').value = localDate();
         document.getElementById('subDate').value = localDate();
         
@@ -1866,21 +1867,16 @@
 
         // Temporary local repository; the central server will own this sequence later.
         const ESTIMATE_STORE = 'kn3x_finalized_estimates_v1';
+        const estimateDocumentStorage = new EstimateDocumentStorage(ESTIMATE_STORE);
+        let estimateStorageLoading = true;
+        let estimatePhotoContext = 0;
+        let estimatePhotosProcessing = 0;
+        let estimatePdfDraft = false;
+        let estimateStorageChannel = null;
         let activeEstimateId = null;
         let estimateFinalizing = false;
         function estimateMessage(en, es) { return currentLang === 'es' ? es : en; }
-        function readEstimateStore() {
-            const raw = localStorage.getItem(ESTIMATE_STORE);
-            if (!raw) return {version:1, estimates:[]};
-            const data = JSON.parse(raw);
-            if (!data || data.version !== 1 || !Array.isArray(data.estimates)) throw new Error('Invalid estimate store');
-            const numbers = new Set(), ids = new Set();
-            for (const record of data.estimates) {
-                if (!record || !Number.isSafeInteger(record.number) || record.number < 1 || !record.id || !record.document || numbers.has(record.number) || ids.has(record.id)) throw new Error('Invalid saved estimate');
-                numbers.add(record.number); ids.add(record.id);
-            }
-            return data;
-        }
+        function readEstimateStore() { return estimateDocumentStorage.snapshot(); }
         function formatEstimateNumber(number) { return number >= 100001 ? 'PN-' + String(number) : '#' + String(number).padStart(6,'0'); }
         function nextEstimateNumber(store) {
             const number = store.estimates.reduce((max, record) => Math.max(max, record.number), 100000) + 1;
@@ -1908,7 +1904,13 @@
             data.localEstimateId = activeEstimateId;
             return data;
         }
+        function photosReadyForEstimate() {
+            if (!estimatePhotosProcessing) return true;
+            alert(estimateMessage('Wait for your photo to finish processing, then try again.','Espera a que termine de procesarse la foto e inténtalo de nuevo.'));
+            return false;
+        }
         function validEstimateForFinalizing() {
+            if (!photosReadyForEstimate()) return false;
             const required = ['inputClientName','fechaActual','inputClientEmail','inputPhone','inputAddress','inputDuration'];
             if (required.some(id => !document.getElementById(id).value.trim()) || !document.getElementById('inputClientEmail').checkValidity()) {
                 alert(estimateMessage('Complete all required fields and enter a valid email before finalizing.','Completa los campos obligatorios y un correo válido antes de finalizar.'));
@@ -1929,6 +1931,7 @@
         function refreshEstimateControls() {
             const status = document.getElementById('estimateWorkflowStatus'), selector = document.getElementById('savedLocalEstimates');
             if (!status || !selector) return;
+            if (estimateStorageLoading) {status.textContent = estimateMessage('Loading estimates on this device…','Cargando presupuestos de este dispositivo…');return;}
             try {
                 const store = readEstimateStore();
                 const record = store.estimates.find(record => record.id === activeEstimateId);
@@ -1945,61 +1948,64 @@
                 selector.value = selectedId;
                 const changed = record && estimateDocumentFingerprint(record.document) !== estimateDocumentFingerprint(collectEstimateDocument());
                 status.textContent = record ? estimateMessage(
-                    formatEstimateNumber(record.number) + (changed ? ' reserved — changes pending. Finalize again before PDF.' : ' finalized and reserved.'),
-                    formatEstimateNumber(record.number) + (changed ? ' reservado — cambios pendientes. Finaliza de nuevo antes del PDF.' : ' finalizado y reservado.')
-                ) : estimateMessage('Draft — number reserved only when you finalize. Saved on this browser only.','Borrador — el número se reserva al finalizar. Se guarda solo en este navegador.');
+                    formatEstimateNumber(record.number) + (changed ? ' reserved — changes pending. Finalize to save, or generate a draft PDF.' : ' finalized and reserved.'),
+                    formatEstimateNumber(record.number) + (changed ? ' reservado — cambios pendientes. Finaliza para guardar o genera un PDF borrador.' : ' finalizado y reservado.')
+                ) : estimateMessage('Draft — number reserved only when you finalize. Saved on this device only.','Borrador — el número se reserva al finalizar. Se guarda solo en este dispositivo.');
             } catch {
-                status.textContent = estimateMessage('Local storage unavailable. Nothing has been reserved. Keep a JSON backup.','Almacenamiento local no disponible. No se ha reservado ningún número. Conserva una copia JSON.');
+                status.textContent = estimateMessage('Local storage unavailable. Keep a JSON backup; a draft PDF is still available.','Almacenamiento local no disponible. Conserva una copia JSON; puedes generar un PDF borrador.');
             }
         }
         async function finalizeEstimate() {
             if (estimateFinalizing || !validEstimateForFinalizing()) return;
             estimateFinalizing = true;
             const button = document.getElementById('finalizeEstimateButton'); button.disabled = true;
-            const operation = () => {
-                if (!validEstimateForFinalizing()) return;
-                const store = readEstimateStore();
-                let record = store.estimates.find(r => r.id === activeEstimateId);
-                const documentData = collectEstimateDocument();
-                if (record && record.document.clientName.trim().toLowerCase() !== documentData.clientName.trim().toLowerCase()) {
-                    alert(estimateMessage('This number is reserved for '+record.document.clientName+'. Use Clear content for a different client.','Este número está reservado para '+record.document.clientName+'. Usa Borrar contenido para otro cliente.'));
-                    return;
-                }
-                const now = new Date().toISOString();
-                const id = record?.id || crypto.randomUUID();
-                let number = record?.number;
-                if (!number) {
-                    const candidate = Number(documentData.estNum.replace(/^(?:PN-|#)/i, ''));
-                    number = Number.isSafeInteger(candidate) && candidate > 0 && !store.estimates.some(r => r.number === candidate)
-                        ? Math.max(candidate,nextEstimateNumber(store)) : nextEstimateNumber(store);
-                }
-                documentData.estNum = formatEstimateNumber(number); documentData.localEstimateId = id;
-                const updated = {id,number,finalizedAt:record?.finalizedAt || now,updatedAt:now,document:documentData};
-                if (record) store.estimates[store.estimates.indexOf(record)] = updated;
-                else store.estimates.push(updated);
-                // Persist before changing the visible ID or claiming a reservation.
-                localStorage.setItem(ESTIMATE_STORE, JSON.stringify(store));
-                activeEstimateId = id; setEstimateNumber(number);
-                refreshEstimateControls();
-                alert(estimateMessage(documentData.estNum+' finalized and saved on this browser. This does not mean client approval.',
-                    documentData.estNum+' finalizado y guardado en este navegador. Esto no significa aprobación del cliente.'));
-            };
             try {
-                if (navigator.locks?.request) await navigator.locks.request(ESTIMATE_STORE, operation);
-                else operation();
+                let savedRecord;
+                await estimateDocumentStorage.update(store => {
+                    const record = store.estimates.find(r => r.id === activeEstimateId);
+                    const documentData = collectEstimateDocument();
+                    if (record && record.document.clientName.trim().toLowerCase() !== documentData.clientName.trim().toLowerCase()) {
+                        throw new Error(estimateMessage('This number is reserved for '+record.document.clientName+'. Use Clear content for a different client.','Este número está reservado para '+record.document.clientName+'. Usa Borrar contenido para otro cliente.'));
+                    }
+                    const now = new Date().toISOString();
+                    const id = record?.id || crypto.randomUUID();
+                    let number = record?.number;
+                    if (!number) {
+                        const candidate = Number(documentData.estNum.replace(/^(?:PN-|#)/i,''));
+                        number = Number.isSafeInteger(candidate) && candidate > 0 && !store.estimates.some(r => r.number === candidate)
+                            ? Math.max(candidate,nextEstimateNumber(store)) : nextEstimateNumber(store);
+                    }
+                    documentData.estNum = formatEstimateNumber(number); documentData.localEstimateId = id;
+                    savedRecord = {id,number,finalizedAt:record?.finalizedAt || now,updatedAt:now,document:documentData};
+                    if (record) store.estimates[store.estimates.indexOf(record)] = savedRecord;
+                    else store.estimates.push(savedRecord);
+                    return store;
+                });
+                // Only announce a reservation after the whole document, including photos, commits.
+                activeEstimateId = savedRecord.id; setEstimateNumber(savedRecord.number);
+                estimateStorageChannel?.postMessage('updated');
+                refreshEstimateControls();
+                alert(estimateMessage(savedRecord.document.estNum+' finalized and saved on this device, including photos. This does not mean client approval.',
+                    savedRecord.document.estNum+' finalizado y guardado en este dispositivo, incluidas las fotos. Esto no significa aprobación del cliente.'));
             } catch(error) {
                 console.error('Estimate finalization failed',error);
-                alert(estimateMessage('Could not save or reserve the estimate. Your form is unchanged. Local storage may be full or unavailable; save a JSON backup.',
-                    'No se pudo guardar ni reservar el presupuesto. Tus datos siguen en pantalla. El almacenamiento local puede estar lleno o no disponible; guarda una copia JSON.'));
+                refreshEstimateControls();
+                alert(estimateMessage('Could not save or reserve the estimate. Your information is still on screen. Save a JSON backup; Generate PDF can create a clearly marked draft without saving.',
+                    'No se pudo guardar ni reservar el presupuesto. Tus datos siguen en pantalla. Guarda una copia JSON; Generar PDF permite crear un borrador identificado sin guardar.')+'\n'+error.message);
             } finally { estimateFinalizing = false; button.disabled = false; }
         }
         function finalizedEstimateReadyForPdf() {
+            estimatePdfDraft = false;
             try {
                 const record = readEstimateStore().estimates.find(r => r.id === activeEstimateId);
                 if (record && estimateDocumentFingerprint(record.document) === estimateDocumentFingerprint(collectEstimateDocument())) return true;
             } catch {}
-            alert(estimateMessage('Click the green Finalize estimate button before generating the PDF.','Pulsa el botón verde Finalizar presupuesto antes de generar el PDF.'));
-            refreshEstimateControls(); return false;
+            const approved = confirm(estimateMessage(
+                'This version has not been finalized and saved. Generate a DRAFT PDF with photos anyway? It will be marked as a draft and will not reserve a new estimate number. You can also save a JSON backup.',
+                'Esta versión no está finalizada y guardada. ¿Generar de todos modos un PDF BORRADOR con las fotos? Quedará identificado como borrador y no reservará un nuevo número. También puedes guardar una copia JSON.'));
+            estimatePdfDraft = approved;
+            refreshEstimateControls();
+            return approved;
         }
         function clearEstimateContent() {
             if (estimateFinalizing) return;
@@ -2007,6 +2013,7 @@
                 '¿Borrar este formulario e iniciar un presupuesto nuevo? Se perderán los cambios no finalizados. Los presupuestos finalizados y sus números reservados se conservarán.'))) return;
             let number; try { number = nextEstimateNumber(readEstimateStore()); } catch { alert(estimateMessage('Cannot read local numbering. Save a JSON backup before clearing.','No se puede leer la numeración local. Guarda una copia JSON antes de borrar.')); return; }
             activeEstimateId = null;
+            estimatePhotoContext++;
             ['inputClientName','inputClientEmail','inputPhone','inputAddress','inputDuration','inputPrintedName'].forEach(id => document.getElementById(id).value = '');
             document.getElementById('inputPrintedName').dataset.manual = 'false';
             document.getElementById('selectCustomerDir').value = '';
@@ -2041,16 +2048,28 @@
             document.querySelectorAll('.est-display').forEach(el => el.textContent = document.getElementById('inputEstNum').value);
             refreshEstimateControls();
         }
-        function initializeEstimateWorkflow() {
+        async function initializeEstimateWorkflow() {
             document.getElementById('inputEstNum').readOnly = true;
-            try {setEstimateNumber(nextEstimateNumber(readEstimateStore()));} catch {}
-            refreshEstimateControls();
             document.getElementById('estimateContainer').addEventListener('input', refreshEstimateControls);
             document.getElementById('estimateContainer').addEventListener('change', refreshEstimateControls);
-            window.addEventListener('storage', event => {if(event.key===ESTIMATE_STORE) refreshEstimateControls();});
+            const reload = async () => {
+                try { await estimateDocumentStorage.reload(); refreshEstimateControls(); }
+                catch { /* Current form stays intact if storage becomes unavailable. */ }
+            };
+            try {
+                await estimateDocumentStorage.initialize();
+                setEstimateNumber(nextEstimateNumber(readEstimateStore()));
+                if (typeof BroadcastChannel !== 'undefined') {
+                    estimateStorageChannel = new BroadcastChannel('kn3x-estimate-storage');
+                    estimateStorageChannel.onmessage = reload;
+                }
+                window.addEventListener('focus',reload);
+            } catch (error) { console.error('Estimate storage initialization failed',error); }
+            finally { estimateStorageLoading = false; refreshEstimateControls(); }
         }
 
         function validarEImprimirPresupuesto() {
+            if (!photosReadyForEstimate()) return;
             const name = document.getElementById('inputClientName').value.trim();
             const email = document.getElementById('inputClientEmail').value.trim();
             const phone = document.getElementById('inputPhone').value.trim();
@@ -2202,7 +2221,8 @@
                     start=end;page++;
                 }
                 const pages=pdf.getNumberOfPages();
-                for(let i=1;i<=pages;i++){pdf.setPage(i);pdf.setFontSize(8);pdf.setTextColor(100,116,139);pdf.text('KN3X Project LLC | '+document.getElementById('inputEstNum').value,10,274);pdf.text(i+' / '+pages,205,274,{align:'right'});}
+                for(let i=1;i<=pages;i++){pdf.setPage(i);pdf.setFontSize(8);pdf.setTextColor(100,116,139);pdf.text((estimatePdfDraft ? (currentLang === 'es' ? 'BORRADOR - NO FINALIZADO | ' : 'DRAFT - NOT FINALIZED | ') : 'KN3X Project LLC | ')+document.getElementById('inputEstNum').value,10,274);
+                    if (estimatePdfDraft) {pdf.setTextColor(185,28,28);pdf.setFontSize(10);pdf.text(currentLang === 'es' ? 'BORRADOR - NO FINALIZADO' : 'DRAFT - NOT FINALIZED',205,7,{align:'right'});}pdf.text(i+' / '+pages,205,274,{align:'right'});}
                 return pdf;
             } finally {frame.remove();}
         }
@@ -2217,12 +2237,12 @@
                 const pdf = await renderEstimateLayoutPdf();
                 const es = currentLang === 'es';
                 const value = id => document.getElementById(id).value;
-                const name=('KN3X_'+value('inputEstNum')+'_'+value('inputClientName')).replace(/[^a-zA-Z0-9_-]/g,'_').slice(0,110)+'.pdf';
+                const name=((estimatePdfDraft?'DRAFT_':'')+'KN3X_'+value('inputEstNum')+'_'+value('inputClientName')).replace(/[^a-zA-Z0-9_-]/g,'_').slice(0,110)+'.pdf';
                 if(estimatePdfUrl) URL.revokeObjectURL(estimatePdfUrl);
                 estimatePdfFile=new File([pdf.output('blob')],name,{type:'application/pdf'});
                 estimatePdfUrl=URL.createObjectURL(estimatePdfFile);
                 const dialog=document.getElementById('estimatePdfDialog');
-                document.getElementById('pdfReadyTitle').textContent=es?'Tu PDF está listo':'Your PDF is ready';
+                document.getElementById('pdfReadyTitle').textContent=estimatePdfDraft ? (es?'Tu PDF borrador está listo':'Your draft PDF is ready') : (es?'Tu PDF está listo':'Your PDF is ready');
                 document.getElementById('pdfReadyHelp').textContent=es?'Descárgalo o pulsa Compartir y elige Mail u otra aplicación para enviarlo.':'Download it or tap Share and choose Mail or another app to send it.';
                 const download=document.getElementById('downloadEstimatePdf');download.href=estimatePdfUrl;download.download=name;download.textContent=es?'Descargar PDF':'Download PDF';
                 const share=document.getElementById('shareEstimatePdf');share.textContent=es?'Compartir PDF':'Share PDF';share.hidden=!(navigator.canShare && navigator.canShare({files:[estimatePdfFile]}));
@@ -2232,14 +2252,43 @@
             finally { button.disabled=false; }
         }
 
-        function procesarImagen(event) {
+        async function prepareEstimatePhoto(file) {
+            const original = await new Promise((resolve,reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = () => reject(new Error('Photo could not be read'));
+                reader.readAsDataURL(file);
+            });
+            const image = new Image(); image.src = original;
+            await image.decode();
+            const scale = Math.min(1,1600 / Math.max(image.naturalWidth,image.naturalHeight));
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.max(1,Math.round(image.naturalWidth * scale));
+            canvas.height = Math.max(1,Math.round(image.naturalHeight * scale));
+            const context = canvas.getContext('2d');
+            context.fillStyle = '#fff';context.fillRect(0,0,canvas.width,canvas.height);
+            context.drawImage(image,0,0,canvas.width,canvas.height);
+            const optimized = canvas.toDataURL('image/jpeg',.85);
+            canvas.width = canvas.height = 0;
+            return optimized;
+        }
+        async function procesarImagen(event) {
             const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader(); reader.onload = () => { agregarTarjetaFoto(reader.result); document.getElementById('trFotos').style.display = 'table-row'; }; reader.readAsDataURL(file); event.target.value = ''; return;
-                agregarTarjetaFoto(imageUrl);
+            if (!file) return;
+            event.target.value = '';
+            const photoContext = estimatePhotoContext;
+            estimatePhotosProcessing++;
+            try {
+                const photo = await prepareEstimatePhoto(file);
+                if (photoContext !== estimatePhotoContext) return;
+                agregarTarjetaFoto(photo);
                 document.getElementById('trFotos').style.display = 'table-row';
-                event.target.value = ''; 
-            }
+                refreshEstimateControls();
+            } catch (error) {
+                console.error('Photo processing failed',error);
+                alert(estimateMessage('This photo could not be opened. Try a JPG or PNG file. Your other data is unchanged.',
+                    'No se pudo abrir esta foto. Prueba con un archivo JPG o PNG. Los demás datos siguen en pantalla.'));
+            } finally { estimatePhotosProcessing--; }
         }
 
         function agregarTarjetaFoto(imageUrl) {
@@ -2603,6 +2652,7 @@
 
         // VALIDACIÓN PARA EXPORTAR (GUARDAR JSON)
         function exportarArchivo() {
+            if (!photosReadyForEstimate()) return;
             syncPrintedName();
             const num = document.getElementById('inputEstNum').value.trim().replace('#', '');
             const client = document.getElementById('inputClientName').value.trim();
@@ -2611,12 +2661,8 @@
             const addr = document.getElementById('inputAddress').value.trim();
             const duration = document.getElementById('inputDuration').value.trim();
             
-            if(!client || !email || !phone || !addr || !duration) {
-                alert(currentLang === 'en' ? "Please fill all mandatory fields (*) before saving." : "Por favor llena todos los campos obligatorios (*) antes de guardar.");
-                return;
-            }
 
-            const cleanClient = client.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+            const cleanClient = client.replace(/[^a-z0-9]/gi, '_').toLowerCase() || (currentLang === 'es' ? 'borrador' : 'draft');
             const data = collectEstimateDocument();
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
             const url = URL.createObjectURL(blob);
@@ -2637,6 +2683,7 @@
                     if (!data || !Array.isArray(data.items) || data.items.length > 1000 || data.items.some(item => !item || !Number.isFinite(Number(item.qty)) || Number(item.qty) < 0 || !Number.isFinite(Number(item.price)) || Number(item.price) < 0)) throw new Error('Invalid estimate');
                     if (data.photos && (!Array.isArray(data.photos) || data.photos.some(p => !p || !/^data:image\/(png|jpeg|webp|gif);base64,[A-Za-z0-9+/=]+$/.test(p.src)))) throw new Error('Invalid photos');
                     if (data.signatures && (!Array.isArray(data.signatures) || data.signatures.some(src => src && !/^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(src)))) throw new Error('Invalid signatures');
+                    estimatePhotoContext++;
                     document.getElementById('inputEstNum').value = data.estNum || ''; document.querySelectorAll('.est-display').forEach(el => el.innerText = data.estNum || '');
                     document.getElementById('inputClientName').value = data.clientName || '';
                     document.getElementById('inputPrintedName').value = typeof data.printedName === 'string' ? data.printedName : (data.clientName || '');

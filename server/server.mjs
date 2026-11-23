@@ -12,7 +12,7 @@ const IDLE = 60 * 60 * 1000;
 const digest = value => createHash('sha256').update(value).digest('hex');
 const cookieName = 'kn3x_session';
 const publicFiles = new Set(['/login.html','/access.css','/login.js','/logo.PNG','/favicon.ico','/favicon-32.png','/apple-touch-icon.png','/icon-192.png','/icon-512.png','/site.webmanifest']);
-const privateFiles = new Set(['/index.html','/account.html','/account.js','/workspace-account.js']);
+const privateFiles = new Set(['/index.html','/account.html','/account.js','/workspace-account.js','/estimate-storage.js']);
 const mime = { '.html':'text/html; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.css':'text/css; charset=utf-8', '.png':'image/png', '.ico':'image/x-icon', '.webmanifest':'application/manifest+json' };
 
 export async function buildServer({ dataDir, root = sourceRoot, origin = 'http://127.0.0.1:3080', secureCookies = origin.startsWith('https:') } = {}) {
