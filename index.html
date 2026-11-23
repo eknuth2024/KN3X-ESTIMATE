@@ -709,9 +709,6 @@
  #estimateContainer:not(.pdf-export) #tablaPresupuesto thead {overflow:hidden;}
  #estimateContainer:not(.pdf-export) #tablaPresupuesto thead :is(tr,th) {border-radius:0 !important;}
 }
-@media screen {
- #mainContent #estimateContainer .qty:focus::placeholder {color:transparent !important;}
-}
 </style>
 
     <!-- KN3X Estimate browser and iPhone/iPad home-screen icons -->
@@ -1861,7 +1858,7 @@
                     
                 </td>
                 <td class="p-1 md:p-2 print:py-1 print:px-0 align-top pt-2 md:pt-3 print:pt-1">
-                    <input type="number" inputmode="decimal" aria-label="Cantidad / Quantity" placeholder="QTY" min="0" step="any" value="" class="w-full p-1 border border-transparent hover:border-gray-200 focus:border-slate-500 rounded focus:outline-none bg-transparent text-center transition qty text-[10px] md:text-sm print:p-0 print:text-xs mt-5 md:mt-6 print:mt-0" onchange="calcularTotales()" onkeyup="calcularTotales()">
+                    <input type="number" inputmode="decimal" aria-label="Cantidad / Quantity" placeholder="QTY" onfocus="this.placeholder=''" onblur="this.placeholder='QTY'" min="0" step="any" value="" class="w-full p-1 border border-transparent hover:border-gray-200 focus:border-slate-500 rounded focus:outline-none bg-transparent text-center transition qty text-[10px] md:text-sm print:p-0 print:text-xs mt-5 md:mt-6 print:mt-0" onchange="calcularTotales()" onkeyup="calcularTotales()">
                 </td>
                 <td class="estimate-unit-cell p-1 md:p-2 print:py-1 print:px-0 align-top">
                     <input type="text" readonly class="unit-display w-full rounded border border-gray-300 bg-white text-slate-700 text-center p-1" value="" data-unit="" placeholder="—" aria-label="${currentLang === 'es' ? 'Unidad automática' : 'Automatic unit'}" title="${currentLang === 'es' ? 'Se completa al seleccionar la partida' : 'Filled automatically when you select a service'}">
