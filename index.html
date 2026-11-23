@@ -776,6 +776,28 @@
     <link rel="manifest" href="./site.webmanifest?v=20261119">
     <meta name="theme-color" content="#596675">
     <meta name="apple-mobile-web-app-title" content="KN3X Estimate">
+
+<style>
+@media screen {
+ #estimateContainer:not(.pdf-export) #listaItems .service-field-label {
+   display:block;font-size:10px;font-weight:700;line-height:14px;
+   letter-spacing:.025em;text-transform:uppercase;color:#eef2f7;margin:0 0 6px;
+ }
+ #estimateContainer:not(.pdf-export) #listaItems .service-row-tools > .service-field-label:nth-child(1) {grid-column:1;grid-row:1;margin:0;}
+ #estimateContainer:not(.pdf-export) #listaItems .service-row-tools > .service-field-label:nth-child(3) {grid-column:2;grid-row:1;margin:0;}
+ #estimateContainer:not(.pdf-export) #listaItems .service-row-tools > input.service-search {grid-column:1;grid-row:2;}
+ #estimateContainer:not(.pdf-export) #listaItems .service-row-tools > input.nota-input {grid-column:2;grid-row:2;}
+ #estimateContainer:not(.pdf-export) #listaItems td:first-child > .service-select-field {display:block;min-width:0;width:100%;margin:0;}
+ #estimateContainer:not(.pdf-export) #listaItems td:nth-child(n+2) > .service-field-label {text-align:center;}
+}
+@media screen and (min-width:640px) {
+ #estimateContainer:not(.pdf-export) #listaItems td:first-child > .service-select-field {grid-column:1;grid-row:2;}
+ #estimateContainer:not(.pdf-export) #listaItems td:nth-child(n+2) {align-self:end;}
+}
+@media print {
+ #listaItems .service-select-field {order:1;}
+}
+</style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans h-screen overflow-hidden flex text-xs md:text-sm">
 
@@ -1911,29 +1933,36 @@
             tr.innerHTML = `
                 <td class="p-1 md:p-2 print:py-1 print:px-0 flex flex-col gap-1 w-full">
                     <div class="service-row-tools relative w-full mb-1 group">
+                        <span class="service-field-label no-print" data-service-label-en="Search service" data-service-label-es="Buscar servicio">${currentLang === 'es' ? 'Buscar servicio' : 'Search service'}</span>
                         <input type="text" class="service-search no-print w-full p-1 border border-gray-200 rounded focus:border-slate-500 focus:outline-none bg-white transition text-[9px] md:text-[11px]" placeholder="🔍 Search service..." onkeyup="filtrarServicios(this)">
+                        <span class="service-field-label no-print" data-service-label-en="Additional notes" data-service-label-es="Notas adicionales">${currentLang === 'es' ? 'Notas adicionales' : 'Additional notes'}</span>
                         <input type="text" class="nota-input w-full p-1 md:p-1.5 border border-transparent hover:border-gray-200 focus:border-slate-500 rounded focus:outline-none bg-transparent transition text-[9px] md:text-[11px] text-gray-500 print:p-0 mt-1" placeholder="${i18n[currentLang].notes}">
                     </div>
+                    <div class="service-select-field"><span class="service-field-label no-print" data-service-label-en="Service / Material" data-service-label-es="Servicio / Material">${currentLang === 'es' ? 'Servicio / Material' : 'Service / Material'}</span>
                     <select class="catalogo-select w-full p-1 md:p-1.5 border border-gray-200 rounded focus:border-slate-500 focus:outline-none bg-white transition cursor-pointer text-slate-700 font-medium print:p-0 text-[10px] md:text-xs" onchange="actualizarPrecioDesdeCatalogo(this)">
                         <option value="0" disabled selected>${i18n[currentLang].select}</option>
                         ${generarOpcionesCatalogo(null)}
-                    </select>
+                    </select></div>
                     
                 </td>
                 <td class="p-1 md:p-2 print:py-1 print:px-0 align-top pt-2 md:pt-3 print:pt-1">
+                    <span class="service-field-label no-print" data-service-label-en="Quantity" data-service-label-es="Cantidad">${currentLang === 'es' ? 'Cantidad' : 'Quantity'}</span>
                     <input type="number" inputmode="decimal" aria-label="${currentLang === 'es' ? 'Cantidad' : 'Quantity'}" placeholder="${currentLang === 'es' ? 'CANT.' : 'QTY'}" onfocus="syncQuantityHint(this)" onblur="syncQuantityHint(this)" min="0" step="any" value="" class="w-full p-1 border border-transparent hover:border-gray-200 focus:border-slate-500 rounded focus:outline-none bg-transparent text-center transition qty text-[10px] md:text-sm print:p-0 print:text-xs mt-5 md:mt-6 print:mt-0" onchange="calcularTotales()" onkeyup="calcularTotales()">
                 </td>
                 <td class="estimate-unit-cell p-1 md:p-2 print:py-1 print:px-0 align-top">
+                    <span class="service-field-label no-print" data-service-label-en="Unit" data-service-label-es="Unidad">${currentLang === 'es' ? 'Unidad' : 'Unit'}</span>
                     <input type="text" readonly class="unit-display w-full rounded border border-gray-300 bg-white text-slate-700 text-center p-1" value="" data-unit="" placeholder="—" aria-label="${currentLang === 'es' ? 'Unidad automática' : 'Automatic unit'}" title="${currentLang === 'es' ? 'Se completa al seleccionar la partida' : 'Filled automatically when you select a service'}">
                 </td>
                 
                 <td class="p-1 md:p-2 print:py-1 print:px-0 align-top pt-2 md:pt-3 print:pt-1">
+                    <span class="service-field-label no-print" data-service-label-en="Unit price" data-service-label-es="Precio unitario">${currentLang === 'es' ? 'Precio unitario' : 'Unit price'}</span>
                     <div class="flex items-center justify-end mt-5 md:mt-6 print:mt-0">
                         <span class="text-slate-400 mr-0.5 md:mr-1 text-[10px] md:text-sm print:text-xs">$</span>
                         <input type="number" inputmode="decimal" aria-label="Precio unitario / Unit price" min="0" value="0.00" step="0.01" class="w-full max-w-[60px] md:max-w-[80px] p-1 border border-transparent hover:border-gray-200 focus:border-slate-500 rounded focus:outline-none bg-transparent text-right transition price text-[10px] md:text-sm print:p-0 print:text-xs" onchange="calcularTotales()" onkeyup="calcularTotales()">
                     </div>
                 </td>
                 <td class="p-1 md:p-2 print:py-1 print:px-0 align-top pt-2 md:pt-3 print:pt-1">
+                    <span class="service-field-label no-print" data-service-label-en="Total" data-service-label-es="Total">${currentLang === 'es' ? 'Total' : 'Total'}</span>
                     <div class="flex items-center justify-end mt-5 md:mt-6 print:mt-0">
                         <span class="row-total block p-1 border border-transparent font-semibold text-slate-700 text-right text-[10px] md:text-sm print:p-0 print:text-xs">$0.00</span>
                     </div>
@@ -1949,7 +1978,7 @@
         // BUSCADOR INTELIGENTE EN EL SELECT
         function filtrarServicios(input) {
             const filter = input.value.toLowerCase();
-            const select = input.parentElement.nextElementSibling; 
+            const select = input.closest('tr').querySelector('.catalogo-select'); 
             const options = select.options;
             let firstVisibleIndex = 0;
             
@@ -2834,6 +2863,9 @@
             document.querySelectorAll('.nota-input').forEach(input => input.placeholder = i18n[currentLang].notes);
             document.querySelectorAll('.unit-display').forEach(syncEstimateUnitLabel);
             document.querySelectorAll('.qty').forEach(syncQuantityHint);
+            document.querySelectorAll('[data-service-label-en]').forEach(el => {
+                el.textContent = currentLang === 'es' ? el.dataset.serviceLabelEs : el.dataset.serviceLabelEn;
+            });
             actualizarSelectsTerminos();
             refreshEstimateControls();
             const customerPlaceholder = document.getElementById('selectCustomerDir')?.options[0];
