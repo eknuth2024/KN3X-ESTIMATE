@@ -585,8 +585,8 @@
 /* Screen-only glass controls; exported documents keep their paper styling. */
 @media screen {
  #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) :is(input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not(#inputEstNum),select,textarea) {
-   background:linear-gradient(165deg,rgba(255,255,255,.24),rgba(255,255,255,.03) 48%,rgba(32,44,63,.10)),var(--field-glass-tint,rgba(160,172,189,.72)) !important;
-   color:#101c2e !important;
+   background:linear-gradient(165deg,rgba(255,255,255,.24),rgba(255,255,255,.03) 48%,rgba(32,44,63,.10)),var(--field-glass-tint,rgba(120,134,155,.92)) !important;
+   color:#020916 !important;
    border:1px solid rgba(232,240,250,.58) !important;
    border-radius:999px !important;
    box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 -1px 0 rgba(34,45,64,.12),0 3px 9px rgba(15,23,42,.12) !important;
@@ -602,18 +602,18 @@
    box-shadow:inset 0 1px 0 rgba(255,255,255,.65),0 0 0 4px rgba(251,146,60,.13),0 5px 14px rgba(15,23,42,.18) !important;
  }
  #mainContent .field-has-value {--field-glass-tint:rgba(227,207,147,.84);}
- #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) :is(input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not(#inputEstNum),select,textarea)::placeholder {color:#344358 !important;opacity:1;}
+ #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) :is(input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not(#inputEstNum),select,textarea)::placeholder {color:#020916 !important;opacity:1;}
  #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) :is(input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not(#inputEstNum),select,textarea):is(select) {
    -webkit-appearance:none;appearance:none;
    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%2327364c' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E"),linear-gradient(165deg,rgba(255,255,255,.24),rgba(255,255,255,.03) 48%,rgba(32,44,63,.10)) !important;
-   background-color:var(--field-glass-tint,rgba(160,172,189,.72)) !important;
+   background-color:var(--field-glass-tint,rgba(120,134,155,.92)) !important;
    background-repeat:no-repeat !important;
    background-position:right 12px center,0 0 !important;
    background-size:14px 14px,100% 100% !important;
    padding-right:32px !important;
  }
  #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) select option,
- #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) select optgroup {background:#d4dae2;color:#101c2e;}
+ #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) select optgroup {background:#d4dae2;color:#020916;}
  #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) :is(input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not(#inputEstNum),select,textarea):is(textarea) {
    border-radius:24px !important;padding:10px 16px !important;
  }
@@ -622,7 +622,7 @@
  #mainContent #estimateContainer input[type="number"]::-webkit-inner-spin-button,
  #mainContent #estimateContainer input[type="number"]::-webkit-outer-spin-button {-webkit-appearance:none;margin:0;}
  #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) input:-webkit-autofill {
-   -webkit-text-fill-color:#101c2e !important;
+   -webkit-text-fill-color:#020916 !important;
    -webkit-box-shadow:inset 0 0 0 1000px rgba(227,207,147,.96) !important;
  }
 }
