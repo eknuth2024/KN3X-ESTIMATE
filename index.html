@@ -664,6 +664,17 @@
  #estimateContainer:not(.pdf-export) .estimate-acceptance-panel .signature-pad-container {background:#a0acbd;border-color:#cbd5e1;}
  #estimateContainer:not(.pdf-export) .estimate-acceptance-panel .signature-pad-container > span {color:#344358;}
 }
+/* Paint the browser/standalone safe area below the floating navigation. */
+@media screen and (max-width:1023px) {
+ html.kn3x-workspace-shell,
+ html.kn3x-workspace-shell body {background-color:#596675;}
+ html.kn3x-workspace-shell::after {
+   content:"";position:fixed;left:0;right:0;bottom:0;
+   height:env(safe-area-inset-bottom,0px);
+   background:#596675;pointer-events:none;z-index:2099;
+ }
+ html.kn3x-workspace-shell.workspace-keyboard-open::after {display:none;}
+}
 </style>
 
     <!-- KN3X Estimate browser and iPhone/iPad home-screen icons -->
@@ -671,7 +682,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=20261119">
     <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=20261119">
     <link rel="manifest" href="./site.webmanifest?v=20261119">
-    <meta name="theme-color" content="#0D0F12">
+    <meta name="theme-color" content="#596675">
     <meta name="apple-mobile-web-app-title" content="KN3X Estimate">
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans h-screen overflow-hidden flex text-xs md:text-sm">
