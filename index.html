@@ -679,6 +679,23 @@
  #estimateContainer:not(.pdf-export) button,
  #estimatePdfDialog :is(button,a) {border-radius:999px !important;}
 }
+@media screen {
+ #estimateContainer:not(.pdf-export) #listaItems td:first-child > .service-row-tools {
+   display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+   gap:8px;width:100%;min-width:0;margin:0;
+ }
+ #estimateContainer:not(.pdf-export) #listaItems td:first-child > .service-row-tools > input {
+   width:100% !important;max-width:none !important;min-width:0;
+   margin:0 !important;height:36px;min-height:36px;box-sizing:border-box;
+   grid-column:auto;grid-row:auto;
+ }
+}
+@media print {
+ #listaItems td:first-child {display:flex;flex-direction:column;}
+ #listaItems .catalogo-select {order:1;}
+ #listaItems .service-row-tools {display:block;order:2;margin:4px 0 0;}
+ #listaItems .service-row-tools .service-search {display:none !important;}
+}
 </style>
 
     <!-- KN3X Estimate browser and iPhone/iPad home-screen icons -->
@@ -1817,14 +1834,15 @@
             tr.className = "border-b border-gray-100 hover:bg-slate-50 transition group print:border-gray-200";
             tr.innerHTML = `
                 <td class="p-1 md:p-2 print:py-1 print:px-0 flex flex-col gap-1 w-full">
-                    <div class="relative w-full mb-1 group no-print">
-                        <input type="text" class="w-full p-1 border border-gray-200 rounded focus:border-slate-500 focus:outline-none bg-white transition text-[9px] md:text-[11px]" placeholder="🔍 Search service..." onkeyup="filtrarServicios(this)">
+                    <div class="service-row-tools relative w-full mb-1 group">
+                        <input type="text" class="service-search no-print w-full p-1 border border-gray-200 rounded focus:border-slate-500 focus:outline-none bg-white transition text-[9px] md:text-[11px]" placeholder="🔍 Search service..." onkeyup="filtrarServicios(this)">
+                        <input type="text" class="nota-input w-full p-1 md:p-1.5 border border-transparent hover:border-gray-200 focus:border-slate-500 rounded focus:outline-none bg-transparent transition text-[9px] md:text-[11px] text-gray-500 print:p-0 mt-1" placeholder="${i18n[currentLang].notes}">
                     </div>
                     <select class="catalogo-select w-full p-1 md:p-1.5 border border-gray-200 rounded focus:border-slate-500 focus:outline-none bg-white transition cursor-pointer text-slate-700 font-medium print:p-0 text-[10px] md:text-xs" onchange="actualizarPrecioDesdeCatalogo(this)">
                         <option value="0" disabled selected>${i18n[currentLang].select}</option>
                         ${generarOpcionesCatalogo(null)}
                     </select>
-                    <input type="text" class="nota-input w-full p-1 md:p-1.5 border border-transparent hover:border-gray-200 focus:border-slate-500 rounded focus:outline-none bg-transparent transition text-[9px] md:text-[11px] text-gray-500 print:p-0 mt-1" placeholder="${i18n[currentLang].notes}">
+                    
                 </td>
                 <td class="p-1 md:p-2 print:py-1 print:px-0 align-top pt-2 md:pt-3 print:pt-1">
                     <input type="number" inputmode="decimal" aria-label="Cantidad / Quantity" min="0" step="any" value="" class="w-full p-1 border border-transparent hover:border-gray-200 focus:border-slate-500 rounded focus:outline-none bg-transparent text-center transition qty text-[10px] md:text-sm print:p-0 print:text-xs mt-5 md:mt-6 print:mt-0" onchange="calcularTotales()" onkeyup="calcularTotales()">
