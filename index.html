@@ -247,8 +247,8 @@
                 width:100%; min-width:0; min-height:32px; padding:3px;
                 font-size:14px; margin-top:36px;
             }
-            #estimateContainer:not(.pdf-export) #listaItems td:nth-child(3) > div,
-            #estimateContainer:not(.pdf-export) #listaItems td:nth-child(4) > div { margin-top:36px; min-height:32px; align-items:center; }
+            #estimateContainer:not(.pdf-export) #listaItems td:nth-child(4) > div,
+            #estimateContainer:not(.pdf-export) #listaItems td:nth-child(5) > div { margin-top:36px; min-height:32px; align-items:center; }
             #estimateContainer:not(.pdf-export) #listaItems .price { min-height:32px; min-width:0; font-size:12px; }
             #estimateContainer:not(.pdf-export) #listaItems td:last-child { padding:2px; }
             #estimateContainer:not(.pdf-export) #listaItems td:last-child button { margin-top:38px; width:18px; height:24px; }
@@ -350,8 +350,8 @@
             #estimateContainer:not(.pdf-export) #listaItems .catalogo-select { height:36px; }
             #estimateContainer:not(.pdf-export) #listaItems .nota-input { margin-top:12px; height:32px; }
             #estimateContainer:not(.pdf-export) #listaItems .qty { margin-top:40px; }
-            #estimateContainer:not(.pdf-export) #listaItems td:nth-child(3) > div,
-            #estimateContainer:not(.pdf-export) #listaItems td:nth-child(4) > div { margin-top:40px; min-height:36px; }
+            #estimateContainer:not(.pdf-export) #listaItems td:nth-child(4) > div,
+            #estimateContainer:not(.pdf-export) #listaItems td:nth-child(5) > div { margin-top:40px; min-height:36px; }
             #estimateContainer:not(.pdf-export) #listaItems td:last-child button { margin-top:46px; }
         }
     
@@ -496,6 +496,53 @@
 }
 #sidebar .desktop-nav-item {color:#e2e8f0;}
 #sidebar .desktop-nav-item[aria-current="page"] {background:#334155;color:#fff;box-shadow:inset 3px 0 #fb923c;}
+
+        #tablaPresupuesto {table-layout:fixed;width:100%;}
+        #tablaPresupuesto th:nth-child(1) {width:44%;}
+        #tablaPresupuesto th:nth-child(2) {width:10%;}
+        #tablaPresupuesto th:nth-child(3) {width:12%;}
+        #tablaPresupuesto th:nth-child(4) {width:14%;}
+        #tablaPresupuesto th:nth-child(5) {width:15%;}
+        #tablaPresupuesto th:nth-child(6) {width:5%;}
+        #tablaPresupuesto th:nth-child(3) .estimate-column-title {justify-content:center;}
+        #listaItems .unit-select {margin-top:24px;min-width:0;max-width:100%;}
+        @media screen and (max-width:1023px) {
+            #estimateContainer:not(.pdf-export) #tablaPresupuesto th:nth-child(1) {width:34%;}
+            #estimateContainer:not(.pdf-export) #tablaPresupuesto th:nth-child(2) {width:14%;}
+            #estimateContainer:not(.pdf-export) #tablaPresupuesto th:nth-child(3) {width:17%;}
+            #estimateContainer:not(.pdf-export) #tablaPresupuesto th:nth-child(4) {width:16%;}
+            #estimateContainer:not(.pdf-export) #tablaPresupuesto th:nth-child(5) {width:14%;}
+            #estimateContainer:not(.pdf-export) #tablaPresupuesto th:nth-child(6) {width:5%;padding:0;}
+            #estimateContainer:not(.pdf-export) #tablaPresupuesto th {padding-left:2px;padding-right:2px;}
+            #estimateContainer:not(.pdf-export) #listaItems .unit-select {margin-top:40px;height:36px;min-height:36px;padding:2px;}
+            #estimateContainer:not(.pdf-export) #listaItems .estimate-unit-cell {padding:12px 3px;}
+        }
+        @media print {
+            #tablaPresupuesto th:nth-child(1) {width:50%;}
+            #tablaPresupuesto th:nth-child(2) {width:10%;}
+            #tablaPresupuesto th:nth-child(3) {width:12%;}
+            #tablaPresupuesto th:nth-child(4),#tablaPresupuesto th:nth-child(5) {width:14%;}
+            #listaItems .unit-select {margin-top:0;padding:0;text-align:center;}
+        }
+
+        @media screen and (max-width:639px) {
+            #estimateContainer:not(.pdf-export) #tablaPresupuesto :is(thead,tbody) {display:block;width:100%;}
+            #estimateContainer:not(.pdf-export) #tablaPresupuesto tr {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;position:relative;}
+            #estimateContainer:not(.pdf-export) #tablaPresupuesto thead tr {gap:0;border-radius:8px;overflow:hidden;background:#f97316;}
+            #estimateContainer:not(.pdf-export) #tablaPresupuesto th:nth-child(n) {width:auto;min-width:0;border-radius:0;padding:0 5px;}
+            #estimateContainer:not(.pdf-export) #tablaPresupuesto th:first-child {grid-column:1/-1;}
+            #estimateContainer:not(.pdf-export) #tablaPresupuesto th:last-child {display:none;}
+            #estimateContainer:not(.pdf-export) #tablaPresupuesto .estimate-column-title {min-height:30px;}
+            #estimateContainer:not(.pdf-export) #tablaPresupuesto th:nth-child(n+2) .estimate-column-title {justify-content:center;}
+            #estimateContainer:not(.pdf-export) #listaItems tr {padding:10px 0;}
+            #estimateContainer:not(.pdf-export) #listaItems td {display:block;width:auto;min-width:0;padding:0;}
+            #estimateContainer:not(.pdf-export) #listaItems td:first-child {grid-column:1/-1;display:flex;padding-right:26px;}
+            #estimateContainer:not(.pdf-export) #listaItems td:last-child {position:absolute;right:0;top:12px;}
+            #estimateContainer:not(.pdf-export) #listaItems :is(.qty,.unit-select) {margin-top:0;min-height:36px;height:36px;}
+            #estimateContainer:not(.pdf-export) #listaItems td:nth-child(4) > div,
+            #estimateContainer:not(.pdf-export) #listaItems td:nth-child(5) > div {margin-top:0;min-height:36px;}
+            #estimateContainer:not(.pdf-export) #listaItems td:last-child button {margin-top:0;}
+        }
 </style>
 
     <!-- KN3X Estimate browser and iPhone/iPad home-screen icons -->
@@ -644,6 +691,7 @@
                                             <tr class="bg-orange-500 text-white text-[9px] md:text-[11px] uppercase tracking-wider">
                                                 <th class="p-1.5 md:p-3 rounded-tl-lg w-[50%] md:w-1/2 print:py-1"><span class="estimate-column-title" data-i18n="service">Service / Material</span></th>
                                                 <th class="p-1.5 md:p-3 w-10 md:w-20 text-center print:py-1"><span class="estimate-column-title" data-i18n="qty">Qty</span></th>
+                                                <th class="estimate-unit-heading p-1.5 md:p-3 text-center print:py-1"><span class="estimate-column-title" data-i18n="unit">Unit</span></th>
                                                 <th class="p-1.5 md:p-3 w-16 md:w-28 text-right print:py-1"><span class="estimate-column-title" data-i18n="price">Price</span></th>
                                                 <th class="p-1.5 md:p-3 w-16 md:w-28 text-right rounded-tr-lg print:py-1"><span class="estimate-column-title" data-i18n="total">Total</span></th>
                                                 <th class="p-1 md:p-3 w-6 no-print"></th>
@@ -1163,7 +1211,7 @@
             en: {
                 title: "Estimate", est_num: "Est. #:", client: "Client / Project Name", date: "Date",
                 email: "Email Address", phone: "Phone Number", address: "Job Site Address",
-                service: "Service / Material", qty: "Qty", price: "Unit Price", total: "Total",
+                service: "Service / Material", unit: "Unit", qty: "Qty", price: "Unit Price", total: "Total",
                 add_item: "+ Add Service", subtotal: "Subtotal:", tax: "Tax (8.25%):", total_usd: "Total USD:",
                 generate_pdf: "Generate PDF", select: "Select a service...", notes: "+ Add notes (optional)",
                 photos_title: "Site Conditions & Notes (Appendix)", add_photo: "Add Photo",
@@ -1189,7 +1237,7 @@
             es: {
                 title: "Presupuesto", est_num: "Folio:", client: "Nombre del Cliente / Proyecto", date: "Fecha",
                 email: "Correo Electrónico", phone: "Teléfono", address: "Dirección de la Obra",
-                service: "Servicio / Material", qty: "Cant.", price: "Precio Unitario", total: "Total",
+                service: "Servicio / Material", unit: "Unidad", qty: "Cant.", price: "Precio Unitario", total: "Total",
                 add_item: "+ Añadir Servicio", subtotal: "Subtotal:", tax: "Impuesto (8.25%):", total_usd: "Total USD:",
                 generate_pdf: "Generar PDF", select: "Seleccione un servicio...", notes: "+ Agregar notas (opcional)",
                 photos_title: "Condiciones del Sitio y Notas (Anexo)", add_photo: "Añadir Foto",
@@ -1465,8 +1513,8 @@
         function estimateDocumentFingerprint(data) {
             return JSON.stringify({...data, items: (data.items || []).map(item => {
                 if (!item.serviceId) return item;
-                const {selectIndex, ...stableItem} = item;
-                return stableItem;
+                const {selectIndex, unit, ...stableItem} = item;
+                return {...stableItem, unit: unit ?? inferEstimateUnit(item.serviceId)};
             })});
         }
 
@@ -1591,6 +1639,44 @@
         // ==========================================
         // LÓGICA DEL PRESUPUESTO & BUSCADOR
         // ==========================================
+        
+        const estimateUnits = [
+            {id:'sqft',en:'SqFt',es:'SqFt',descriptionEn:'Square feet',descriptionEs:'Pies cuadrados'},
+            {id:'linft',en:'LinFt',es:'LinFt',descriptionEn:'Linear feet',descriptionEs:'Pies lineales'},
+            {id:'each',en:'Each',es:'Und.',descriptionEn:'Each unit',descriptionEs:'Unidad'},
+            {id:'hr',en:'Hr',es:'Hora',descriptionEn:'Hours',descriptionEs:'Horas'},
+            {id:'cuyd',en:'CuYd',es:'Yd³',descriptionEn:'Cubic yards',descriptionEs:'Yardas cúbicas'},
+            {id:'project',en:'Project',es:'Proy.',descriptionEn:'Per project',descriptionEs:'Por proyecto'},
+            {id:'drop',en:'Drop',es:'Punto',descriptionEn:'Network drop',descriptionEs:'Punto de red'}
+        ];
+        function inferEstimateUnit(serviceId) {
+            const name = catalogoPrecios.find(item => item.id === serviceId)?.nom_en || '';
+            if (/SqFt/i.test(name)) return 'sqft';
+            if (/LinFt/i.test(name)) return 'linft';
+            if (/CuYd/i.test(name)) return 'cuyd';
+            if (/Each/i.test(name)) return 'each';
+            if (/\bHr\b/i.test(name)) return 'hr';
+            if (/Project/i.test(name)) return 'project';
+            if (/Drop/i.test(name)) return 'drop';
+            return '';
+        }
+        function estimateUnitOptions(value = '') {
+            const es = currentLang === 'es';
+            return '<option value="">—</option>' + estimateUnits.map(unit =>
+                '<option value="'+unit.id+'" title="'+(es ? unit.descriptionEs : unit.descriptionEn)+'" '+(unit.id === value ? 'selected' : '')+'>'+(es ? unit.es : unit.en)+'</option>').join('');
+        }
+        function syncEstimateUnitLabel(select) {
+            const unit = estimateUnits.find(unit => unit.id === select.value);
+            select.title = unit ? (currentLang === 'es' ? unit.descriptionEs : unit.descriptionEn) : (currentLang === 'es' ? 'Seleccionar unidad' : 'Select unit');
+            select.setAttribute('aria-label',currentLang === 'es' ? 'Unidad' : 'Unit');
+        }
+        function restoreEstimateUnit(row, item = {}) {
+            const select = row.querySelector('.unit-select');
+            const inferred = inferEstimateUnit(row.querySelector('.catalogo-select').selectedOptions[0]?.dataset.id);
+            select.value = estimateUnits.some(unit => unit.id === item.unit) ? item.unit : inferred;
+            syncEstimateUnitLabel(select);
+        }
+
         function agregarFila() {
             const tbody = document.getElementById('listaItems');
             const tr = document.createElement('tr');
@@ -1609,6 +1695,12 @@
                 <td class="p-1 md:p-2 print:py-1 print:px-0 align-top pt-2 md:pt-3 print:pt-1">
                     <input type="number" inputmode="decimal" aria-label="Cantidad / Quantity" min="0" step="any" value="" class="w-full p-1 border border-transparent hover:border-gray-200 focus:border-slate-500 rounded focus:outline-none bg-transparent text-center transition qty text-[10px] md:text-sm print:p-0 print:text-xs mt-5 md:mt-6 print:mt-0" onchange="calcularTotales()" onkeyup="calcularTotales()">
                 </td>
+                <td class="estimate-unit-cell p-1 md:p-2 print:py-1 print:px-0 align-top">
+                    <select class="unit-select w-full rounded border border-gray-300 bg-white text-slate-700 text-center p-1" aria-label="${currentLang === 'es' ? 'Unidad' : 'Unit'}" onchange="syncEstimateUnitLabel(this)">
+                        ${estimateUnitOptions()}
+                    </select>
+                </td>
+                
                 <td class="p-1 md:p-2 print:py-1 print:px-0 align-top pt-2 md:pt-3 print:pt-1">
                     <div class="flex items-center justify-end mt-5 md:mt-6 print:mt-0">
                         <span class="text-slate-400 mr-0.5 md:mr-1 text-[10px] md:text-sm print:text-xs">$</span>
@@ -1691,6 +1783,7 @@
             const fila = selectElement.closest('tr');
             const precioInput = fila.querySelector('.price');
             precioInput.value = parseFloat(selectElement.value).toFixed(2);
+            restoreEstimateUnit(fila);
             calcularTotales();
         }
 
@@ -1776,7 +1869,7 @@
             };
             document.querySelectorAll('#listaItems tr').forEach(fila => {
                 const sel = fila.querySelector('.catalogo-select');
-                data.items.push({ serviceId: sel.selectedOptions[0]?.dataset.id, selectIndex: sel.selectedIndex, nota: fila.querySelector('.nota-input').value, qty: fila.querySelector('.qty').value, price: fila.querySelector('.price').value });
+                data.items.push({ serviceId: sel.selectedOptions[0]?.dataset.id, selectIndex: sel.selectedIndex, nota: fila.querySelector('.nota-input').value, qty: fila.querySelector('.qty').value, unit: fila.querySelector('.unit-select').value, price: fila.querySelector('.price').value });
             });
 
             data.localEstimateId = activeEstimateId;
@@ -1793,9 +1886,9 @@
                 const selected = row.querySelector('select').selectedOptions[0];
                 const quantity = Number(row.querySelector('.qty').value), price = Number(row.querySelector('.price').value);
                 return !selected?.dataset.id || (selected.dataset.id === 'custom' && !row.querySelector('.nota-input').value.trim()) ||
-                    !Number.isFinite(quantity) || quantity <= 0 || !row.querySelector('.price').value.trim() || !Number.isFinite(price) || price < 0 || !Number.isFinite(quantity * price);
+                    !row.querySelector('.unit-select').value || !Number.isFinite(quantity) || quantity <= 0 || !row.querySelector('.price').value.trim() || !Number.isFinite(price) || price < 0 || !Number.isFinite(quantity * price);
             })) {
-                alert(estimateMessage('Select a service on every line and check quantities and prices. Describe custom services in Notes.','Selecciona un servicio en cada partida y revisa cantidades y precios. Describe los servicios personalizados en Notas.'));
+                alert(estimateMessage('Select a service and unit on every line and check quantities and prices. Describe custom services in Notes.','Selecciona un servicio y una unidad en cada partida y revisa cantidades y precios. Describe los servicios personalizados en Notas.'));
                 return false;
             }
             return true;
@@ -2057,8 +2150,8 @@
                     pdf.setFont('helvetica','bold');pdf.setFontSize(8);pdf.setTextColor(255,255,255);
                     for(const heading of headings) {
                         if(heading.top>=start && heading.top+heading.height<=end+1) {
-                            const align=heading.index===0?'left':heading.index===1?'center':'right';
-                            const x=heading.index===0?heading.left+6:heading.index===1?heading.left+heading.width/2:heading.left+heading.width-6;
+                            const align=heading.index===0?'left':heading.index<=2?'center':'right';
+                            const x=heading.index===0?heading.left+6:heading.index<=2?heading.left+heading.width/2:heading.left+heading.width-6;
                             pdf.text(heading.text,10+x*factor,10+(bodyOffset+heading.top-start+heading.height/2)*factor,{align,baseline:'middle'});
                         }
                     }
@@ -2465,6 +2558,11 @@
                 if (!serviceId) select.selectedIndex = 0;
             });
             document.querySelectorAll('.nota-input').forEach(input => input.placeholder = i18n[currentLang].notes);
+            document.querySelectorAll('.unit-select').forEach(select => {
+                const value = select.value;
+                select.innerHTML = estimateUnitOptions(value);
+                syncEstimateUnitLabel(select);
+            });
             actualizarSelectsTerminos();
             refreshEstimateControls();
             const customerPlaceholder = document.getElementById('selectCustomerDir')?.options[0];
@@ -2528,6 +2626,7 @@
                         } else sel.selectedIndex = 0;
                         tr.querySelector('.nota-input').value = item.nota || '';
                         tr.querySelector('.qty').value = item.qty ?? ''; tr.querySelector('.price').value = item.price ?? 0;
+                        restoreEstimateUnit(tr,item);
                     });
                     document.getElementById('photoGrid').innerHTML = '';
                     (data.photos || []).forEach(photo => { agregarTarjetaFoto(photo.src); const card = document.getElementById('photoGrid').lastElementChild; card.querySelector('.photo-title-input').value = photo.title || ''; card.querySelector('.photo-desc-input').value = photo.description || ''; });
@@ -2565,7 +2664,7 @@
             document.getElementById('inputEstNum').value = project.id;
             document.getElementById('inputClientEmail').value = ''; document.getElementById('inputPhone').value = '';
             document.getElementById('listaItems').innerHTML = '';
-            project.items.forEach(item => { agregarFila(); const row = document.getElementById('listaItems').lastElementChild; row.querySelector('select').innerHTML = `<option value="0" disabled>Select service</option>${generarOpcionesCatalogo(item.id)}`; row.querySelector('.qty').value = item.qty; row.querySelector('.price').value = item.price; row.querySelector('.nota-input').value = item.nota; }); calcularTotales();
+            project.items.forEach(item => { agregarFila(); const row = document.getElementById('listaItems').lastElementChild; row.querySelector('select').innerHTML = `<option value="0" disabled>Select service</option>${generarOpcionesCatalogo(item.id)}`; row.querySelector('.qty').value = item.qty; row.querySelector('.price').value = item.price; row.querySelector('.nota-input').value = item.nota; restoreEstimateUnit(row,item); }); calcularTotales();
             toggleVista('estimate'); 
         };
 
