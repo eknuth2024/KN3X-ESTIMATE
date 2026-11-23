@@ -543,6 +543,41 @@
             #estimateContainer:not(.pdf-export) #listaItems td:nth-child(5) > div {margin-top:0;min-height:36px;}
             #estimateContainer:not(.pdf-export) #listaItems td:last-child button {margin-top:0;}
         }
+
+/* Place every amount on the service row instead of estimating offsets with margins. */
+@media screen and (min-width:640px) {
+ #estimateContainer:not(.pdf-export) #tablaPresupuesto :is(thead,tbody) {display:block;width:100%;}
+ #estimateContainer:not(.pdf-export) #tablaPresupuesto tr {display:grid;grid-template-columns:44% 10% 12% 14% 15% 5%;}
+ #estimateContainer:not(.pdf-export) #tablaPresupuesto th:nth-child(n) {width:auto;min-width:0;}
+ #estimateContainer:not(.pdf-export) #listaItems tr {padding:12px 0;row-gap:12px;align-items:center;}
+ #estimateContainer:not(.pdf-export) #listaItems td:nth-child(n) {width:auto;min-width:0;padding:0 4px;align-self:center;}
+ #estimateContainer:not(.pdf-export) #listaItems td:first-child {display:contents;}
+ #estimateContainer:not(.pdf-export) #listaItems td:first-child > div {grid-column:1;grid-row:1;margin:0;}
+ #estimateContainer:not(.pdf-export) #listaItems .catalogo-select {grid-column:1;grid-row:2;margin:0;height:36px;box-sizing:border-box;}
+ #estimateContainer:not(.pdf-export) #listaItems .nota-input {grid-column:1;grid-row:3;margin:0;height:32px;box-sizing:border-box;}
+ #estimateContainer:not(.pdf-export) #listaItems td:nth-child(2) {grid-column:2;grid-row:2;}
+ #estimateContainer:not(.pdf-export) #listaItems td:nth-child(3) {grid-column:3;grid-row:2;}
+ #estimateContainer:not(.pdf-export) #listaItems td:nth-child(4) {grid-column:4;grid-row:2;}
+ #estimateContainer:not(.pdf-export) #listaItems td:nth-child(5) {grid-column:5;grid-row:2;}
+ #estimateContainer:not(.pdf-export) #listaItems td:nth-child(6) {grid-column:6;grid-row:2;}
+ #estimateContainer:not(.pdf-export) #listaItems :is(.qty,.unit-select,.price) {margin:0;min-height:36px;height:36px;box-sizing:border-box;}
+ #estimateContainer:not(.pdf-export) #listaItems td:nth-child(4) > div,
+ #estimateContainer:not(.pdf-export) #listaItems td:nth-child(5) > div {margin:0;min-height:36px;height:36px;align-items:center;}
+ #estimateContainer:not(.pdf-export) #listaItems td:last-child button {margin:0;}
+}
+@media screen and (min-width:640px) and (max-width:1023px) {
+ #estimateContainer:not(.pdf-export) #tablaPresupuesto tr {grid-template-columns:34% 14% 17% 16% 14% 5%;}
+}
+@media screen and (max-width:639px) {
+ #estimateContainer:not(.pdf-export) #listaItems td:nth-child(n) {padding:0;min-width:0;}
+ #estimateContainer:not(.pdf-export) #listaItems td:first-child {padding-right:26px;}
+ #estimateContainer:not(.pdf-export) #listaItems :is(.qty,.unit-select,.price) {margin:0;height:36px;min-height:36px;box-sizing:border-box;}
+ #estimateContainer:not(.pdf-export) #listaItems td:nth-child(4) > div,
+ #estimateContainer:not(.pdf-export) #listaItems td:nth-child(5) > div {margin:0;height:36px;min-height:36px;align-items:center;}
+}
+@media print {
+ #listaItems .unit-select {font-size:12px;line-height:16px;}
+}
 </style>
 
     <!-- KN3X Estimate browser and iPhone/iPad home-screen icons -->
