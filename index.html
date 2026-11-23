@@ -851,46 +851,46 @@
                             </div>
                         </div>
                         <div class="text-right w-1/3">
-                            <h2 class="text-[11px] md:text-xl font-black text-slate-800 contract-title leading-tight">INDEPENDENT CONTRACTOR<br>AGREEMENT (1099)</h2>
+                            <h2 class="text-[11px] md:text-xl font-black text-slate-800 contract-title leading-tight"><span data-contract-en="INDEPENDENT CONTRACTOR AGREEMENT (1099)" data-contract-es="CONTRATO DE CONTRATISTA INDEPENDIENTE (1099)">INDEPENDENT CONTRACTOR<br>AGREEMENT (1099)</span></h2>
                         </div>
                     </div>
 
                     <div class="bg-blue-50 p-3 md:p-4 rounded-lg border border-blue-200 mb-6 md:mb-8 no-print">
-                        <h4 class="font-bold text-blue-800 mb-2 md:mb-3 text-[11px] md:text-sm">Contract Details (Link to Ledger)</h4>
+                        <h4 class="font-bold text-blue-800 mb-2 md:mb-3 text-[11px] md:text-sm"><span data-contract-en="Contract Details (Link to Ledger)" data-contract-es="Datos del contrato (vinculados al libro 1099)">Contract Details (Link to Ledger)</span></h4>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                             <div>
-                                <label class="block text-[10px] md:text-xs font-bold text-slate-600 uppercase mb-1">Select Subcontractor <span class="text-red-500">*</span></label>
+                                <label class="block text-[10px] md:text-xs font-bold text-slate-600 uppercase mb-1"><span data-contract-en="Select Subcontractor" data-contract-es="Seleccionar subcontratista">Select Subcontractor</span> <span class="text-red-500">*</span></label>
                                 <select id="subNameSelect" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm font-bold text-slate-700" onchange="updateContract()">
                                     <option value="">-- Select from Ledger --</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-[10px] md:text-xs font-bold text-slate-600 uppercase mb-1">Service Provided <span class="text-red-500">*</span></label>
+                                <label class="block text-[10px] md:text-xs font-bold text-slate-600 uppercase mb-1"><span data-contract-en="Service Provided" data-contract-es="Servicio a realizar">Service Provided</span> <span class="text-red-500">*</span></label>
                                 <input type="text" id="subService" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm" placeholder="e.g., Interior Painting" onkeyup="updateContract()">
                             </div>
                             <div>
-                                <label class="block text-[10px] md:text-xs font-bold text-slate-600 uppercase mb-1">Project Compensation ($ Amount) <span class="text-red-500">*</span></label>
+                                <label class="block text-[10px] md:text-xs font-bold text-slate-600 uppercase mb-1"><span data-contract-en="Project Compensation ($ Amount)" data-contract-es="Remuneración del proyecto (importe en $)">Project Compensation ($ Amount)</span> <span class="text-red-500">*</span></label>
                                 <input type="number" id="subPayNum" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm" placeholder="1500" onkeyup="updateContract()">
                             </div>
                             <div>
-                                <label class="block text-[10px] md:text-xs font-bold text-slate-600 uppercase mb-1">Date <span class="text-red-500">*</span></label>
+                                <label class="block text-[10px] md:text-xs font-bold text-slate-600 uppercase mb-1"><span data-contract-en="Date" data-contract-es="Fecha">Date</span> <span class="text-red-500">*</span></label>
                                 <input type="date" id="subDate" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm" onchange="updateContract()">
                             </div>
                         </div>
                         <div class="mt-4 flex justify-end">
                             <button onclick="guardarPagoYGenerarPDF()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow-sm text-[11px] md:text-sm transition w-full md:w-auto">
-                                ✓ Save Amount to Ledger & Print
+                                <span data-contract-en="✓ Save Amount to Ledger &amp; Print" data-contract-es="✓ Guardar importe en el libro 1099 e imprimir">✓ Save Amount to Ledger & Print</span>
                             </button>
                         </div>
                     </div>
 
                     <div class="text-[11px] md:text-sm text-slate-700 space-y-3 md:space-y-4 contract-text text-justify">
-                        <p>This Subcontractor Agreement ("Agreement") is entered into by and between <strong>KN3X Project LLC</strong> ("Contractor") and <strong id="docSubName" class="underline decoration-slate-300">[Subcontractor Name]</strong> ("Subcontractor"), effective as of <strong id="docSubDate" class="underline decoration-slate-300">[Date]</strong>.</p>
-                        <div><h3 class="font-bold text-slate-800 text-xs md:text-base">1. INDEPENDENT CONTRACTOR STATUS</h3><p>The Subcontractor is an independent contractor (1099) and not an employee, partner, or agent of KN3X Project LLC. The Subcontractor is solely responsible for paying their own local, state, and federal taxes. KN3X Project LLC will not withhold any taxes from payments. Subcontractor must provide a completed IRS W-9 form before any payment is issued.</p></div>
-                        <div><h3 class="font-bold text-slate-800 text-xs md:text-base">2. SCOPE OF WORK</h3><p>The Subcontractor agrees to perform the following services: <strong id="docSubService" class="underline decoration-slate-300">[Service Provided]</strong> as assigned by KN3X Project LLC. The specific location and timeline for each project will be provided via Work Orders.</p></div>
-                        <div><h3 class="font-bold text-slate-800 text-xs md:text-base">3. TOOLS & MATERIALS</h3><p>The Subcontractor shall provide their own tools, equipment, vehicles, and standard protective gear required to complete the work safely.</p></div>
-                        <div><h3 class="font-bold text-slate-800 text-xs md:text-base">4. COMPENSATION & PAYMENT TERMS</h3><p>Compensation for this agreement is set at: <strong class="underline decoration-slate-300">$<span id="docSubPay">0.00</span> Flat Fee</strong>. Payment will be made on a per-project or milestone basis, not as an hourly wage. Payments will be processed only after the work is fully completed, inspected by KN3X Project LLC.</p></div>
-                        <div><h3 class="font-bold text-slate-800 text-xs md:text-base">5. LIABILITY</h3><p>The Subcontractor is fully responsible for any damage to the client’s property caused by their negligence. The cost of repairing such damage will be deducted from final payment. Subcontractor agrees not to solicit further direct business from KN3X Project LLC’s clients.</p></div>
+                        <p><span data-contract-en="This Subcontractor Agreement (&quot;Agreement&quot;) is entered into by and between " data-contract-es="Este Contrato de Subcontratación («Contrato») se celebra entre ">This Subcontractor Agreement ("Agreement") is entered into by and between </span><strong>KN3X Project LLC</strong><span data-contract-en=" (&quot;Contractor&quot;) and " data-contract-es=" («Contratista») y "> ("Contractor") and </span><strong id="docSubName" class="underline decoration-slate-300">[Subcontractor Name]</strong><span data-contract-en=" (&quot;Subcontractor&quot;), effective as of " data-contract-es=" («Subcontratista»), con vigencia a partir del "> ("Subcontractor"), effective as of </span><strong id="docSubDate" class="underline decoration-slate-300">[Date]</strong>.</p>
+                        <div><h3 class="font-bold text-slate-800 text-xs md:text-base"><span data-contract-en="1. INDEPENDENT CONTRACTOR STATUS" data-contract-es="1. CONDICIÓN DE CONTRATISTA INDEPENDIENTE">1. INDEPENDENT CONTRACTOR STATUS</span></h3><p><span data-contract-en="The Subcontractor is an independent contractor (1099) and not an employee, partner, or agent of KN3X Project LLC. The Subcontractor is solely responsible for paying their own local, state, and federal taxes. KN3X Project LLC will not withhold any taxes from payments. Subcontractor must provide a completed IRS W-9 form before any payment is issued." data-contract-es="El Subcontratista es un contratista independiente (1099), no un empleado, socio ni representante de KN3X Project LLC. El Subcontratista es el único responsable del pago de sus impuestos locales, estatales y federales. KN3X Project LLC no retendrá impuestos de los pagos. El Subcontratista deberá entregar el formulario W-9 del IRS debidamente completado antes de que se emita cualquier pago.">The Subcontractor is an independent contractor (1099) and not an employee, partner, or agent of KN3X Project LLC. The Subcontractor is solely responsible for paying their own local, state, and federal taxes. KN3X Project LLC will not withhold any taxes from payments. Subcontractor must provide a completed IRS W-9 form before any payment is issued.</span></p></div>
+                        <div><h3 class="font-bold text-slate-800 text-xs md:text-base"><span data-contract-en="2. SCOPE OF WORK" data-contract-es="2. ALCANCE DEL TRABAJO">2. SCOPE OF WORK</span></h3><p><span data-contract-en="The Subcontractor agrees to perform the following services: " data-contract-es="El Subcontratista se compromete a realizar los siguientes servicios: ">The Subcontractor agrees to perform the following services: </span><strong id="docSubService" class="underline decoration-slate-300">[Service Provided]</strong><span data-contract-en=" as assigned by KN3X Project LLC. The specific location and timeline for each project will be provided via Work Orders." data-contract-es=" según lo asignado por KN3X Project LLC. La ubicación y el cronograma específicos de cada proyecto se comunicarán mediante órdenes de trabajo."> as assigned by KN3X Project LLC. The specific location and timeline for each project will be provided via Work Orders.</span></p></div>
+                        <div><h3 class="font-bold text-slate-800 text-xs md:text-base"><span data-contract-en="3. TOOLS &amp; MATERIALS" data-contract-es="3. HERRAMIENTAS Y MATERIALES">3. TOOLS & MATERIALS</span></h3><p><span data-contract-en="The Subcontractor shall provide their own tools, equipment, vehicles, and standard protective gear required to complete the work safely." data-contract-es="El Subcontratista deberá aportar sus propias herramientas, equipos, vehículos y equipo de protección estándar necesarios para realizar el trabajo de forma segura.">The Subcontractor shall provide their own tools, equipment, vehicles, and standard protective gear required to complete the work safely.</span></p></div>
+                        <div><h3 class="font-bold text-slate-800 text-xs md:text-base"><span data-contract-en="4. COMPENSATION &amp; PAYMENT TERMS" data-contract-es="4. REMUNERACIÓN Y CONDICIONES DE PAGO">4. COMPENSATION & PAYMENT TERMS</span></h3><p><span data-contract-en="Compensation for this agreement is set at: " data-contract-es="La remuneración de este contrato se establece en: ">Compensation for this agreement is set at: </span><strong class="underline decoration-slate-300">$<span id="docSubPay">0.00</span><span data-contract-en=" Flat Fee" data-contract-es=" Importe fijo"> Flat Fee</span></strong><span data-contract-en=". Payment will be made on a per-project or milestone basis, not as an hourly wage. Payments will be processed only after the work is fully completed, inspected by KN3X Project LLC." data-contract-es=". El pago se realizará por proyecto o por hitos, no como salario por hora. Los pagos se procesarán únicamente después de que el trabajo se haya completado en su totalidad y haya sido inspeccionado por KN3X Project LLC.">. Payment will be made on a per-project or milestone basis, not as an hourly wage. Payments will be processed only after the work is fully completed, inspected by KN3X Project LLC.</span></p></div>
+                        <div><h3 class="font-bold text-slate-800 text-xs md:text-base"><span data-contract-en="5. LIABILITY" data-contract-es="5. RESPONSABILIDAD">5. LIABILITY</span></h3><p><span data-contract-en="The Subcontractor is fully responsible for any damage to the client’s property caused by their negligence. The cost of repairing such damage will be deducted from final payment. Subcontractor agrees not to solicit further direct business from KN3X Project LLC’s clients." data-contract-es="El Subcontratista es plenamente responsable de cualquier daño a la propiedad del cliente causado por su negligencia. El costo de reparación de dichos daños se descontará del pago final. El Subcontratista se compromete a no solicitar trabajos adicionales directamente a los clientes de KN3X Project LLC.">The Subcontractor is fully responsible for any damage to the client’s property caused by their negligence. The cost of repairing such damage will be deducted from final payment. Subcontractor agrees not to solicit further direct business from KN3X Project LLC’s clients.</span></p></div>
                     </div>
 
                     <div class="mt-8 md:mt-12 flex justify-between gap-4 md:gap-8 w-full print-avoid-break items-end">
@@ -900,12 +900,12 @@
                         <div class="w-1/2">
                             <div class="signature-pad-container h-20 md:h-28 border-2 border-dashed border-gray-300 rounded mb-1 relative no-print bg-gray-50 cursor-crosshair">
                                 <canvas class="absolute inset-0 w-full h-full signature-canvas"></canvas>
-                                <button onclick="clearSignature(this)" class="absolute top-1 right-1 bg-red-100 text-red-600 text-[8px] md:text-[10px] px-1.5 py-0.5 rounded font-bold hover:bg-red-200">Clear</button>
-                                <span class="absolute bottom-1 left-2 text-[8px] text-gray-400 pointer-events-none">Sign here</span>
+                                <button onclick="clearSignature(this)" class="absolute top-1 right-1 bg-red-100 text-red-600 text-[8px] md:text-[10px] px-1.5 py-0.5 rounded font-bold hover:bg-red-200"><span data-contract-en="Clear" data-contract-es="Borrar">Clear</span></button>
+                                <span class="absolute bottom-1 left-2 text-[8px] text-gray-400 pointer-events-none"><span data-contract-en="Sign here" data-contract-es="Firme aquí">Sign here</span></span>
                             </div>
                             <img src="" class="signature-img hidden h-20 md:h-28 object-contain mb-1 signature-print w-full" alt="Signature">
                             <div class="border-t border-slate-400 pt-1">
-                                <p class="font-bold text-[10px] md:text-xs text-slate-800">Subcontractor Signature</p><p class="text-[8px] md:text-[10px] text-slate-500 uppercase tracking-wider">Print Name & Date</p>
+                                <p class="font-bold text-[10px] md:text-xs text-slate-800"><span data-contract-en="Subcontractor Signature" data-contract-es="Firma del subcontratista">Subcontractor Signature</span></p><p class="text-[8px] md:text-[10px] text-slate-500 uppercase tracking-wider"><span data-contract-en="Print Name &amp; Date" data-contract-es="Nombre en letra de imprenta y fecha">Print Name & Date</span></p>
                             </div>
                         </div>
                     </div>
@@ -1130,7 +1130,7 @@
             } else if (vista === 'contract') {
                 document.getElementById('contractContainer').classList.remove('hidden'); 
                 document.getElementById('contractContainer').classList.add('print:block'); 
-                topBarTitle.innerText = "Subcontractor Agreement";
+                topBarTitle.innerText = currentLang === 'es' ? "Contrato de subcontratista" : "Subcontractor Agreement";
                 poblarSelectContrato();
                 updateContract();
             } else if (vista === 'ledger') {
@@ -2358,22 +2358,24 @@
         // ==========================================
         function poblarSelectContrato() {
             const select = document.getElementById('subNameSelect');
-            select.innerHTML = '<option value="">-- Select from Ledger --</option>';
+            const previous = select.value;
+            select.innerHTML = '<option value="">'+(currentLang === 'es' ? '-- Seleccionar del libro 1099 --' : '-- Select from Ledger --')+'</option>';
             subLedger.forEach(sub => {
                 const opt = document.createElement('option');
                 opt.value = sub.id;
-                opt.text = sub.w9 === 'Pending' ? `⚠️ ${escapeHTML(sub.name)} (W-9 Pending)` : `${escapeHTML(sub.name)} - ${escapeHTML(sub.trade)}`;
+                opt.text = sub.w9 === 'Pending' ? `⚠️ ${escapeHTML(sub.name)} (${currentLang === 'es' ? 'W-9 pendiente' : 'W-9 Pending'})` : `${escapeHTML(sub.name)} - ${escapeHTML(sub.trade)}`;
                 select.appendChild(opt);
             });
+            select.value = previous;
         }
 
         function updateContract() {
             const select = document.getElementById('subNameSelect');
-            let name = "[Subcontractor Name]";
+            let name = currentLang === 'es' ? "[Nombre del subcontratista]" : "[Subcontractor Name]";
             if(select.value) { const sub = subLedger.find(s => s.id === select.value); if(sub) name = sub.name; }
-            const service = document.getElementById('subService').value || "[Service Provided]";
+            const service = document.getElementById('subService').value || (currentLang === 'es' ? "[Servicio a realizar]" : "[Service Provided]");
             const payNum = parseFloat(document.getElementById('subPayNum').value) || 0;
-            const date = document.getElementById('subDate').value || "[Date]";
+            const date = document.getElementById('subDate').value || (currentLang === 'es' ? "[Fecha]" : "[Date]");
             
             document.getElementById('docSubName').innerText = name;
             document.getElementById('docSubService').innerText = service;
@@ -2394,7 +2396,7 @@
             
             const subIndex = subLedger.findIndex(s => s.id === select.value);
             if(subIndex !== -1) {
-                if(subLedger[subIndex].w9 === 'Pending') alert(`🛑 LEGAL WARNING: ${subLedger[subIndex].name}'s W-9 Form is still PENDING.\nYou may print this contract, but DO NOT issue any payment until you receive their signed W-9.`);
+                if(subLedger[subIndex].w9 === 'Pending') alert(currentLang === 'es' ? `🛑 ADVERTENCIA LEGAL: el formulario W-9 de ${subLedger[subIndex].name} sigue PENDIENTE.\nPuede imprimir este contrato, pero NO emita ningún pago hasta recibir su W-9 firmado.` : `🛑 LEGAL WARNING: ${subLedger[subIndex].name}'s W-9 Form is still PENDING.\nYou may print this contract, but DO NOT issue any payment until you receive their signed W-9.`);
                 const paymentKey = JSON.stringify([select.value, service, date, payNum]);
                 const payments = subLedger[subIndex].payments || [];
                 if (payments.some(p => p.key === paymentKey)) { window.print(); return; }
@@ -2402,7 +2404,7 @@
                 subLedger[subIndex].payments = [...payments, {key: paymentKey, service, date, amount: payNum}];
                 subLedger[subIndex].totalPaid = (Number(subLedger[subIndex].totalPaid) || 0) + payNum;
                 localStorage.setItem('kn3x_subs_v3', JSON.stringify(subLedger));
-                if(subLedger[subIndex].w9 !== 'Pending') alert(`$${payNum} successfully added to ${subLedger[subIndex].name}'s ledger!`);
+                if(subLedger[subIndex].w9 !== 'Pending') alert(currentLang === 'es' ? `¡Se agregaron $ ${payNum} al libro de ${subLedger[subIndex].name}!` : `${payNum} successfully added to ${subLedger[subIndex].name}'s ledger!`);
             }
             
             window.print();
@@ -2411,6 +2413,18 @@
         // ==========================================
         // TRADUCCIONES Y SISTEMA DE ARCHIVOS (.json)
         // ==========================================
+        function syncContractLanguage() {
+            const es = currentLang === 'es';
+            document.querySelectorAll('[data-contract-en]').forEach(el => {
+                el.textContent = es ? el.dataset.contractEs : el.dataset.contractEn;
+            });
+            document.getElementById('subService').placeholder = es ? 'Ej.: pintura interior' : 'e.g., Interior Painting';
+            document.querySelector('#contractContainer .signature-img').alt = es ? 'Firma' : 'Signature';
+            poblarSelectContrato();
+            updateContract();
+            if (workspaceView === 'contract') document.getElementById('topBarTitle').textContent = es ? 'Contrato de subcontratista' : 'Subcontractor Agreement';
+        }
+
         function toggleLanguage() {
             currentLang = currentLang === 'en' ? 'es' : 'en';
             document.documentElement.lang = currentLang;
@@ -2438,6 +2452,7 @@
             refreshEstimateControls();
             const customerPlaceholder = document.getElementById('selectCustomerDir')?.options[0];
             if (customerPlaceholder) customerPlaceholder.textContent = currentLang === 'es' ? '-- Seleccionar cliente --' : '-- Select customer --';
+            syncContractLanguage();
         }
 
         // VALIDACIÓN PARA EXPORTAR (GUARDAR JSON)
