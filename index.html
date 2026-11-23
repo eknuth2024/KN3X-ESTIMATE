@@ -657,6 +657,13 @@
 @media (prefers-reduced-motion:reduce) {
  #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) :is(input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not(#inputEstNum),select,textarea) {transition:none;}
 }
+@media screen {
+ #mainContent #listaItems input[onkeyup="filtrarServicios(this)"] {--field-glass-tint:rgba(147,197,253,.90);}
+ #estimateContainer:not(.pdf-export) .estimate-acceptance-panel {background:#728092;border-color:#95a2b2;}
+ #estimateContainer:not(.pdf-export) .estimate-acceptance-panel :is(h3,p,[data-i18n="sign_signature"],[data-i18n="sign_name"],[data-i18n="sign_date"]) {color:#eef2f7;}
+ #estimateContainer:not(.pdf-export) .estimate-acceptance-panel .signature-pad-container {background:#a0acbd;border-color:#cbd5e1;}
+ #estimateContainer:not(.pdf-export) .estimate-acceptance-panel .signature-pad-container > span {color:#344358;}
+}
 </style>
 
     <!-- KN3X Estimate browser and iPhone/iPad home-screen icons -->
@@ -880,7 +887,7 @@
                                     </div>
                                 </div>
         
-                                <div class="mt-8 md:mt-10 w-full bg-white border border-gray-300 rounded-lg p-4 md:p-6 print:border-gray-300 print:p-4 shadow-sm print:shadow-none print-avoid-break">
+                                <div class="estimate-acceptance-panel mt-8 md:mt-10 w-full bg-white border border-gray-300 rounded-lg p-4 md:p-6 print:border-gray-300 print:p-4 shadow-sm print:shadow-none print-avoid-break">
                                     <h3 class="text-[10px] md:text-xs font-bold text-slate-600 uppercase tracking-widest mb-1.5 md:mb-2" data-i18n="acceptance_title">Client Acceptance</h3>
                                     <p class="text-[9px] md:text-xs text-slate-500 mb-1.5 md:mb-2" data-i18n="acceptance_text">I have reviewed and approve the scope of work, pricing, and terms above. I authorize KN3X Project LLC to proceed.</p>
                                     
