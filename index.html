@@ -588,7 +588,7 @@
    background:linear-gradient(165deg,rgba(255,255,255,.24),rgba(255,255,255,.03) 48%,rgba(32,44,63,.10)),var(--field-glass-tint,rgba(120,134,155,.92)) !important;
    color:#020916 !important;
    border:1px solid rgba(232,240,250,.58) !important;
-   border-radius:999px !important;
+   border-radius:var(--workspace-corner-radius,18px) !important;
    box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 -1px 0 rgba(34,45,64,.12),0 3px 9px rgba(15,23,42,.12) !important;
    -webkit-backdrop-filter:blur(18px) saturate(135%);
    backdrop-filter:blur(18px) saturate(135%);
@@ -615,7 +615,7 @@
  #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) select option,
  #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) select optgroup {background:#d4dae2;color:#020916;}
  #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) :is(input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not(#inputEstNum),select,textarea):is(textarea) {
-   border-radius:24px !important;padding:10px 16px !important;
+   border-radius:var(--workspace-corner-radius,18px) !important;padding:10px 16px !important;
  }
  #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) :is(input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not(#inputEstNum),select,textarea):is(.qty,.price,.unit-display) {padding:6px !important;}
  #mainContent #estimateContainer input[type="number"] {-moz-appearance:textfield;appearance:textfield;}
@@ -695,6 +695,19 @@
  #listaItems .catalogo-select {order:1;}
  #listaItems .service-row-tools {display:block;order:2;margin:4px 0 0;}
  #listaItems .service-row-tools .service-search {display:none !important;}
+}
+@media screen {
+ html.kn3x-workspace-shell {--workspace-corner-radius:18px;}
+ #estimateContainer:not(.pdf-export) :is(.workspace-dark-panel,.service-editor-panel,.estimate-acceptance-panel),
+ #mainContent :is(#formCustomer,#formVendor,#ledgerDashboard) {
+   border-radius:var(--workspace-corner-radius) !important;
+ }
+ #estimateContainer:not(.pdf-export) :is(#customerPickerBar,#paymentPlanPanel > label),
+ #estimateContainer:not(.pdf-export) #tablaPresupuesto thead {
+   border-radius:var(--workspace-corner-radius) !important;
+ }
+ #estimateContainer:not(.pdf-export) #tablaPresupuesto thead {overflow:hidden;}
+ #estimateContainer:not(.pdf-export) #tablaPresupuesto thead :is(tr,th) {border-radius:0 !important;}
 }
 </style>
 
