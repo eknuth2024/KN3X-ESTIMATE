@@ -450,6 +450,31 @@
         -webkit-text-fill-color:#1f2937 !important;
     }
 }
+
+@media screen {
+    #mainContent #listaItems input[onkeyup="filtrarServicios(this)"] {
+        background-color:#dbeafe !important; color:#1f2937 !important; border-color:#93c5fd !important;
+    }
+    #mainContent #listaItems select.catalogo-select {
+        background-color:#fff !important; color:#1f2937 !important; border-color:#cbd5e1 !important;
+    }
+    #mainContent #listaItems input.nota-input {
+        background-color:#e5e7eb !important; color:#374151 !important; border-color:#cbd5e1 !important;
+    }
+    #estimateContainer:not(.pdf-export) .estimate-date-field {min-width:0;overflow:hidden;}
+    #estimateContainer:not(.pdf-export) #fechaActual {
+        display:block; box-sizing:border-box; width:100% !important;
+        min-width:0 !important; max-width:100% !important;
+        height:34px !important; min-height:34px !important;
+        -webkit-appearance:none; appearance:none; padding:6px 8px;
+    }
+    #estimateContainer:not(.pdf-export) #fechaActual::-webkit-date-and-time-value {
+        min-width:0; text-align:left; line-height:20px;
+    }
+    #estimateContainer:not(.pdf-export) #fechaActual::-webkit-datetime-edit {
+        display:block; min-width:0; max-width:100%; padding:0;
+    }
+}
 </style>
 
     <!-- KN3X Estimate browser and iPhone/iPad home-screen icons -->
@@ -593,7 +618,7 @@
                                             <label class="block text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5"><span data-i18n="client">Client / Project Name</span> <span class="text-red-500 no-print">*</span></label>
                                             <input type="text" id="inputClientName" class="w-full border-gray-300 rounded shadow-sm focus:border-slate-500 focus:ring-slate-500 p-1 md:p-1.5 border bg-white print:p-0 print:font-semibold text-xs md:text-sm">
                                         </div>
-                                        <div class="w-full md:w-1/3 print:w-1/3 mb-2 print:mb-1">
+                                        <div class="estimate-date-field w-full md:w-1/3 print:w-1/3 mb-2 print:mb-1">
                                             <label class="block text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5"><span data-i18n="date">Date</span> <span class="text-red-500 no-print">*</span></label>
                                             <input type="date" id="fechaActual" class="w-full border-gray-300 rounded shadow-sm focus:border-slate-500 focus:ring-slate-500 p-1 md:p-1.5 border bg-white text-slate-700 text-xs md:text-sm print:p-0 print:font-semibold">
                                         </div>
@@ -1587,7 +1612,7 @@
                     <input type="text" class="nota-input w-full p-1 md:p-1.5 border border-transparent hover:border-gray-200 focus:border-slate-500 rounded focus:outline-none bg-transparent transition text-[9px] md:text-[11px] text-gray-500 print:p-0 mt-1" placeholder="${i18n[currentLang].notes}">
                 </td>
                 <td class="p-1 md:p-2 print:py-1 print:px-0 align-top pt-2 md:pt-3 print:pt-1">
-                    <input type="number" inputmode="decimal" aria-label="Cantidad / Quantity" min="0" step="any" value="1" class="w-full p-1 border border-transparent hover:border-gray-200 focus:border-slate-500 rounded focus:outline-none bg-transparent text-center transition qty text-[10px] md:text-sm print:p-0 print:text-xs mt-5 md:mt-6 print:mt-0" onchange="calcularTotales()" onkeyup="calcularTotales()">
+                    <input type="number" inputmode="decimal" aria-label="Cantidad / Quantity" min="0" step="any" value="" class="w-full p-1 border border-transparent hover:border-gray-200 focus:border-slate-500 rounded focus:outline-none bg-transparent text-center transition qty text-[10px] md:text-sm print:p-0 print:text-xs mt-5 md:mt-6 print:mt-0" onchange="calcularTotales()" onkeyup="calcularTotales()">
                 </td>
                 <td class="p-1 md:p-2 print:py-1 print:px-0 align-top pt-2 md:pt-3 print:pt-1">
                     <div class="flex items-center justify-end mt-5 md:mt-6 print:mt-0">
@@ -2473,7 +2498,7 @@
                             sel.selectedIndex = option ? option.index : 0;
                         } else sel.selectedIndex = 0;
                         tr.querySelector('.nota-input').value = item.nota || '';
-                        tr.querySelector('.qty').value = item.qty ?? 1; tr.querySelector('.price').value = item.price ?? 0;
+                        tr.querySelector('.qty').value = item.qty ?? ''; tr.querySelector('.price').value = item.price ?? 0;
                     });
                     document.getElementById('photoGrid').innerHTML = '';
                     (data.photos || []).forEach(photo => { agregarTarjetaFoto(photo.src); const card = document.getElementById('photoGrid').lastElementChild; card.querySelector('.photo-title-input').value = photo.title || ''; card.querySelector('.photo-desc-input').value = photo.description || ''; });
