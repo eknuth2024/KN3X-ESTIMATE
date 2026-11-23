@@ -891,6 +891,17 @@
  }
 }
 </style>
+<style>
+@media screen {
+ #estimateContainer:not(.pdf-export) #listaItems .qty::placeholder {font-size:14px;}
+ #estimateContainer:not(.pdf-export) #listaItems td:nth-child(2) > .service-field-label {font-size:9px;}
+ #estimateContainer:not(.pdf-export) #listaItems .price[readonly] {cursor:default;}
+}
+@media screen and (min-width:1024px) {
+ #estimateContainer:not(.pdf-export) #listaItems .qty,
+ #estimateContainer:not(.pdf-export) #listaItems .qty::placeholder {font-size:11px;}
+}
+</style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans h-screen overflow-hidden flex text-xs md:text-sm">
 
@@ -2051,7 +2062,7 @@
                     <span class="service-field-label no-print" data-service-label-en="Unit price" data-service-label-es="Precio unitario">${currentLang === 'es' ? 'Precio unitario' : 'Unit price'}</span>
                     <div class="flex items-center justify-end mt-5 md:mt-6 print:mt-0">
                         <span class="text-slate-400 mr-0.5 md:mr-1 text-[10px] md:text-sm print:text-xs">$</span>
-                        <input type="number" inputmode="decimal" aria-label="Precio unitario / Unit price" min="0" value="0.00" step="0.01" class="w-full max-w-[60px] md:max-w-[80px] p-1 border border-transparent hover:border-gray-200 focus:border-slate-500 rounded focus:outline-none bg-transparent text-right transition price text-[10px] md:text-sm print:p-0 print:text-xs" onchange="calcularTotales()" onkeyup="calcularTotales()">
+                        <input type="number" inputmode="decimal" readonly aria-readonly="true" title="Precio del catálogo / Catalog price" aria-label="Precio unitario / Unit price" min="0" value="0.00" step="0.01" class="w-full max-w-[60px] md:max-w-[80px] p-1 border border-transparent hover:border-gray-200 focus:border-slate-500 rounded focus:outline-none bg-transparent text-right transition price text-[10px] md:text-sm print:p-0 print:text-xs">
                     </div>
                 </td>
                 <td class="p-1 md:p-2 print:py-1 print:px-0 align-top pt-2 md:pt-3 print:pt-1">
@@ -2130,7 +2141,8 @@
         function actualizarPrecioDesdeCatalogo(selectElement) {
             const fila = selectElement.closest('tr');
             const precioInput = fila.querySelector('.price');
-            precioInput.value = parseFloat(selectElement.value).toFixed(2);
+            const service = catalogoPrecios.find(item => item.id === selectElement.selectedOptions[0]?.dataset.id);
+            precioInput.value = (service ? Number(service.precio) : 0).toFixed(2);
             restoreEstimateUnit(fila);
             calcularTotales();
         }
