@@ -852,6 +852,45 @@
  html.kn3x-workspace-shell,html.kn3x-workspace-shell::after {background:#2c2c2e;}
 }
 </style>
+
+<style>
+@media screen {
+ html.kn3x-workspace-shell #mainWrapper {min-height:0;min-width:0;}
+ html.kn3x-workspace-shell #mainContent {min-height:0;min-width:0;flex:1 1 0%;}
+ #estimateContainer:not(.pdf-export) .estimate-project-panel > .grid {align-items:stretch;}
+ #estimateContainer:not(.pdf-export) .estimate-project-panel > .grid > div {
+   display:flex;flex-direction:column;min-width:0;
+ }
+ #estimateContainer:not(.pdf-export) .estimate-project-panel #validezSelect,
+ #estimateContainer:not(.pdf-export) .estimate-project-panel label[for="inputDuration"] + div {margin-top:auto;}
+ #estimateContainer:not(.pdf-export) .estimate-project-panel label[for="inputDuration"] {
+   display:flex;align-items:flex-start;gap:4px;line-height:1.4;letter-spacing:.06em;
+ }
+ #estimateContainer:not(.pdf-export) .estimate-project-panel label[for="inputDuration"] > [data-i18n] {min-width:0;}
+ #estimateContainer:not(.pdf-export) .estimate-project-panel label[for="inputDuration"] > .no-print {
+   flex:0 0 auto;white-space:nowrap;
+ }
+ #estimateContainer:not(.pdf-export) :is(#validezSelect,#inputDuration) {box-sizing:border-box;min-width:0;width:100%;height:40px;}
+}
+@media screen and (max-width:1023px) {
+ html.kn3x-workspace-shell #mainContent {
+   padding-bottom:24px;scroll-padding-bottom:calc(140px + env(safe-area-inset-bottom,0px));
+ }
+ /* A real scrollable block avoids Safari losing trailing overflow padding. */
+ html.kn3x-workspace-shell #mainContent::after {
+   content:"";display:block;height:calc(140px + env(safe-area-inset-bottom,0px));
+   min-height:calc(140px + env(safe-area-inset-bottom,0px));width:1px;pointer-events:none;
+ }
+}
+@media screen and (min-width:1024px) {
+ html.kn3x-workspace-shell body,html.kn3x-workspace-shell #mainWrapper {height:100dvh;}
+}
+@media screen and (min-width:1024px) and (pointer:coarse) {
+ html.kn3x-workspace-shell #mainContent::after {
+   content:"";display:block;height:calc(32px + env(safe-area-inset-bottom,0px));width:1px;
+ }
+}
+</style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans h-screen overflow-hidden flex text-xs md:text-sm">
 
