@@ -603,7 +603,7 @@
  }
  #mainContent .field-has-value {--field-glass-tint:rgba(227,207,147,.84);}
  #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) :is(input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not(#inputEstNum),select,textarea)::placeholder {color:#344358 !important;opacity:1;}
- #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) select {
+ #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) :is(input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not(#inputEstNum),select,textarea):is(select) {
    -webkit-appearance:none;appearance:none;
    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%2327364c' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E"),linear-gradient(165deg,rgba(255,255,255,.24),rgba(255,255,255,.03) 48%,rgba(32,44,63,.10)) !important;
    background-color:var(--field-glass-tint,rgba(160,172,189,.72)) !important;
@@ -614,10 +614,10 @@
  }
  #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) select option,
  #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) select optgroup {background:#d4dae2;color:#101c2e;}
- #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) textarea {
+ #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) :is(input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not(#inputEstNum),select,textarea):is(textarea) {
    border-radius:24px !important;padding:10px 16px !important;
  }
- #mainContent #estimateContainer :is(.qty,.price,.unit-display) {padding:6px !important;}
+ #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) :is(input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not(#inputEstNum),select,textarea):is(.qty,.price,.unit-display) {padding:6px !important;}
  #mainContent #estimateContainer input[type="number"] {-moz-appearance:textfield;appearance:textfield;}
  #mainContent #estimateContainer input[type="number"]::-webkit-inner-spin-button,
  #mainContent #estimateContainer input[type="number"]::-webkit-outer-spin-button {-webkit-appearance:none;margin:0;}
