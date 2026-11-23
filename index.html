@@ -749,6 +749,12 @@
    -webkit-text-fill-color:#020916 !important;
  }
 }
+@media screen {
+ #estimateContainer:not(.pdf-export) #printedClientName {
+   color:#eef2f7;display:block;border:0;background:none;box-shadow:none;
+   overflow-wrap:anywhere;white-space:normal;
+ }
+}
 </style>
 
     <!-- KN3X Estimate browser and iPhone/iPad home-screen icons -->
@@ -991,7 +997,7 @@
                                                 <span class="text-[8px] md:text-[10px] font-bold text-slate-500 print:text-slate-700 uppercase tracking-wider" data-i18n="sign_signature">Client Signature</span>
                                             </div>
                                         </div>
-                                        <div class="printed-name-box w-[35%] md:w-[40%] border-t border-gray-400 print:border-gray-800 pt-1"><input id="inputPrintedName" type="text" aria-label="Printed name / Nombre del firmante" autocomplete="off" maxlength="100" class="printed-name-field bg-transparent text-slate-800 focus:outline-none"><span class="text-[8px] md:text-[10px] font-bold text-slate-500 print:text-slate-700 uppercase tracking-wider" data-i18n="sign_name">Printed Name</span></div>
+                                        <div class="printed-name-box w-[35%] md:w-[40%] border-t border-gray-400 print:border-gray-800 pt-1"><span id="printedClientName" class="printed-name-field text-slate-800"></span><span class="text-[8px] md:text-[10px] font-bold text-slate-500 print:text-slate-700 uppercase tracking-wider" data-i18n="sign_name">Printed Name</span></div>
                                         <div class="w-[15%] border-t border-gray-400 print:border-gray-800 pt-1"><span class="text-[8px] md:text-[10px] font-bold text-slate-500 print:text-slate-700 uppercase tracking-wider" data-i18n="sign_date">Date</span></div>
                                     </div>
                                 </div>
@@ -2068,7 +2074,7 @@
                 fecha: document.getElementById('fechaActual').value, email: document.getElementById('inputClientEmail').value.trim(),
                 phone: document.getElementById('inputPhone').value.trim(), address: document.getElementById('inputAddress').value.trim(),
                 validez: document.getElementById('validezSelect').value, pagoPlan: document.getElementById('pagoSelect').value,
-                duration: document.getElementById('inputDuration').value.trim(), printedName: document.getElementById("inputPrintedName").value, printedNameManual: document.getElementById("inputPrintedName").dataset.manual === "true", items: [], photos: Array.from(document.querySelectorAll('#photoGrid > div')).map(card => ({src: card.querySelector('img').src, title: card.querySelector('.photo-title-input').value, description: card.querySelector('.photo-desc-input').value})), signatures: Array.from(document.querySelectorAll('#estimateContainer .signature-img')).map(img => img.getAttribute('src') || '')
+                duration: document.getElementById('inputDuration').value.trim(), printedName: document.getElementById("printedClientName").textContent, printedNameManual: false, items: [], photos: Array.from(document.querySelectorAll('#photoGrid > div')).map(card => ({src: card.querySelector('img').src, title: card.querySelector('.photo-title-input').value, description: card.querySelector('.photo-desc-input').value})), signatures: Array.from(document.querySelectorAll('#estimateContainer .signature-img')).map(img => img.getAttribute('src') || '')
             };
             document.querySelectorAll('#listaItems tr').forEach(fila => {
                 const sel = fila.querySelector('.catalogo-select');
@@ -2188,8 +2194,8 @@
             let number; try { number = nextEstimateNumber(readEstimateStore()); } catch { alert(estimateMessage('Cannot read local numbering. Save a JSON backup before clearing.','No se puede leer la numeración local. Guarda una copia JSON antes de borrar.')); return; }
             activeEstimateId = null;
             estimatePhotoContext++;
-            ['inputClientName','inputClientEmail','inputPhone','inputAddress','inputDuration','inputPrintedName'].forEach(id => document.getElementById(id).value = '');
-            document.getElementById('inputPrintedName').dataset.manual = 'false';
+            ['inputClientName','inputClientEmail','inputPhone','inputAddress','inputDuration'].forEach(id => document.getElementById(id).value = '');
+            syncPrintedName();
             document.getElementById('selectCustomerDir').value = '';
             document.getElementById('savedLocalEstimates').value = '';
             document.getElementById('fechaActual').value = localDate();
@@ -2333,7 +2339,7 @@
                     #estimateContainer [data-i18n="tc_main_title"] + div {display:block!important}
                     #estimateContainer [data-i18n="tc_main_title"] + div > div {display:block!important;width:100%!important;margin-bottom:18px!important}
                     #estimateContainer.pdf-export .pdf-contact-text, #estimateContainer.pdf-export .pdf-contact-text a {color:transparent!important}
-                    #estimateContainer.pdf-export .printed-name-field {position:absolute!important;white-space:nowrap!important}
+                    #estimateContainer.pdf-export .printed-name-field {position:absolute!important;white-space:normal!important;overflow-wrap:anywhere!important}
                     #estimateContainer.pdf-export .estimate-column-title {min-height:26px!important;transform:none!important;color:transparent!important}
                     #estimateContainer .pdf-field {border:0!important;box-shadow:none!important;background:transparent!important;white-space:pre-wrap}
                     #estimateContainer > table > tfoot {display:none!important}
@@ -2861,8 +2867,8 @@
                     estimatePhotoContext++;
                     document.getElementById('inputEstNum').value = data.estNum || ''; document.querySelectorAll('.est-display').forEach(el => el.innerText = data.estNum || '');
                     document.getElementById('inputClientName').value = data.clientName || '';
-                    document.getElementById('inputPrintedName').value = typeof data.printedName === 'string' ? data.printedName : (data.clientName || '');
-                    document.getElementById('inputPrintedName').dataset.manual = String(data.printedNameManual === true || (typeof data.printedName === 'string' && data.printedName !== data.clientName)); document.getElementById('fechaActual').value = data.fecha || '';
+                    syncPrintedName();
+                    document.getElementById('fechaActual').value = data.fecha || '';
                     document.getElementById('inputClientEmail').value = data.email || ''; document.getElementById('inputPhone').value = data.phone || '';
                     document.getElementById('inputAddress').value = data.address || ''; document.getElementById('validezSelect').value = data.validez || '15d';
                     document.getElementById('pagoSelect').value = data.pagoPlan || 'thirds'; document.getElementById('inputDuration').value = data.duration || '';
@@ -2909,7 +2915,7 @@
             if (!confirm(currentLang === 'es' ? 'Cargar este ejemplo reemplazará el presupuesto en pantalla. ¿Continuar?' : 'Load this demo and replace the current estimate?')) return;
             activeEstimateId = null;
             document.getElementById('inputClientName').value = project.client;
-            document.getElementById('inputPrintedName').dataset.manual = 'false'; syncPrintedName();
+            syncPrintedName();
             document.getElementById('inputAddress').value = project.address;
             document.getElementById('inputDuration').value = project.duration;
             document.getElementById('inputEstNum').value = project.id;
@@ -2943,13 +2949,11 @@
         }
 
         function syncPrintedName() {
-            const field = document.getElementById('inputPrintedName');
-            if (field.dataset.manual !== 'true') field.value = document.getElementById('inputClientName').value;
+            document.getElementById('printedClientName').textContent = document.getElementById('inputClientName').value.trim();
         }
         window.addEventListener('beforeprint', syncPrintedName);
         window.onload = () => {
             document.getElementById('inputClientName').addEventListener('input', syncPrintedName);
-            document.getElementById('inputPrintedName').addEventListener('input', event => { event.target.dataset.manual = 'true'; });
             syncPrintedName();
 
             actualizarSelectsTerminos();
