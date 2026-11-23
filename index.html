@@ -505,7 +505,7 @@
         #tablaPresupuesto th:nth-child(5) {width:15%;}
         #tablaPresupuesto th:nth-child(6) {width:5%;}
         #tablaPresupuesto th:nth-child(3) .estimate-column-title {justify-content:center;}
-        #listaItems .unit-select {margin-top:24px;min-width:0;max-width:100%;}
+        #listaItems .unit-display {margin-top:24px;min-width:0;max-width:100%;}
         @media screen and (max-width:1023px) {
             #estimateContainer:not(.pdf-export) #tablaPresupuesto th:nth-child(1) {width:34%;}
             #estimateContainer:not(.pdf-export) #tablaPresupuesto th:nth-child(2) {width:14%;}
@@ -514,7 +514,7 @@
             #estimateContainer:not(.pdf-export) #tablaPresupuesto th:nth-child(5) {width:14%;}
             #estimateContainer:not(.pdf-export) #tablaPresupuesto th:nth-child(6) {width:5%;padding:0;}
             #estimateContainer:not(.pdf-export) #tablaPresupuesto th {padding-left:2px;padding-right:2px;}
-            #estimateContainer:not(.pdf-export) #listaItems .unit-select {margin-top:40px;height:36px;min-height:36px;padding:2px;}
+            #estimateContainer:not(.pdf-export) #listaItems .unit-display {margin-top:40px;height:36px;min-height:36px;padding:2px;}
             #estimateContainer:not(.pdf-export) #listaItems .estimate-unit-cell {padding:12px 3px;}
         }
         @media print {
@@ -522,7 +522,7 @@
             #tablaPresupuesto th:nth-child(2) {width:10%;}
             #tablaPresupuesto th:nth-child(3) {width:12%;}
             #tablaPresupuesto th:nth-child(4),#tablaPresupuesto th:nth-child(5) {width:14%;}
-            #listaItems .unit-select {margin-top:0;padding:0;text-align:center;}
+            #listaItems .unit-display {margin-top:0;padding:0;text-align:center;}
         }
 
         @media screen and (max-width:639px) {
@@ -538,7 +538,7 @@
             #estimateContainer:not(.pdf-export) #listaItems td {display:block;width:auto;min-width:0;padding:0;}
             #estimateContainer:not(.pdf-export) #listaItems td:first-child {grid-column:1/-1;display:flex;padding-right:26px;}
             #estimateContainer:not(.pdf-export) #listaItems td:last-child {position:absolute;right:0;top:12px;}
-            #estimateContainer:not(.pdf-export) #listaItems :is(.qty,.unit-select) {margin-top:0;min-height:36px;height:36px;}
+            #estimateContainer:not(.pdf-export) #listaItems :is(.qty,.unit-display) {margin-top:0;min-height:36px;height:36px;}
             #estimateContainer:not(.pdf-export) #listaItems td:nth-child(4) > div,
             #estimateContainer:not(.pdf-export) #listaItems td:nth-child(5) > div {margin-top:0;min-height:36px;}
             #estimateContainer:not(.pdf-export) #listaItems td:last-child button {margin-top:0;}
@@ -560,7 +560,7 @@
  #estimateContainer:not(.pdf-export) #listaItems td:nth-child(4) {grid-column:4;grid-row:2;}
  #estimateContainer:not(.pdf-export) #listaItems td:nth-child(5) {grid-column:5;grid-row:2;}
  #estimateContainer:not(.pdf-export) #listaItems td:nth-child(6) {grid-column:6;grid-row:2;}
- #estimateContainer:not(.pdf-export) #listaItems :is(.qty,.unit-select,.price) {margin:0;min-height:36px;height:36px;box-sizing:border-box;}
+ #estimateContainer:not(.pdf-export) #listaItems :is(.qty,.unit-display,.price) {margin:0;min-height:36px;height:36px;box-sizing:border-box;}
  #estimateContainer:not(.pdf-export) #listaItems td:nth-child(4) > div,
  #estimateContainer:not(.pdf-export) #listaItems td:nth-child(5) > div {margin:0;min-height:36px;height:36px;align-items:center;}
  #estimateContainer:not(.pdf-export) #listaItems td:last-child button {margin:0;}
@@ -571,12 +571,12 @@
 @media screen and (max-width:639px) {
  #estimateContainer:not(.pdf-export) #listaItems td:nth-child(n) {padding:0;min-width:0;}
  #estimateContainer:not(.pdf-export) #listaItems td:first-child {padding-right:26px;}
- #estimateContainer:not(.pdf-export) #listaItems :is(.qty,.unit-select,.price) {margin:0;height:36px;min-height:36px;box-sizing:border-box;}
+ #estimateContainer:not(.pdf-export) #listaItems :is(.qty,.unit-display,.price) {margin:0;height:36px;min-height:36px;box-sizing:border-box;}
  #estimateContainer:not(.pdf-export) #listaItems td:nth-child(4) > div,
  #estimateContainer:not(.pdf-export) #listaItems td:nth-child(5) > div {margin:0;height:36px;min-height:36px;align-items:center;}
 }
 @media print {
- #listaItems .unit-select {font-size:12px;line-height:16px;}
+ #listaItems .unit-display {font-size:12px;line-height:16px;}
 }
 @media screen {
  #estimateContainer:not(.pdf-export) .estimate-company-banner {background-color:#0f172a;}
@@ -1688,6 +1688,7 @@
             {id:'drop',en:'Drop',es:'Punto',descriptionEn:'Network drop',descriptionEs:'Punto de red'}
         ];
         function inferEstimateUnit(serviceId) {
+            if (serviceId === 'custom') return 'each';
             const name = catalogoPrecios.find(item => item.id === serviceId)?.nom_en || '';
             if (/SqFt/i.test(name)) return 'sqft';
             if (/LinFt/i.test(name)) return 'linft';
@@ -1698,21 +1699,17 @@
             if (/Drop/i.test(name)) return 'drop';
             return '';
         }
-        function estimateUnitOptions(value = '') {
-            const es = currentLang === 'es';
-            return '<option value="">—</option>' + estimateUnits.map(unit =>
-                '<option value="'+unit.id+'" title="'+(es ? unit.descriptionEs : unit.descriptionEn)+'" '+(unit.id === value ? 'selected' : '')+'>'+(es ? unit.es : unit.en)+'</option>').join('');
-        }
-        function syncEstimateUnitLabel(select) {
-            const unit = estimateUnits.find(unit => unit.id === select.value);
-            select.title = unit ? (currentLang === 'es' ? unit.descriptionEs : unit.descriptionEn) : (currentLang === 'es' ? 'Seleccionar unidad' : 'Select unit');
-            select.setAttribute('aria-label',currentLang === 'es' ? 'Unidad' : 'Unit');
+        function syncEstimateUnitLabel(field) {
+            const unit = estimateUnits.find(unit => unit.id === field.dataset.unit);
+            field.value = unit ? (currentLang === 'es' ? unit.es : unit.en) : '';
+            field.title = unit ? (currentLang === 'es' ? unit.descriptionEs : unit.descriptionEn) : (currentLang === 'es' ? 'Se completa al seleccionar la partida' : 'Filled automatically when you select a service');
+            field.setAttribute('aria-label',currentLang === 'es' ? 'Unidad automática' : 'Automatic unit');
         }
         function restoreEstimateUnit(row, item = {}) {
-            const select = row.querySelector('.unit-select');
+            const field = row.querySelector('.unit-display');
             const inferred = inferEstimateUnit(row.querySelector('.catalogo-select').selectedOptions[0]?.dataset.id);
-            select.value = estimateUnits.some(unit => unit.id === item.unit) ? item.unit : inferred;
-            syncEstimateUnitLabel(select);
+            field.dataset.unit = estimateUnits.some(unit => unit.id === item.unit) ? item.unit : inferred;
+            syncEstimateUnitLabel(field);
         }
 
         function agregarFila() {
@@ -1734,9 +1731,7 @@
                     <input type="number" inputmode="decimal" aria-label="Cantidad / Quantity" min="0" step="any" value="" class="w-full p-1 border border-transparent hover:border-gray-200 focus:border-slate-500 rounded focus:outline-none bg-transparent text-center transition qty text-[10px] md:text-sm print:p-0 print:text-xs mt-5 md:mt-6 print:mt-0" onchange="calcularTotales()" onkeyup="calcularTotales()">
                 </td>
                 <td class="estimate-unit-cell p-1 md:p-2 print:py-1 print:px-0 align-top">
-                    <select class="unit-select w-full rounded border border-gray-300 bg-white text-slate-700 text-center p-1" aria-label="${currentLang === 'es' ? 'Unidad' : 'Unit'}" onchange="syncEstimateUnitLabel(this)">
-                        ${estimateUnitOptions()}
-                    </select>
+                    <input type="text" readonly class="unit-display w-full rounded border border-gray-300 bg-white text-slate-700 text-center p-1" value="" data-unit="" placeholder="—" aria-label="${currentLang === 'es' ? 'Unidad automática' : 'Automatic unit'}" title="${currentLang === 'es' ? 'Se completa al seleccionar la partida' : 'Filled automatically when you select a service'}">
                 </td>
                 
                 <td class="p-1 md:p-2 print:py-1 print:px-0 align-top pt-2 md:pt-3 print:pt-1">
@@ -1907,7 +1902,7 @@
             };
             document.querySelectorAll('#listaItems tr').forEach(fila => {
                 const sel = fila.querySelector('.catalogo-select');
-                data.items.push({ serviceId: sel.selectedOptions[0]?.dataset.id, selectIndex: sel.selectedIndex, nota: fila.querySelector('.nota-input').value, qty: fila.querySelector('.qty').value, unit: fila.querySelector('.unit-select').value, price: fila.querySelector('.price').value });
+                data.items.push({ serviceId: sel.selectedOptions[0]?.dataset.id, selectIndex: sel.selectedIndex, nota: fila.querySelector('.nota-input').value, qty: fila.querySelector('.qty').value, unit: fila.querySelector('.unit-display').dataset.unit, price: fila.querySelector('.price').value });
             });
 
             data.localEstimateId = activeEstimateId;
@@ -1924,7 +1919,7 @@
                 const selected = row.querySelector('select').selectedOptions[0];
                 const quantity = Number(row.querySelector('.qty').value), price = Number(row.querySelector('.price').value);
                 return !selected?.dataset.id || (selected.dataset.id === 'custom' && !row.querySelector('.nota-input').value.trim()) ||
-                    !row.querySelector('.unit-select').value || !Number.isFinite(quantity) || quantity <= 0 || !row.querySelector('.price').value.trim() || !Number.isFinite(price) || price < 0 || !Number.isFinite(quantity * price);
+                    !row.querySelector('.unit-display').dataset.unit || !Number.isFinite(quantity) || quantity <= 0 || !row.querySelector('.price').value.trim() || !Number.isFinite(price) || price < 0 || !Number.isFinite(quantity * price);
             })) {
                 alert(estimateMessage('Select a service and unit on every line and check quantities and prices. Describe custom services in Notes.','Selecciona un servicio y una unidad en cada partida y revisa cantidades y precios. Describe los servicios personalizados en Notas.'));
                 return false;
@@ -2596,11 +2591,7 @@
                 if (!serviceId) select.selectedIndex = 0;
             });
             document.querySelectorAll('.nota-input').forEach(input => input.placeholder = i18n[currentLang].notes);
-            document.querySelectorAll('.unit-select').forEach(select => {
-                const value = select.value;
-                select.innerHTML = estimateUnitOptions(value);
-                syncEstimateUnitLabel(select);
-            });
+            document.querySelectorAll('.unit-display').forEach(syncEstimateUnitLabel);
             actualizarSelectsTerminos();
             refreshEstimateControls();
             const customerPlaceholder = document.getElementById('selectCustomerDir')?.options[0];
