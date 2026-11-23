@@ -622,7 +622,7 @@
  #mainContent #estimateContainer input[type="number"]::-webkit-inner-spin-button,
  #mainContent #estimateContainer input[type="number"]::-webkit-outer-spin-button {-webkit-appearance:none;margin:0;}
  #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) input:-webkit-autofill {
-   -webkit-text-fill-color:#020916 !important;
+   -webkit-text-fill-color:var(--field-ink,#f5f5f7) !important;
    -webkit-box-shadow:inset 0 0 0 1000px rgba(227,207,147,.96) !important;
  }
 }
@@ -729,23 +729,23 @@
  #estimateContainer:not(.pdf-export) #trFotos [data-i18n="photos_title"] {color:#eef2f7;}
  #estimateContainer:not(.pdf-export) .estimate-acceptance-panel .signature-pad-container {background:#718096;border-color:#94a3b8;}
  #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) :is(input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not(#inputEstNum),select,textarea):is(input,select,textarea) {
-   background:linear-gradient(155deg,rgba(255,255,255,.52),rgba(255,255,255,.08)),var(--field-solid-tint,rgba(255,255,255,.88)) !important;
-   color:#111827 !important;border:1px solid rgba(255,255,255,.85) !important;
+   background:linear-gradient(155deg,rgba(255,255,255,.08),rgba(255,255,255,.015)),var(--field-solid-tint,#3a3a3c) !important;
+   color:var(--field-ink,#f5f5f7) !important;border:1px solid rgba(255,255,255,.18) !important;
    -webkit-backdrop-filter:blur(16px) saturate(150%) !important;backdrop-filter:blur(16px) saturate(150%) !important;
-   box-shadow:inset 0 1px 1px rgba(255,255,255,.95),inset 0 -1px 2px rgba(148,163,184,.18),0 2px 5px rgba(15,23,42,.12) !important;
+   box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 2px 5px rgba(0,0,0,.16) !important;
  }
  #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) :is(input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not(#inputEstNum),select,textarea):focus-visible {
    box-shadow:none !important;outline:2px solid #fb923c;outline-offset:2px;
  }
- #mainContent .field-has-value {--field-solid-tint:#f5e5bb;}
- #mainContent #listaItems input[onkeyup="filtrarServicios(this)"]:not(.field-has-value) {--field-solid-tint:rgba(255,255,255,.88);}
+ #mainContent .field-has-value {--field-solid-tint:#f5e5bb;--field-ink:#30291b;}
+ #mainContent #listaItems input[onkeyup="filtrarServicios(this)"]:not(.field-has-value) {--field-solid-tint:#3a3a3c;}
  #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) :is(input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not(#inputEstNum),select,textarea):is(select) {
    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%2327364c' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E") !important;
-   background-color:var(--field-solid-tint,#ffffff) !important;
+   background-color:var(--field-solid-tint,#3a3a3c) !important;
    background-size:14px 14px !important;background-position:right 12px center !important;background-repeat:no-repeat !important;
  }
  #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) :is(input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not(#inputEstNum),select,textarea):is(input):-webkit-autofill {
-   -webkit-box-shadow:inset 0 0 0 1000px var(--field-solid-tint,#ffffff) !important;
+   -webkit-box-shadow:inset 0 0 0 1000px var(--field-solid-tint,#3a3a3c) !important;
    -webkit-text-fill-color:#020916 !important;
  }
 }
@@ -774,7 +774,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=20261119">
     <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=20261119">
     <link rel="manifest" href="./site.webmanifest?v=20261119">
-    <meta name="theme-color" content="#596675">
+    <meta name="theme-color" content="#2c2c2e">
     <meta name="apple-mobile-web-app-title" content="KN3X Estimate">
 
 <style>
@@ -804,28 +804,28 @@
 @media screen {
  html.kn3x-workspace-shell body {font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;}
  html.kn3x-workspace-shell body,#mainWrapper,#mainContent,
- #estimateContainer:not(.pdf-export) {background-color:#b8bec7;}
+ #estimateContainer:not(.pdf-export) {background-color:#1c1c1e;}
  #estimateContainer:not(.pdf-export) :is(.workspace-dark-panel,.service-editor-panel,.estimate-acceptance-panel),
  #estimateContainer:not(.pdf-export) #trFotos > td > div,
  #estimateContainer:not(.pdf-export) #photoGrid > div,
  #mainContent :is(#formCustomer,#formVendor) {
-   background:#e3e6eb;border:1px solid rgba(255,255,255,.85);
-   box-shadow:0 4px 16px rgba(30,41,59,.08),inset 0 1px 0 rgba(255,255,255,.8);
+   background:#2c2c2e;border:1px solid rgba(255,255,255,.18);
+   box-shadow:0 4px 16px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.05);
  }
  #estimateContainer:not(.pdf-export) #listaItems {background:transparent;}
- #estimateContainer:not(.pdf-export) #listaItems tr:hover {background:rgba(255,255,255,.18);}
+ #estimateContainer:not(.pdf-export) #listaItems tr:hover {background:rgba(255,255,255,.035);}
  #estimateContainer:not(.pdf-export) .workspace-dark-panel :is(label,h3,h4,.text-slate-400,.text-slate-500,.text-slate-600,.text-slate-700,.text-slate-800):not(input):not(select):not(textarea),
  #estimateContainer:not(.pdf-export) .estimate-acceptance-panel :is(h3,p,[data-i18n="sign_signature"],[data-i18n="sign_name"],[data-i18n="sign_date"]),
  #estimateContainer:not(.pdf-export) #listaItems .service-field-label,
  #estimateContainer:not(.pdf-export) #printedClientName,
  #estimateContainer:not(.pdf-export) #trFotos [data-i18n="photos_title"],
- #estimateContainer:not(.pdf-export) #listaItems .row-total {color:#273244;}
+ #estimateContainer:not(.pdf-export) #listaItems .row-total {color:#f5f5f7;}
  #estimateContainer:not(.pdf-export) #customerPickerBar label {color:#fff;}
  #estimateContainer:not(.pdf-export) #paymentPlanPanel > label {color:#273244;}
  #estimateContainer:not(.pdf-export) .workspace-dark-panel [class*="border-gray"],
- #estimateContainer:not(.pdf-export) .workspace-dark-panel [class*="border-slate"] {border-color:#b7c0cc;}
+ #estimateContainer:not(.pdf-export) .workspace-dark-panel [class*="border-slate"] {border-color:#545458;}
  #estimateContainer:not(.pdf-export) .estimate-acceptance-panel .signature-pad-container {
-   background:#f8f9fb;border-color:#bcc5d0;
+   background:#f8f9fb;border-color:#545458;
  }
  #mainContent :is(input,select,textarea) {
    transition:background-color .18s ease,border-color .18s ease,box-shadow .18s ease;
@@ -833,6 +833,23 @@
 }
 @media (prefers-reduced-motion:reduce) {
  #mainContent :is(input,select,textarea) {transition:none;}
+}
+</style>
+<style>
+@media screen {
+ html.kn3x-workspace-shell {color-scheme:dark;}
+ html.kn3x-workspace-shell body,#mainContent {color:#f5f5f7;}
+ #topHeader {background:#2c2c2e !important;border-color:#48484a !important;color:#f5f5f7;}
+ #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) :is(input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not(#inputEstNum),select,textarea):is(select) {background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23d1d1d6' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E") !important;}
+ #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) :is(input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not(#inputEstNum),select,textarea):is(select).field-has-value {background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%2330291b' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E") !important;}
+ #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) :is(input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not(#inputEstNum),select,textarea)::placeholder {color:#c7c7cc !important;opacity:1;}
+ #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) :is(input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not(#inputEstNum),select,textarea).field-has-value::placeholder {color:#5c5037 !important;}
+ #mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) :is(input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not(#inputEstNum),select,textarea) option,#mainContent :is(#estimateContainer,#customerLedgerContainer,#contractContainer,#ledgerContainer,#form1099Container,#radarContainer) :is(input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not(#inputEstNum),select,textarea) optgroup {background:#3a3a3c;color:#f5f5f7;}
+ #estimateContainer:not(.pdf-export) :is(.estimate-company-banner,#customerPickerBar) {color:#fff;}
+ #estimateContainer:not(.pdf-export) .workspace-dark-panel :is(p,.text-gray-500,.text-gray-600,.text-gray-700,.text-gray-800) {color:#e5e5ea;}
+}
+@media screen and (max-width:1023px) {
+ html.kn3x-workspace-shell,html.kn3x-workspace-shell::after {background:#2c2c2e;}
 }
 </style>
 </head>
