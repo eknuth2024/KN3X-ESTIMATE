@@ -494,6 +494,8 @@
    background-color:#46515f;
  }
 }
+#sidebar .desktop-nav-item {color:#e2e8f0;}
+#sidebar .desktop-nav-item[aria-current="page"] {background:#334155;color:#fff;box-shadow:inset 3px 0 #fb923c;}
 </style>
 
     <!-- KN3X Estimate browser and iPhone/iPad home-screen icons -->
@@ -515,45 +517,19 @@
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
 
-        <nav class="flex-1 overflow-y-auto py-4">
-            <!-- CUSTOMERS -->
-            <div class="mb-2">
-                <button onclick="toggleMenu('menuCustomers', 'iconCustomers')" class="w-full flex items-center justify-between px-6 py-3 hover:bg-slate-800 text-left focus:outline-none transition">
-                    <div class="flex items-center gap-3">
-                        <svg class="desktop-menu-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="17" height="18" rx="2"/><path d="M1 7h5M1 12h5M1 17h5"/><circle cx="13" cy="9" r="2.5"/><path d="M9 17v-1a4 4 0 0 1 8 0v1"/></svg>
-                        <span class="font-bold text-sm uppercase tracking-wider text-white" data-i18n="menu_customers">Customers</span>
-                    </div>
-                    <svg id="iconCustomers" class="w-4 h-4 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </button>
-                <div id="menuCustomers" class="submenu bg-slate-950">
-                    <button onclick="cambiarSeccion('estimate')" class="w-full text-left pl-14 pr-6 py-2.5 text-sm hover:text-orange-400 hover:bg-slate-900 transition flex items-center gap-2"><svg class="desktop-menu-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg><span data-i18n="btn_estimate_view">Estimate Tool</span></button>
-                    <button onclick="cambiarSeccion('customerLedger')" class="w-full text-left pl-14 pr-6 py-2.5 text-sm hover:text-orange-400 hover:bg-slate-900 transition flex items-center gap-2"><svg class="desktop-menu-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="17" height="18" rx="2"/><path d="M1 7h5M1 12h5M1 17h5"/><circle cx="13" cy="9" r="2.5"/><path d="M9 17v-1a4 4 0 0 1 8 0v1"/></svg><span data-i18n="btn_customer_dir">Directory</span></button>
-                </div>
-            </div>
-
-            <!-- VENDORS -->
-            <div class="mb-2">
-                <button onclick="toggleMenu('menuVendors', 'iconVendors')" class="w-full flex items-center justify-between px-6 py-3 hover:bg-slate-800 text-left focus:outline-none transition">
-                    <div class="flex items-center gap-3">
-                        <svg class="desktop-menu-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M2 21v-2a7 7 0 0 1 14 0v2M16 5a3 3 0 0 1 0 6M18 14a6 6 0 0 1 4 5v2"/></svg>
-                        <span class="font-bold text-sm uppercase tracking-wider text-white" data-i18n="menu_team">Vendors & Team</span>
-                    </div>
-                    <svg id="iconVendors" class="w-4 h-4 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </button>
-                <div id="menuVendors" class="submenu bg-slate-950">
-                    <button onclick="cambiarSeccion('contract')" class="w-full text-left pl-14 pr-6 py-2.5 text-sm hover:text-blue-400 hover:bg-slate-900 transition flex items-center gap-2"><svg class="desktop-menu-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg><span data-i18n="btn_contract">Subcontractor Doc</span></button>
-                    <button onclick="cambiarSeccion('ledger')" class="w-full text-left pl-14 pr-6 py-2.5 text-sm hover:text-blue-400 hover:bg-slate-900 transition flex items-center gap-2"><svg class="desktop-menu-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="17" height="18" rx="2"/><path d="M1 7h5M1 12h5M1 17h5"/><circle cx="13" cy="9" r="2.5"/><path d="M9 17v-1a4 4 0 0 1 8 0v1"/></svg><span data-i18n="btn_ledger">1099 Ledger</span></button>
-                </div>
-            </div>
-
-            <!-- RADAR -->
-            <div class="mb-2 border-t border-slate-800 mt-4 pt-4">
-                <button onclick="cambiarSeccion('radar')" class="w-full flex items-center px-6 py-3 hover:bg-slate-800 text-left focus:outline-none transition gap-3">
-                    <svg class="desktop-menu-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 12l6-6M12 7a5 5 0 1 0 5 5"/><circle cx="12" cy="12" r="1"/></svg>
-                    <span class="font-bold text-sm uppercase tracking-wider text-white" data-i18n="btn_radar">Demo Radar</span>
-                </button>
-            </div>
-        <div class="px-6 py-4 border-t border-slate-800"><a id="workspace-account-link" href="login.html" class="block text-orange-400 font-bold py-2">Usuario</a><p id="workspace-account-user" class="text-xs text-slate-400 truncate" hidden></p></div></nav>
+        <nav class="flex-1 overflow-y-auto py-4" aria-label="Desktop navigation">
+<button type="button" data-sidebar-view="estimate" onclick="cambiarSeccion('estimate')" class="desktop-nav-item w-full flex items-center gap-3 px-6 py-3 text-left hover:bg-slate-800 transition"><svg class="desktop-menu-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg><span data-sidebar-label="estimate" class="font-bold text-sm uppercase tracking-wider">Estimate</span></button>
+<button type="button" data-sidebar-view="customerLedger" onclick="cambiarSeccion('customerLedger')" class="desktop-nav-item w-full flex items-center gap-3 px-6 py-3 text-left hover:bg-slate-800 transition"><svg class="desktop-menu-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="17" height="18" rx="2"/><path d="M1 7h5M1 12h5M1 17h5"/><circle cx="13" cy="9" r="2.5"/><path d="M9 17v-1a4 4 0 0 1 8 0v1"/></svg><span data-sidebar-label="customerLedger" class="font-bold text-sm uppercase tracking-wider">Directory</span></button>
+<button type="button" id="desktop-team-toggle" onclick="toggleMenu('menuVendors','iconVendors');this.setAttribute('aria-expanded',String(document.getElementById('menuVendors').classList.contains('open')))" aria-expanded="false" aria-controls="menuVendors" class="desktop-nav-item w-full flex items-center justify-between px-6 py-3 text-left hover:bg-slate-800 transition">
+<span class="flex items-center gap-3"><svg class="desktop-menu-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M2 21v-2a7 7 0 0 1 14 0v2M16 5a3 3 0 0 1 0 6M18 14a6 6 0 0 1 4 5v2"/></svg><span data-sidebar-label="team" class="font-bold text-sm uppercase tracking-wider">Team</span></span>
+<svg id="iconVendors" class="w-4 h-4 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>
+<div id="menuVendors" class="submenu bg-slate-950">
+<button onclick="cambiarSeccion('contract')" class="w-full text-left pl-14 pr-6 py-2.5 text-sm hover:text-orange-400 transition"><span data-i18n="btn_contract">Subcontractor Doc</span></button>
+<button onclick="cambiarSeccion('ledger')" class="w-full text-left pl-14 pr-6 py-2.5 text-sm hover:text-orange-400 transition"><span data-i18n="btn_ledger">1099 Ledger</span></button>
+</div>
+<button type="button" data-sidebar-view="radar" onclick="cambiarSeccion('radar')" class="desktop-nav-item w-full flex items-center gap-3 px-6 py-3 text-left hover:bg-slate-800 transition"><svg class="desktop-menu-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 12l6-6M12 7a5 5 0 1 0 5 5"/><circle cx="12" cy="12" r="1"/></svg><span data-sidebar-label="radar" class="font-bold text-sm uppercase tracking-wider">Radar</span></button>
+<div class="px-6 py-1"><a id="workspace-account-link" href="login.html" class="desktop-nav-item font-bold text-sm uppercase tracking-wider py-3">User</a><p id="workspace-account-user" class="text-xs text-slate-400 truncate" hidden></p></div>
+</nav>
         <div class="p-4 border-t border-slate-800 text-center text-[10px] md:text-xs text-slate-500">KN3X Command Center v2.5<br>© 2026 Austin, TX</div>
     </aside>
 
@@ -2646,10 +2622,20 @@
     });
     document.addEventListener('click',event => { if (!dock.contains(event.target) && !panel.contains(event.target)) closeTeam(); });
     document.addEventListener('keydown',event => { if (event.key === 'Escape' && !panel.hidden) { closeTeam(); teamToggle.focus(); } });
-    window.addEventListener('kn3x:viewchange',event => selectView(event.detail));
+    window.addEventListener('kn3x:viewchange',event => {selectView(event.detail);selectDesktopView(event.detail);});
+    function selectDesktopView(view) {
+        document.querySelectorAll('#sidebar [aria-current]').forEach(item => item.removeAttribute('aria-current'));
+        const target = ['contract','ledger','form1099'].includes(view) ? document.getElementById('desktop-team-toggle') : document.querySelector('[data-sidebar-view="'+view+'"]');
+        target?.setAttribute('aria-current','page');
+    }
+    selectDesktopView('estimate');
     function translateDock() {
         const es = document.documentElement.lang === 'es';
         const labels = es ? { estimate:'Presupuesto',directory:'Directorio',team:'Equipo',radar:'Radar',user:'Usuario' } : { estimate:'Estimate',directory:'Directory',team:'Team',radar:'Radar',user:'User' };
+        const desktopLabels = es ? {estimate:'Presupuesto',customerLedger:'Directorio',team:'Equipo',radar:'Radar'} : {estimate:'Estimate',customerLedger:'Directory',team:'Team',radar:'Radar'};
+        document.querySelectorAll('[data-sidebar-label]').forEach(label => {label.textContent=desktopLabels[label.dataset.sidebarLabel];});
+        document.getElementById('workspace-account-link').textContent = es ? 'Usuario' : 'User';
+
         dock.querySelectorAll('[data-dock-label]').forEach(label => { label.textContent = labels[label.dataset.dockLabel]; });
         document.getElementById('estimate-team-title').textContent = es ? 'Equipo' : 'Team';
         panel.querySelector('[data-team-item="contract"]').textContent = es ? 'Contrato de subcontratista' : 'Subcontractor Doc';
