@@ -488,6 +488,12 @@
 #sidebar .submenu .desktop-menu-icon {width:20px;height:20px;}
 #sidebar #workspace-account-link {display:flex;align-items:center;gap:12px;}
 #sidebar #workspace-account-link::before {content:"";width:22px;height:22px;flex-shrink:0;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20aria-hidden%3D%22true%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fb923c%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%228%22%20r%3D%224%22%2F%3E%3Cpath%20d%3D%22M4%2022v-2a8%208%200%200%201%2016%200v2%22%2F%3E%3C%2Fsvg%3E") center/contain no-repeat;}
+@media screen {
+ #sidebar > div:first-child,
+ #estimateContainer:not(.pdf-export) .estimate-company-banner {
+   background-color:#46515f;
+ }
+}
 </style>
 
     <!-- KN3X Estimate browser and iPhone/iPad home-screen icons -->
@@ -597,8 +603,8 @@
                         <!-- HEADER Y DATOS DEL CLIENTE -->
                         <tr>
                             <td class="p-0 align-top">
-                                <!-- HEADER NEGRO COMPACTO -->
-                                <div class="bg-black flex flex-row justify-between items-center p-3 md:p-6 print:bg-transparent print:p-0 print:pb-3 print:border-b-2 print:border-gray-200 rounded-t-lg md:rounded-t-xl print:rounded-none w-full">
+                                <!-- COMPANY HEADER -->
+                                <div class="estimate-company-banner bg-black flex flex-row justify-between items-center p-3 md:p-6 print:bg-transparent print:p-0 print:pb-3 print:border-b-2 print:border-gray-200 rounded-t-lg md:rounded-t-xl print:rounded-none w-full">
                                     <div class="flex flex-row items-center gap-2 md:gap-6 print:gap-4 w-2/3">
                                         <img src="logo.PNG" alt="KN3X Project LLC" class="h-10 md:h-16 object-contain print:h-12">
                                         <div class="estimate-contact-details flex flex-col gap-0.5 md:gap-1 text-[7px] md:text-[11px] text-gray-300 print:text-gray-600 print:text-[9px]">
