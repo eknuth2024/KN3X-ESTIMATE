@@ -984,6 +984,35 @@
  .estimate-mobile-dock .dock-touch-lens,.estimate-mobile-dock svg{transition:none!important;}
  .estimate-mobile-dock.dock-scrubbing > .dock-touch-preview svg{transform:none;}
 }
+</style><style>
+@media screen and (max-width:1023px) {
+ .estimate-mobile-dock {overflow:visible;}
+ .estimate-mobile-dock .dock-touch-lens {
+   transform:scale(1.28,1.30);transform-origin:center;
+   background:radial-gradient(ellipse at 25% 5%,rgba(255,255,255,.34),transparent 40%),
+     linear-gradient(140deg,rgba(255,255,255,.12),rgba(18,20,24,.025) 48%,rgba(255,255,255,.15));
+   border:1px solid rgba(255,255,255,.48);
+   box-shadow:inset 2px 2px 3px rgba(255,255,255,.55),inset -2px -2px 4px rgba(0,0,0,.5),
+     inset 0 -3px 5px rgba(102,175,255,.2),0 5px 16px rgba(0,0,0,.32);
+   backdrop-filter:blur(.4px) saturate(185%) contrast(108%);
+   -webkit-backdrop-filter:blur(.4px) saturate(185%) contrast(108%);
+ }
+ .estimate-mobile-dock .dock-touch-lens::before {
+   content:"";position:absolute;inset:-1px;border-radius:inherit;padding:2px;pointer-events:none;
+   background:conic-gradient(from 20deg,rgba(255,255,255,.1),rgba(132,178,255,.65),rgba(188,121,255,.5),rgba(255,184,107,.7),rgba(255,255,255,.15),rgba(109,227,221,.65),rgba(239,170,255,.6),rgba(255,255,255,.1));
+   -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+   -webkit-mask-composite:xor;mask-composite:exclude;
+ }
+ .estimate-mobile-dock.dock-scrubbing > .dock-touch-preview {color:#fff;}
+ .estimate-mobile-dock.dock-scrubbing > .dock-touch-preview svg {transform:scale(1.32);filter:drop-shadow(0 1px 2px rgba(0,0,0,.3));}
+ .estimate-mobile-dock.dock-scrubbing > .dock-touch-preview .dock-label {transform:scale(1.08);}
+ .estimate-mobile-dock .dock-label {transition:transform .15s ease;}
+}
+@media(prefers-reduced-motion:reduce){
+ .estimate-mobile-dock.dock-scrubbing > .dock-touch-preview svg,
+ .estimate-mobile-dock.dock-scrubbing > .dock-touch-preview .dock-label {transform:none;}
+ .estimate-mobile-dock .dock-label {transition:none;}
+}
 </style></head>
 <body class="bg-gray-100 text-gray-800 font-sans h-screen overflow-hidden flex text-xs md:text-sm">
 
