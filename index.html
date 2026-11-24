@@ -1074,6 +1074,13 @@
    color:#ff6961!important;font-size:12px;line-height:1.35;font-weight:600;margin:5px 4px 0;white-space:normal;
  }
 }
+</style><style>
+@media screen {
+ html.kn3x-workspace-shell #mainContent :is(#newCustName,#newCustPhone,#newCustAddr,#newSubName,#newSubTrade,#newSubPhone,#newSubAddr,#newSubID,#subNameSelect,#subService,#subPayNum,#subDate)[aria-required="true"] {border:2px solid #ff9500!important;}
+ html.kn3x-workspace-shell #mainContent :is(#newCustName,#newCustPhone,#newCustAddr,#newSubName,#newSubTrade,#newSubPhone,#newSubAddr,#newSubID,#subNameSelect,#subService,#subPayNum,#subDate)[aria-required="true"][aria-invalid="true"] {border:2px solid #ff453a!important;outline-color:#ff453a;}
+ #mainContent :is(#customerLedgerContainer,#contractContainer,#ledgerContainer) .estimate-field-error {color:#ff6961!important;font-size:12px;line-height:1.35;font-weight:600;margin:5px 4px 0;}
+ #mainContent :is(#customerLedgerContainer,#contractContainer,#ledgerContainer) label .text-red-500 {font-size:17px;font-weight:900;line-height:1;color:#ff453a;vertical-align:middle;}
+}
 </style></head>
 <body class="bg-gray-100 text-gray-800 font-sans h-screen overflow-hidden flex text-xs md:text-sm">
 
@@ -1370,11 +1377,11 @@
                             <div class="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4">
                                 <div class="col-span-1 md:col-span-2">
                                     <label class="block text-[10px] font-bold text-orange-800 uppercase mb-1">Client / Company Name <span class="text-red-500">*</span></label>
-                                    <input type="text" id="newCustName" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-orange-500 border">
+                                    <input type="text" id="newCustName" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-orange-500 border" aria-required="true">
                                 </div>
                                 <div>
                                     <label class="block text-[10px] font-bold text-orange-800 uppercase mb-1">Phone Number <span class="text-red-500">*</span></label>
-                                    <input type="text" id="newCustPhone" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-orange-500 border">
+                                    <input type="text" id="newCustPhone" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-orange-500 border" aria-required="true">
                                 </div>
                                 <div>
                                     <label class="block text-[10px] font-bold text-orange-800 uppercase mb-1">Email Address</label>
@@ -1382,7 +1389,7 @@
                                 </div>
                                 <div class="col-span-1 md:col-span-4">
                                     <label class="block text-[10px] font-bold text-orange-800 uppercase mb-1">Default Property Address <span class="text-red-500">*</span></label>
-                                    <input type="text" id="newCustAddr" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-orange-500 border">
+                                    <input type="text" id="newCustAddr" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-orange-500 border" aria-required="true">
                                 </div>
                             </div>
                             <div class="mt-4 flex flex-col sm:flex-row justify-end gap-2">
@@ -1430,21 +1437,21 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                             <div>
                                 <label class="block text-[10px] md:text-xs font-bold text-slate-600 uppercase mb-1"><span data-contract-en="Select Subcontractor" data-contract-es="Seleccionar subcontratista">Select Subcontractor</span> <span class="text-red-500">*</span></label>
-                                <select id="subNameSelect" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm font-bold text-slate-700" onchange="updateContract()">
+                                <select id="subNameSelect" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm font-bold text-slate-700" onchange="updateContract()" aria-required="true">
                                     <option value="">-- Select from Ledger --</option>
                                 </select>
                             </div>
                             <div>
                                 <label class="block text-[10px] md:text-xs font-bold text-slate-600 uppercase mb-1"><span data-contract-en="Service Provided" data-contract-es="Servicio a realizar">Service Provided</span> <span class="text-red-500">*</span></label>
-                                <input type="text" id="subService" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm" placeholder="e.g., Interior Painting" onkeyup="updateContract()">
+                                <input type="text" id="subService" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm" placeholder="e.g., Interior Painting" onkeyup="updateContract()" aria-required="true">
                             </div>
                             <div>
                                 <label class="block text-[10px] md:text-xs font-bold text-slate-600 uppercase mb-1"><span data-contract-en="Project Compensation ($ Amount)" data-contract-es="Remuneración del proyecto (importe en $)">Project Compensation ($ Amount)</span> <span class="text-red-500">*</span></label>
-                                <input type="number" id="subPayNum" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm" placeholder="1500" onkeyup="updateContract()">
+                                <input type="number" id="subPayNum" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm" placeholder="1500" onkeyup="updateContract()" aria-required="true">
                             </div>
                             <div>
                                 <label class="block text-[10px] md:text-xs font-bold text-slate-600 uppercase mb-1"><span data-contract-en="Date" data-contract-es="Fecha">Date</span> <span class="text-red-500">*</span></label>
-                                <input type="date" id="subDate" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm" onchange="updateContract()">
+                                <input type="date" id="subDate" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm" onchange="updateContract()" aria-required="true">
                             </div>
                         </div>
                         <div class="mt-4 flex justify-end">
@@ -1517,19 +1524,19 @@
                             <div class="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4">
                                 <div class="col-span-1 md:col-span-2">
                                     <label class="block text-[10px] font-bold text-blue-800 uppercase mb-1"><span data-ledger-en="Full Legal Name / LLC" data-ledger-es="Nombre legal completo / LLC">Full Legal Name / LLC</span> <span class="text-red-500">*</span></label>
-                                    <input type="text" id="newSubName" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-blue-500 border">
+                                    <input type="text" id="newSubName" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-blue-500 border" aria-required="true">
                                 </div>
                                 <div>
                                     <label class="block text-[10px] font-bold text-blue-800 uppercase mb-1"><span data-ledger-en="Trade / Specialty" data-ledger-es="Oficio / Especialidad">Trade / Specialty</span> <span class="text-red-500">*</span></label>
-                                    <input type="text" id="newSubTrade" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-blue-500 border">
+                                    <input type="text" id="newSubTrade" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-blue-500 border" aria-required="true">
                                 </div>
                                 <div>
                                     <label class="block text-[10px] font-bold text-blue-800 uppercase mb-1"><span data-ledger-en="Phone Number" data-ledger-es="Número de teléfono">Phone Number</span> <span class="text-red-500">*</span></label>
-                                    <input type="text" id="newSubPhone" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-blue-500 border">
+                                    <input type="text" id="newSubPhone" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-blue-500 border" aria-required="true">
                                 </div>
                                 <div class="col-span-1 md:col-span-2">
                                     <label class="block text-[10px] font-bold text-blue-800 uppercase mb-1"><span data-ledger-en="Mailing Address" data-ledger-es="Dirección postal">Mailing Address</span> <span class="text-red-500">*</span></label>
-                                    <input type="text" id="newSubAddr" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-blue-500 border">
+                                    <input type="text" id="newSubAddr" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-blue-500 border" aria-required="true">
                                 </div>
                                 <div>
                                     <label class="block text-[10px] font-bold text-blue-800 uppercase mb-1"><span data-ledger-en="W-9 Form Status" data-ledger-es="Estado del formulario W-9">W-9 Form Status</span></label>
@@ -1540,7 +1547,7 @@
                                 </div>
                                 <div>
                                     <label class="block text-[10px] font-bold text-blue-800 uppercase mb-1"><span data-ledger-en="EIN / SSN" data-ledger-es="EIN / SSN">EIN / SSN</span> <span class="text-red-500">*</span></label>
-                                    <input type="text" id="newSubID" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-blue-500 border" placeholder="XXX-XX-XXXX">
+                                    <input type="text" id="newSubID" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-blue-500 border" placeholder="XXX-XX-XXXX" aria-required="true">
                                 </div>
                                 <div>
                                     <label class="block text-[10px] font-bold text-blue-800 uppercase mb-1"><span data-ledger-en="Insured (COI)?" data-ledger-es="¿Tiene seguro (COI)?">Insured (COI)?</span></label>
@@ -2146,7 +2153,7 @@
             const email = document.getElementById('newCustEmail').value.trim();
             const addr = document.getElementById('newCustAddr').value.trim();
 
-            if(!name || !phone || !addr) {
+            if(!validateRequiredGroup(["newCustName","newCustPhone","newCustAddr"])) {
                 alert(currentLang === 'en' ? "Please fill all mandatory fields (*) for the Customer." : "Por favor llena todos los campos obligatorios (*) del Cliente.");
                 return;
             }
@@ -2506,10 +2513,17 @@
             return false;
         }
         
-        function updateRequiredFieldError(field,show=false) {
+        function validateRequiredGroup(ids){
+ const invalid=ids.filter(id=>!updateRequiredFieldError(document.getElementById(id),true));
+ if(invalid.length){const first=document.getElementById(invalid[0]);first.scrollIntoView({block:'center',behavior:'smooth'});first.focus({preventScroll:true});}
+ return !invalid.length;
+}
+
+function updateRequiredFieldError(field,show=false) {
             const empty=!field.value.trim();
             const invalidEmail=field.id==='inputClientEmail'&&!empty&&!field.checkValidity();
-            const invalid=empty||invalidEmail;
+            const invalidAmount=field.id==='subPayNum'&&!empty&&(!Number.isFinite(Number(field.value))||Number(field.value)<=0);
+            const invalid=empty||invalidEmail||invalidAmount;
             let message=document.getElementById(field.id+'Error');
             if(invalid&&(show||field.getAttribute('aria-invalid')==='true')){
                 if(!message){
@@ -2520,7 +2534,7 @@
                     field.dataset.previousDescription=field.getAttribute('aria-describedby')||'';
                     field.setAttribute('aria-describedby',[field.dataset.previousDescription,message.id].filter(Boolean).join(' '));
                 }
-                message.textContent=invalidEmail?estimateMessage('Enter a valid email address.','Introduce un correo electrónico válido.'):estimateMessage('This field is required.','Este campo es obligatorio.');
+                message.textContent=invalidAmount?estimateMessage('Enter an amount greater than zero.','Introduce un importe mayor que cero.'):invalidEmail?estimateMessage('Enter a valid email address.','Introduce un correo electrónico válido.'):estimateMessage('This field is required.','Este campo es obligatorio.');
                 field.setAttribute('aria-invalid','true');
             }else if(!invalid){
                 field.removeAttribute('aria-invalid');
@@ -2529,10 +2543,10 @@
             return !invalid;
         }
         document.addEventListener('input',event=>{
-            if(event.target.matches('#estimateContainer input[aria-required="true"][aria-invalid="true"]'))updateRequiredFieldError(event.target);
+            if(event.target.matches('#mainContent [aria-required="true"][aria-invalid="true"]'))updateRequiredFieldError(event.target);
         });
         document.addEventListener('change',event=>{
-            if(event.target.matches('#estimateContainer input[aria-required="true"][aria-invalid="true"]'))updateRequiredFieldError(event.target);
+            if(event.target.matches('#mainContent [aria-required="true"][aria-invalid="true"]'))updateRequiredFieldError(event.target);
         });
 
 function validEstimateForFinalizing() {
@@ -3034,7 +3048,7 @@ function validEstimateForFinalizing() {
             const tin = document.getElementById('newSubID').value.trim();
             const coi = document.getElementById('newSubCOI').value;
 
-            if(!name || !trade || !phone || !addr || !tin) {
+            if(!validateRequiredGroup(["newSubName","newSubTrade","newSubPhone","newSubAddr","newSubID"])) {
                 alert(currentLang === 'en' ? "Please fill all mandatory fields (*) for the Vendor." : "Por favor llena todos los campos obligatorios (*) del Contratista.");
                 return;
             }
@@ -3211,7 +3225,7 @@ function validEstimateForFinalizing() {
             const date = document.getElementById('subDate').value.trim();
             const payNum = parseFloat(document.getElementById('subPayNum').value) || 0;
             
-            if(!select.value || !service || !date || payNum <= 0) {
+            if(!validateRequiredGroup(["subNameSelect","subService","subPayNum","subDate"])) {
                 alert(currentLang === 'en' ? "Please fill all mandatory fields (*) to generate the contract." : "Por favor llena todos los campos obligatorios (*) para generar el contrato.");
                 return;
             }
@@ -3250,7 +3264,7 @@ function validEstimateForFinalizing() {
         function toggleLanguage() {
             currentLang = currentLang === 'en' ? 'es' : 'en';
             document.documentElement.lang = currentLang;
-            document.querySelectorAll('#estimateContainer input[aria-invalid="true"]').forEach(field=>updateRequiredFieldError(field,true));
+            document.querySelectorAll('#mainContent [aria-invalid="true"]').forEach(field=>updateRequiredFieldError(field,true));
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if(i18n[currentLang][key]) el.innerText = i18n[currentLang][key];
