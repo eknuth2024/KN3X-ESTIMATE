@@ -1065,6 +1065,15 @@
    display:inline-block;flex-shrink:0;
  }
 }
+</style><style>
+@media screen {
+ html.kn3x-workspace-shell #mainContent #estimateContainer:not(.pdf-export) input[aria-required="true"][aria-invalid="true"] {
+   border:2px solid #ff453a!important;outline-color:#ff453a;
+ }
+ #estimateContainer:not(.pdf-export) .estimate-field-error {
+   color:#ff6961!important;font-size:12px;line-height:1.35;font-weight:600;margin:5px 4px 0;white-space:normal;
+ }
+}
 </style></head>
 <body class="bg-gray-100 text-gray-800 font-sans h-screen overflow-hidden flex text-xs md:text-sm">
 
@@ -2496,10 +2505,44 @@
             alert(estimateMessage('Wait for your photo to finish processing, then try again.','Espera a que termine de procesarse la foto e inténtalo de nuevo.'));
             return false;
         }
-        function validEstimateForFinalizing() {
+        
+        function updateRequiredFieldError(field,show=false) {
+            const empty=!field.value.trim();
+            const invalidEmail=field.id==='inputClientEmail'&&!empty&&!field.checkValidity();
+            const invalid=empty||invalidEmail;
+            let message=document.getElementById(field.id+'Error');
+            if(invalid&&(show||field.getAttribute('aria-invalid')==='true')){
+                if(!message){
+                    message=document.createElement('p');message.id=field.id+'Error';
+                    message.className='estimate-field-error no-print';message.setAttribute('aria-live','polite');
+                    const anchor=field.id==='inputDuration'?field.parentElement:field;
+                    anchor.after(message);
+                    field.dataset.previousDescription=field.getAttribute('aria-describedby')||'';
+                    field.setAttribute('aria-describedby',[field.dataset.previousDescription,message.id].filter(Boolean).join(' '));
+                }
+                message.textContent=invalidEmail?estimateMessage('Enter a valid email address.','Introduce un correo electrónico válido.'):estimateMessage('This field is required.','Este campo es obligatorio.');
+                field.setAttribute('aria-invalid','true');
+            }else if(!invalid){
+                field.removeAttribute('aria-invalid');
+                if(message){message.remove();const previous=field.dataset.previousDescription;if(previous)field.setAttribute('aria-describedby',previous);else field.removeAttribute('aria-describedby');delete field.dataset.previousDescription;}
+            }
+            return !invalid;
+        }
+        document.addEventListener('input',event=>{
+            if(event.target.matches('#estimateContainer input[aria-required="true"][aria-invalid="true"]'))updateRequiredFieldError(event.target);
+        });
+        document.addEventListener('change',event=>{
+            if(event.target.matches('#estimateContainer input[aria-required="true"][aria-invalid="true"]'))updateRequiredFieldError(event.target);
+        });
+
+function validEstimateForFinalizing() {
             if (!photosReadyForEstimate()) return false;
             const required = ['inputClientName','fechaActual','inputClientEmail','inputPhone','inputAddress','inputDuration'];
-            if (required.some(id => !document.getElementById(id).value.trim()) || !document.getElementById('inputClientEmail').checkValidity()) {
+            const invalidFields = required.filter(id => !updateRequiredFieldError(document.getElementById(id),true));
+            if (invalidFields.length) {
+                const first = document.getElementById(invalidFields[0]);
+                first.scrollIntoView({block:'center',behavior:'smooth'});
+                first.focus({preventScroll:true});
                 alert(estimateMessage('Complete all required fields and enter a valid email before finalizing.','Completa los campos obligatorios y un correo válido antes de finalizar.'));
                 return false;
             }
@@ -3207,6 +3250,7 @@
         function toggleLanguage() {
             currentLang = currentLang === 'en' ? 'es' : 'en';
             document.documentElement.lang = currentLang;
+            document.querySelectorAll('#estimateContainer input[aria-invalid="true"]').forEach(field=>updateRequiredFieldError(field,true));
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if(i18n[currentLang][key]) el.innerText = i18n[currentLang][key];
