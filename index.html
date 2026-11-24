@@ -1013,6 +1013,27 @@
  .estimate-mobile-dock.dock-scrubbing > .dock-touch-preview .dock-label {transform:none;}
  .estimate-mobile-dock .dock-label {transition:none;}
 }
+</style><style>
+@media screen and (max-width:1023px) {
+ html.kn3x-workspace-shell .estimate-mobile-dock {
+   background:rgba(38,38,40,.64);border:1px solid rgba(255,255,255,.14);
+   box-shadow:0 8px 24px rgba(0,0,0,.22);
+   -webkit-backdrop-filter:blur(24px) saturate(100%);backdrop-filter:blur(24px) saturate(100%);
+ }
+ html.kn3x-workspace-shell .estimate-mobile-dock > :is(button,a) {
+   text-shadow:none;
+ }
+ html.kn3x-workspace-shell .estimate-mobile-dock > :is([aria-current="page"],[aria-expanded="true"]) {
+   background:transparent;border-color:transparent;box-shadow:none;animation:none;color:#ffbd92;
+ }
+ html.kn3x-workspace-shell .estimate-mobile-dock.dock-scrubbing > :is(button,a) {
+   background:transparent;border-color:transparent;box-shadow:none;animation:none;
+ }
+ html.kn3x-workspace-shell .estimate-mobile-dock.dock-scrubbing > .dock-touch-preview {color:#fff;}
+ html.kn3x-workspace-shell .estimate-mobile-dock:not(.dock-scrubbing) .dock-touch-lens {
+   opacity:0!important;
+ }
+}
 </style></head>
 <body class="bg-gray-100 text-gray-800 font-sans h-screen overflow-hidden flex text-xs md:text-sm">
 
