@@ -1067,7 +1067,7 @@
 }
 </style><style>
 @media screen {
- html.kn3x-workspace-shell #mainContent #estimateContainer:not(.pdf-export) input[aria-required="true"][aria-invalid="true"] {
+ html.kn3x-workspace-shell #mainContent #estimateContainer:not(.pdf-export) :is(#inputClientName,#fechaActual,#inputClientEmail,#inputPhone,#inputAddress,#inputDuration)[aria-invalid="true"] {
    border:2px solid #ff453a!important;outline-color:#ff453a;
  }
  #estimateContainer:not(.pdf-export) .estimate-field-error {
