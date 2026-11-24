@@ -3536,6 +3536,27 @@ function sync(){
  });
  });
  list.hidden=false;trigger.setAttribute('aria-expanded','true');
+ const rect=trigger.getBoundingClientRect();
+ const viewport=window.visualViewport;
+ const topLimit=(viewport?.offsetTop||0)+10;
+ const bottomLimit=(viewport?.offsetTop||0)+(viewport?.height||window.innerHeight)-10;
+ const header=document.getElementById('topHeader')?.getBoundingClientRect();
+ const dock=document.querySelector('.estimate-mobile-dock')?.getBoundingClientRect();
+ const upper=Math.max(topLimit,header?.bottom||topLimit)+6;
+ const lower=dock&&dock.height&&dock.top>upper?Math.min(bottomLimit,dock.top-8):bottomLimit;
+ const below=Math.max(0,lower-rect.bottom-6),above=Math.max(0,rect.top-upper-6);
+ const opensAbove=above>below;
+ const available=Math.max(80,opensAbove?above:below);
+ const height=Math.min(460,available,list.scrollHeight+2);
+ const width=Math.min(rect.width,window.innerWidth-16);
+ list.style.position='fixed';list.style.margin='0';
+ list.style.left=Math.max(8,Math.min(rect.left,window.innerWidth-width-8))+'px';
+ list.style.width=width+'px';list.style.maxHeight=height+'px';
+ list.style.top=(opensAbove?Math.max(upper,rect.top-height-6):rect.bottom+6)+'px';
+ list.style.zIndex='2200';
+ const selected=list.querySelector('[aria-selected="true"]');
+ if(selected)list.scrollTop=Math.max(0,selected.offsetTop-height/2);
+
  });
  trigger.addEventListener('keydown',e=>{if(e.key==='Escape'){list.hidden=true;trigger.setAttribute('aria-expanded','false');}});
  }
@@ -3544,6 +3565,9 @@ function sync(){
  trigger.classList.toggle('has-selection',!!select.selectedOptions[0]?.dataset.id);
  });
 }
+function closeServiceMenus(){listRoot.querySelectorAll('.mobile-service-list').forEach(x=>x.hidden=true);listRoot.querySelectorAll('.mobile-service-trigger').forEach(x=>x.setAttribute('aria-expanded','false'));}
+document.getElementById('mainContent').addEventListener('scroll',closeServiceMenus,{passive:true});
+window.addEventListener('resize',closeServiceMenus,{passive:true});
 function schedule(){if(!pending){pending=true;requestAnimationFrame(sync);}}
 new MutationObserver(schedule).observe(listRoot,{childList:true,subtree:true});
 listRoot.addEventListener('change',schedule);listRoot.addEventListener('input',schedule);listRoot.addEventListener('keyup',schedule);
