@@ -3651,7 +3651,7 @@ sync();
  dock.addEventListener('pointerdown',e=>{
   if(!mobile.matches||e.pointerType==='mouse'||!e.isPrimary||!e.target.closest('button,a'))return;
   clear();gesture={id:e.pointerId,x:e.clientX,y:e.clientY,active:false,target:null};
-  timer=setTimeout(()=>{if(!gesture)return;gesture.active=true;dock.classList.add('dock-scrubbing');try{dock.setPointerCapture(gesture.id);}catch{}preview(gesture.x,gesture.y);},260);
+  gesture.active=true;dock.classList.add('dock-scrubbing');try{dock.setPointerCapture(gesture.id);}catch{}preview(gesture.x,gesture.y);
  });
  dock.addEventListener('pointermove',e=>{
   if(!gesture||gesture.id!==e.pointerId)return;
