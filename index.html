@@ -902,7 +902,7 @@
  #estimateContainer:not(.pdf-export) #listaItems .qty::placeholder {font-size:11px;}
 }
 </style>
-<style>.estimate-mobile-dock{grid-template-columns:repeat(6,minmax(0,1fr))!important}#materialsContainer{max-width:1100px;margin:auto;padding:20px;background:#2c2c2e;border-radius:24px;color:#f5f5f7}#materialsContainer h2{font-size:22px;font-weight:bold}#materialsContainer p{margin:14px 0;line-height:1.6}#materialsContainer a{color:#8cc5ff}#materialsContainer button{background:#3a3a3c;border:1px solid #666;border-radius:20px;padding:10px;margin:4px}#materialsContainer .mat-scroll{overflow:auto}#materialsContainer table{width:100%;min-width:760px}#materialsContainer th,#materialsContainer td{padding:8px;border-bottom:1px solid #555;text-align:left}#materialsContainer input{width:100%;min-width:65px;color:#fff;background:#3a3a3c;padding:8px;border-radius:12px}#materialsContainer td:first-child{min-width:220px}#materialsContainer td:nth-child(5){min-width:180px}</style></head>
+<style>.estimate-mobile-dock{grid-template-columns:repeat(6,minmax(0,1fr))!important}#materialsContainer{max-width:1100px;margin:auto;padding:20px;background:#2c2c2e;border-radius:24px;color:#f5f5f7}#materialsContainer h2{font-size:22px;font-weight:bold}#materialsContainer p{margin:14px 0;line-height:1.6}#materialsContainer a{color:#8cc5ff}#materialsContainer button{background:#3a3a3c;border:1px solid #666;border-radius:20px;padding:10px;margin:4px}#materialsContainer .mat-scroll{overflow:auto}#materialsContainer table{width:100%;min-width:760px}#materialsContainer th,#materialsContainer td{padding:8px;border-bottom:1px solid #555;text-align:left}#materialsContainer input{width:100%;min-width:65px;color:#fff;background:#3a3a3c;padding:8px;border-radius:12px}#materialsContainer td:first-child{min-width:220px}#materialsContainer td:nth-child(5){min-width:180px}</style><style>#sidebar [data-sidebar-view="materials"] svg{width:24px;height:24px;flex-shrink:0;color:#ff9500}.estimate-mobile-dock [data-dock-view="materials"] svg{width:22px;height:22px}</style></head>
 <body class="bg-gray-100 text-gray-800 font-sans h-screen overflow-hidden flex text-xs md:text-sm">
 
     <!-- SIDEBAR (MENÚ VERTICAL IZQUIERDO) -->
@@ -2435,70 +2435,7 @@
             document.body.appendChild(frame);
             try {
                 const doc = frame.contentDocument;
-                doc.open(); doc.write('<!doctype html><html><head><meta charset="UTF-8"></head><body>
-<script>
-(()=> {
-const es=()=>currentLang==='es', txt=(a,b)=>es()?b:a, esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let rows=[];
-const panel=document.getElementById('materialsContainer');
-function add(name,qty,unit,source,kind='Material'){rows.push({name,qty,unit,source,kind,price:''});}
-function build(){
-rows=[];
-document.querySelectorAll('#listaItems tr').forEach(tr=>{
- const item=catalogoPrecios.find(x=>x.id===tr.querySelector('select')?.selectedOptions[0]?.dataset.id),q=Number(tr.querySelector('.qty')?.value)||0;
- if(!item||q<=0)return;
- const name=item[es()?'nom_es':'nom_en'],id=item.id;
- if(/Painting|Pintura/.test(item.cat_en+' '+item.cat_es)&&/SqFt/.test(item.nom_en)&&!(/epoxy/.test(id))){
- const coats=/primer|extra coat/i.test(item.nom_en)?1:2;
- add(txt('Paint / primer — confirm color and finish','Pintura / primer — confirmar color y acabado'),Math.ceil(q*coats/350*1.10),'gal',name);
- add(txt('Roller covers — allowance, adjust for crew','Fundas de rodillo — previsión, ajustar al personal'),Math.max(1,Math.ceil(q/1500)),'each',name);
- }else if(id==='crp_trim'||/baseboard|crown molding/i.test(item.nom_en)&&!/Painting/.test(item.cat_en)){
- add(txt('Trim — verify profile','Moldura — verificar perfil'),Math.ceil(q*1.10),'LinFt',name);
- }else if(id==='flr_lam'||id==='lnd_sod'||id==='lnd_pavers'){
- add(txt('Surface material — verify product coverage','Material de superficie — verificar cobertura'),Math.ceil(q*1.10),'SqFt',name);
- }else if(id==='lnd_mulch'){add(txt('Mulch / gravel — choose material','Mantillo / grava — elegir material'),Math.ceil(q*1.10*100)/100,'CuYd',name);
- }else{
- const lists={
- plm_faucet:'Grifería o inodoro según alcance;Conectores de alimentación;Sellos y fijaciones compatibles',
- plm_disp:'Triturador compatible;Kit de conexión de drenaje;Cable / conexión según modelo',
- plm_pipe:'Tubería: especificar agua o desagüe, material y diámetro;Codos y conexiones según recorrido;Válvulas y soportes',
- plm_shower:'Válvula de ducha compatible;Tubería y conexiones según plano;Soportes y protección',
- plm_heater:'Calentador según capacidad y energía;Conexiones y válvulas compatibles;Bandeja y drenaje según instalación',
- elec_rec:'Luminarias y cajas compatibles;Cable según circuito y recorrido;Conectores y fijaciones',
- elec_out:'Tomacorrientes o interruptores según circuito;Cajas y placas;Cable y conectores',
- elec_fan:'Ventilador;Caja y soporte aptos para ventilador;Cable y conectores',
- elec_panel:'Panel e interruptores según diseño aprobado;Conductores según carga y recorrido;Conectores y puesta a tierra',
- net_drop:'Cable Cat6: medir recorrido por punto;Jacks y placas;Patch cords y organizadores',
- net_cam:'Cámara según diseño;Cable según recorrido;Montaje y alimentación compatible',
- net_ap:'Access point;Cable según recorrido;PoE y soporte compatible',
- net_rack:'Rack y accesorios según equipo;Patch panel y organizadores;Tornillería',
- net_cable:'Organizadores y velcro;Etiquetas;Patch cords según recorrido',
- elec_smart:'Dispositivo compatible;Conectores y placa;Verificar neutro y alimentación',
- crp_deck:'Tablas según plano;Estructura y soportes según diseño;Fijaciones compatibles',
- crp_patio:'Madera según plano estructural;Herrajes y anclajes;Cubierta según diseño',
- crp_fence:'Postes y travesaños según altura y separación;Tablas o paneles;Concreto y fijaciones',
- crp_cab:'Tableros según despiece;Herrajes;Fijaciones y acabado',
- lnd_wall:'Bloques según dimensiones;Base y drenaje según diseño;Geotextil',
- lnd_light:'Luminarias;Cable de baja tensión según recorrido;Transformador según carga',
- dsn_3d:'Filamento: usar gramos del slicer;Material de soporte según slicer'
- };
- const materials=lists[id]||( /Painting|Pintura/.test(item.cat_en+' '+item.cat_es)?'Pintura o recubrimiento: medir área y confirmar rendimiento;Protección y preparación de superficies': /Hourly|Design/.test(item.cat_en)?'Sin compra automática: definir alcance y consumibles':'Definir materiales según alcance');
- materials.split(';').forEach(n=>add(n,'','',name));
- }
-});
-render();
-}
-function render(){
-panel.innerHTML='<h2>'+txt('INTERNAL MATERIALS','MATERIALES INTERNOS')+'</h2><p>'+txt('Linked to the current estimate. Review quantities and specifications before purchasing. Blank quantities and prices require confirmation.','Vinculado al presupuesto actual. Revisa cantidades y especificaciones antes de comprar. Las cantidades y precios vacíos requieren confirmación.')+'</p><p>'+txt('Paint assumption: 350 SqFt/gal per coat, two coats, 10% allowance. Wall and ceiling areas are measured separately; round-up per line/color. Tools depend on crew and stock.','Pintura: 350 SqFt/gal por mano, dos manos y 10% de previsión. Paredes y techos se miden por separado; redondeo por partida/color. Herramientas dependen del personal y existencias.')+'</p><div class="mat-actions"><button id="matRebuild">'+txt('Rebuild from estimate','Actualizar desde presupuesto')+'</button><button id="matPrint">'+txt('Print / PDF','Imprimir / PDF')+'</button><button id="matCsv">CSV</button><button id="matAdd">'+txt('Add material / tool','Agregar material / herramienta')+'</button></div><p>'+txt('Retail prices: enter a verified store quote. No live prices connected.','Precios: ingresar una cotización verificada de tienda. Sin conexión a precios en vivo.')+'</p><div class="mat-scroll"><table><thead><tr>'+['Material / herramienta','Cantidad','Unidad','Precio compra USD','Partida','Proveedor'].map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map((r,i)=>'<tr>'+['name','qty','unit','price'].map(k=>'<td><input data-row="'+i+'" data-key="'+k+'" value="'+esc(r[k])+'" aria-label="'+k+'"></td>').join('')+'<td>'+esc(r.source)+'</td><td><a target="_blank" rel="noopener" href="https://www.homedepot.com/s/'+encodeURIComponent(r.name)+'">Home Depot</a> · <a target="_blank" rel="noopener" href="https://www.lowes.com/search?searchTerm='+encodeURIComponent(r.name)+'">Lowe’s</a></td></tr>').join('')+'</tbody></table></div><h3>'+txt('Reusable tools — check stock','Herramientas reutilizables — revisar existencias')+'</h3><p>Brochas, rodillo, extensión, bandeja, escalera; plomería: cortatubos y llaves; electricidad: comprobador y herramientas aisladas; redes: ponchadora y tester. Confirmar según alcance.</p><p>Fuentes: <a target="_blank" href="https://s7d9.scene7.com/is/content/behr/1050_tds_uspdf-1">BEHR: 250–400 SqFt/gal</a> · <a target="_blank" href="https://www.lowes.com/pd/Charlotte-Pipe-2-in-x-10-ft-Sch-40-Cellcore-PVC-DWV-Pipe/1000219665">Lowe’s PVC DWV</a>. Revisión: 2026-11-23.</p>';
-panel.querySelector('#matRebuild').onclick=()=>{if(confirm(txt('Replace material edits with a fresh calculation?','¿Reemplazar los ajustes por un cálculo nuevo?')))build();};
-panel.querySelector('#matAdd').onclick=()=>{add('','','','Manual');render();};
-panel.querySelectorAll('input[data-row]').forEach(e=>e.oninput=()=>rows[Number(e.dataset.row)][e.dataset.key]=e.value);
-panel.querySelector('#matCsv').onclick=()=>{const csv=[['Material','Cantidad','Unidad','Precio compra USD','Partida'],...rows.map(r=>[r.name,r.qty,r.unit,r.price,r.source])].map(a=>a.map(x=>'"'+String(x).replaceAll('"','""')+'"').join(',')).join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));a.download='Materiales_'+document.getElementById('inputEstNum').value+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);};
-panel.querySelector('#matPrint').onclick=()=>{const w=window.open('','_blank');if(!w)return;w.document.write('<html><head><title>Materiales internos</title><style>body{font:14px Arial}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ccc;padding:8px}h1{font-size:20px}</style></head><body><h1>KN3X — Materiales internos '+esc(document.getElementById('inputEstNum').value)+'</h1><p>'+esc(document.getElementById('inputClientName').value)+'</p><table><tr><th>Material / herramienta</th><th>Cantidad</th><th>Unidad</th><th>Precio compra USD</th><th>Partida</th></tr>'+rows.map(r=>'<tr>'+[r.name,r.qty||'Confirmar',r.unit,r.price||'Pendiente',r.source].map(x=>'<td>'+esc(x)+'</td>').join('')+'</tr>').join('')+'</table><p>Lista interna estimada. Confirmar medidas, compatibilidad, existencias y precios antes de comprar.</p></body></html>');w.document.close();w.print();};
-}
-window.addEventListener('kn3x:viewchange',e=>{if(e.detail==='materials'){if(!rows.length)build();else render();}});
-})();
-</script></body></html>');doc.close();
+                doc.open(); doc.write('<!doctype html><html><head><meta charset="UTF-8"></head><body></body></html>');doc.close();
                 let styles = '';
                 function copyRules(rules) {
                     for (const rule of rules) {
@@ -3344,6 +3281,69 @@ window.addEventListener('kn3x:viewchange',e=>{if(e.detail==='materials'){if(!row
 })();
 </script>
 <script src="workspace-account.js?v=mobile-dock-1" defer></script>
-</body>
+
+<script>
+(()=> {
+const es=()=>currentLang==='es', txt=(a,b)=>es()?b:a, esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let rows=[];
+const panel=document.getElementById('materialsContainer');
+function add(name,qty,unit,source,kind='Material'){rows.push({name,qty,unit,source,kind,price:''});}
+function build(){
+rows=[];
+document.querySelectorAll('#listaItems tr').forEach(tr=>{
+ const item=catalogoPrecios.find(x=>x.id===tr.querySelector('select')?.selectedOptions[0]?.dataset.id),q=Number(tr.querySelector('.qty')?.value)||0;
+ if(!item||q<=0)return;
+ const name=item[es()?'nom_es':'nom_en'],id=item.id;
+ if(/Painting|Pintura/.test(item.cat_en+' '+item.cat_es)&&/SqFt/.test(item.nom_en)&&!(/epoxy/.test(id))){
+ const coats=/primer|extra coat/i.test(item.nom_en)?1:2;
+ add(txt('Paint / primer — confirm color and finish','Pintura / primer — confirmar color y acabado'),Math.ceil(q*coats/350*1.10),'gal',name);
+ add(txt('Roller covers — allowance, adjust for crew','Fundas de rodillo — previsión, ajustar al personal'),Math.max(1,Math.ceil(q/1500)),'each',name);
+ }else if(id==='crp_trim'||/baseboard|crown molding/i.test(item.nom_en)&&!/Painting/.test(item.cat_en)){
+ add(txt('Trim — verify profile','Moldura — verificar perfil'),Math.ceil(q*1.10),'LinFt',name);
+ }else if(id==='flr_lam'||id==='lnd_sod'||id==='lnd_pavers'){
+ add(txt('Surface material — verify product coverage','Material de superficie — verificar cobertura'),Math.ceil(q*1.10),'SqFt',name);
+ }else if(id==='lnd_mulch'){add(txt('Mulch / gravel — choose material','Mantillo / grava — elegir material'),Math.ceil(q*1.10*100)/100,'CuYd',name);
+ }else{
+ const lists={
+ plm_faucet:'Grifería o inodoro según alcance;Conectores de alimentación;Sellos y fijaciones compatibles',
+ plm_disp:'Triturador compatible;Kit de conexión de drenaje;Cable / conexión según modelo',
+ plm_pipe:'Tubería: especificar agua o desagüe, material y diámetro;Codos y conexiones según recorrido;Válvulas y soportes',
+ plm_shower:'Válvula de ducha compatible;Tubería y conexiones según plano;Soportes y protección',
+ plm_heater:'Calentador según capacidad y energía;Conexiones y válvulas compatibles;Bandeja y drenaje según instalación',
+ elec_rec:'Luminarias y cajas compatibles;Cable según circuito y recorrido;Conectores y fijaciones',
+ elec_out:'Tomacorrientes o interruptores según circuito;Cajas y placas;Cable y conectores',
+ elec_fan:'Ventilador;Caja y soporte aptos para ventilador;Cable y conectores',
+ elec_panel:'Panel e interruptores según diseño aprobado;Conductores según carga y recorrido;Conectores y puesta a tierra',
+ net_drop:'Cable Cat6: medir recorrido por punto;Jacks y placas;Patch cords y organizadores',
+ net_cam:'Cámara según diseño;Cable según recorrido;Montaje y alimentación compatible',
+ net_ap:'Access point;Cable según recorrido;PoE y soporte compatible',
+ net_rack:'Rack y accesorios según equipo;Patch panel y organizadores;Tornillería',
+ net_cable:'Organizadores y velcro;Etiquetas;Patch cords según recorrido',
+ elec_smart:'Dispositivo compatible;Conectores y placa;Verificar neutro y alimentación',
+ crp_deck:'Tablas según plano;Estructura y soportes según diseño;Fijaciones compatibles',
+ crp_patio:'Madera según plano estructural;Herrajes y anclajes;Cubierta según diseño',
+ crp_fence:'Postes y travesaños según altura y separación;Tablas o paneles;Concreto y fijaciones',
+ crp_cab:'Tableros según despiece;Herrajes;Fijaciones y acabado',
+ lnd_wall:'Bloques según dimensiones;Base y drenaje según diseño;Geotextil',
+ lnd_light:'Luminarias;Cable de baja tensión según recorrido;Transformador según carga',
+ dsn_3d:'Filamento: usar gramos del slicer;Material de soporte según slicer'
+ };
+ const materials=lists[id]||( /Painting|Pintura/.test(item.cat_en+' '+item.cat_es)?'Pintura o recubrimiento: medir área y confirmar rendimiento;Protección y preparación de superficies': /Hourly|Design/.test(item.cat_en)?'Sin compra automática: definir alcance y consumibles':'Definir materiales según alcance');
+ materials.split(';').forEach(n=>add(n,'','',name));
+ }
+});
+render();
+}
+function render(){
+panel.innerHTML='<h2>'+txt('INTERNAL MATERIALS','MATERIALES INTERNOS')+'</h2><p>'+txt('Linked to the current estimate. Review quantities and specifications before purchasing. Blank quantities and prices require confirmation.','Vinculado al presupuesto actual. Revisa cantidades y especificaciones antes de comprar. Las cantidades y precios vacíos requieren confirmación.')+'</p><p>'+txt('Paint assumption: 350 SqFt/gal per coat, two coats, 10% allowance. Wall and ceiling areas are measured separately; round-up per line/color. Tools depend on crew and stock.','Pintura: 350 SqFt/gal por mano, dos manos y 10% de previsión. Paredes y techos se miden por separado; redondeo por partida/color. Herramientas dependen del personal y existencias.')+'</p><div class="mat-actions"><button id="matRebuild">'+txt('Rebuild from estimate','Actualizar desde presupuesto')+'</button><button id="matPrint">'+txt('Print / PDF','Imprimir / PDF')+'</button><button id="matCsv">CSV</button><button id="matAdd">'+txt('Add material / tool','Agregar material / herramienta')+'</button></div><p>'+txt('Retail prices: enter a verified store quote. No live prices connected.','Precios: ingresar una cotización verificada de tienda. Sin conexión a precios en vivo.')+'</p><div class="mat-scroll"><table><thead><tr>'+['Material / herramienta','Cantidad','Unidad','Precio compra USD','Partida','Proveedor'].map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map((r,i)=>'<tr>'+['name','qty','unit','price'].map(k=>'<td><input data-row="'+i+'" data-key="'+k+'" value="'+esc(r[k])+'" aria-label="'+k+'"></td>').join('')+'<td>'+esc(r.source)+'</td><td><a target="_blank" rel="noopener" href="https://www.homedepot.com/s/'+encodeURIComponent(r.name)+'">Home Depot</a> · <a target="_blank" rel="noopener" href="https://www.lowes.com/search?searchTerm='+encodeURIComponent(r.name)+'">Lowe’s</a></td></tr>').join('')+'</tbody></table></div><h3>'+txt('Reusable tools — check stock','Herramientas reutilizables — revisar existencias')+'</h3><p>Brochas, rodillo, extensión, bandeja, escalera; plomería: cortatubos y llaves; electricidad: comprobador y herramientas aisladas; redes: ponchadora y tester. Confirmar según alcance.</p><p>Fuentes: <a target="_blank" href="https://s7d9.scene7.com/is/content/behr/1050_tds_uspdf-1">BEHR: 250–400 SqFt/gal</a> · <a target="_blank" href="https://www.lowes.com/pd/Charlotte-Pipe-2-in-x-10-ft-Sch-40-Cellcore-PVC-DWV-Pipe/1000219665">Lowe’s PVC DWV</a>. Revisión: 2026-11-23.</p>';
+panel.querySelector('#matRebuild').onclick=()=>{if(confirm(txt('Replace material edits with a fresh calculation?','¿Reemplazar los ajustes por un cálculo nuevo?')))build();};
+panel.querySelector('#matAdd').onclick=()=>{add('','','','Manual');render();};
+panel.querySelectorAll('input[data-row]').forEach(e=>e.oninput=()=>rows[Number(e.dataset.row)][e.dataset.key]=e.value);
+panel.querySelector('#matCsv').onclick=()=>{const csv=[['Material','Cantidad','Unidad','Precio compra USD','Partida'],...rows.map(r=>[r.name,r.qty,r.unit,r.price,r.source])].map(a=>a.map(x=>'"'+String(x).replaceAll('"','""')+'"').join(',')).join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));a.download='Materiales_'+document.getElementById('inputEstNum').value+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);};
+panel.querySelector('#matPrint').onclick=()=>{const w=window.open('','_blank');if(!w)return;w.document.write('<html><head><title>Materiales internos</title><style>body{font:14px Arial}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ccc;padding:8px}h1{font-size:20px}</style></head><body><h1>KN3X — Materiales internos '+esc(document.getElementById('inputEstNum').value)+'</h1><p>'+esc(document.getElementById('inputClientName').value)+'</p><table><tr><th>Material / herramienta</th><th>Cantidad</th><th>Unidad</th><th>Precio compra USD</th><th>Partida</th></tr>'+rows.map(r=>'<tr>'+[r.name,r.qty||'Confirmar',r.unit,r.price||'Pendiente',r.source].map(x=>'<td>'+esc(x)+'</td>').join('')+'</tr>').join('')+'</table><p>Lista interna estimada. Confirmar medidas, compatibilidad, existencias y precios antes de comprar.</p></body></html>');w.document.close();w.print();};
+}
+window.addEventListener('kn3x:viewchange',e=>{if(e.detail==='materials'){if(!rows.length)build();else render();}});
+})();
+</script></body>
 </html>
 
