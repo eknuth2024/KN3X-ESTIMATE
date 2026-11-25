@@ -3744,120 +3744,64 @@ document.querySelectorAll('#listaItems tr').forEach(tr=>{
  }
 
 });
-const project=txt('New supplies — project kit (one worker)','Compras nuevas — kit del proyecto (una persona)');
+const project=txt('Project consumables','Consumibles del proyecto');
 const unit=txt('each','unidad');
 function kit(entries){entries.forEach(([english,spanish,quantity=1,u=unit])=>add(txt(english,spanish),quantity,u,project));}
+
 if(anyWork)kit([
- ['Safety glasses','Gafas de seguridad'],
- ['Work gloves','Guantes de trabajo'],
- ['Nitrile gloves','Guantes de nitrilo',1,txt('box','caja')],
  ['Trash bags','Bolsas para residuos',1,txt('box','caja')],
- ['Cleaning cloths','Paños de limpieza',1,txt('pack','paquete')],
- ['Utility knife and spare blades','Cúter y cuchillas de repuesto'],
- ['Measuring tape','Cinta métrica'],
- ['Pencil / marker','Lápiz / marcador',2],
- ['Hearing / respiratory protection — select for the task','Protección auditiva / respiratoria — seleccionar según tarea','',''],
- ['Floor protection — measure actual floor area','Protección de pisos — medir área real de piso','',txt('SqFt','ft²')],
- ['First aid kit','Botiquín']
+ ['Disposable cleaning cloths','Paños desechables de limpieza',1,txt('pack','paquete')],
+ ['Disposable floor protection — measure floor area','Protección desechable de pisos — medir área de piso','',txt('SqFt','ft²')]
 ]);
 if(toolKits.has('paint'))kit([
- ['2–2.5 in angled cutting-in brush','Brocha angular de recorte 2–2.5 pulgadas',2],
- ['9 in roller frame','Armazón de rodillo 9 pulgadas'],
- ['Mini roller frame and covers','Minirrodillo con repuestos',1,txt('kit','kit')],
- ['Roller covers for trim / small areas','Repuestos para minirrodillo',2],
- ['Paint tray','Bandeja de pintura'],
+ ['Project-use cutting-in brushes 2–2.5 in','Brochas de recorte para uso del proyecto 2–2.5 pulgadas',2],
+ ['Mini roller covers','Repuestos para minirrodillo',2],
  ['Disposable tray liners','Forros desechables de bandeja',2],
- ['Extension pole','Extensión para rodillo'],
- ['Step ladder','Escalera de tijera'],
- ['5 gal bucket and roller grid','Cubeta de 5 gal y rejilla'],
  ['Paint stirring sticks','Paletas mezcladoras',2],
- ['Paint can opener','Abrelatas de pintura'],
  ['Painter tape — measure masking perimeter and roll length','Cinta de pintor — medir perímetro y largo del rollo','',''],
  ['Masking film / paper — measure protected surfaces','Película / papel de enmascarar — medir superficies','',''],
- ['Canvas drop cloth','Lona protectora'],
- ['Sanding block','Bloque de lijado'],
  ['Sandpaper — select grit and quantity after inspection','Lijas — definir grano y cantidad tras inspección','',''],
- ['Flexible putty knives','Espátulas flexibles',2],
  ['Small-hole filler — verify volume of nail holes','Resanador para orificios de clavos — verificar volumen','',''],
  ['Paintable caulk — measure joints and tube yield','Sellador pintable — medir juntas y rendimiento','',''],
- ['Caulk gun','Pistola de sellador'],
- ['Scraper','Raspador'],
  ['Degreasing cleaner compatible with surface','Limpiador desengrasante compatible',1,txt('bottle','envase')],
- ['Cleaning sponge','Esponja de limpieza',2],
- ['Water / cleaning supply — select for coating type','Agua / limpieza — seleccionar según recubrimiento','',''],
- ['Roller nap — choose for smooth or textured surface','Felpa del rodillo — elegir para superficie lisa o texturizada','','']
+ ['Disposable cleaning sponge','Esponja desechable de limpieza',2],
+ ['Cleaning solvent / water — select coating compatibility','Solvente de limpieza / agua — según recubrimiento','','']
 ]);
 if(toolKits.has('drywall'))kit([
- ['Drywall saw','Serrucho de drywall'],
- ['Taping knife and mud pan','Espátula de encintado y bandeja de masilla'],
  ['Sanding sponge','Esponja de lijado',2],
  ['Drywall screws and backing — confirm patch method','Tornillos y respaldo — confirmar método de parche','',''],
- ['Texture applicator — match existing finish','Aplicador de textura — igualar acabado existente','','']
+ ['Texture compound / aerosol — match existing finish','Compuesto / aerosol de textura — igualar acabado existente','','']
 ]);
 if(toolKits.has('plumbing'))kit([
- ['Adjustable wrenches','Llaves ajustables',2],
- ['Tongue-and-groove pliers','Pinzas de extensión',2],
- ['Basin wrench','Llave para fregadero'],
- ['Pipe cutter — select for pipe material','Cortatubos — elegir según material'],
- ['Deburring tool','Desbarbador'],
- ['Bucket','Cubeta'],
- ['PTFE tape / thread sealant — only for compatible threaded joints','Cinta PTFE / sellador — solo para roscas compatibles',1,txt('kit','kit')],
+ ['PTFE tape / thread sealant — compatible threaded joints only','Cinta PTFE / sellador — solo roscas compatibles',1,txt('kit','kit')],
  ['Pipe supports and anchors — measure spacing','Soportes y anclajes de tubería — definir separación','',''],
- ['PEX tool / PVC primer and cement / solder supplies — select pipe system','Herramienta PEX / primer y cemento PVC / soldadura — elegir sistema','',''],
- ['Leak test equipment — select system','Equipo de prueba de fugas — seleccionar sistema','','']
+ ['PEX fittings / PVC primer and cement / solder — select pipe system','Conexiones PEX / primer y cemento PVC / soldadura — elegir sistema','','']
 ]);
 if(toolKits.has('electric'))kit([
- ['Voltage tester','Comprobador de tensión'],
- ['Multimeter','Multímetro'],
- ['Insulated screwdriver set','Juego de destornilladores aislados'],
- ['Wire stripper and cutter','Pelacables y cortacables'],
- ['Lineman pliers','Pinzas de electricista'],
- ['Fish tape','Guía pasacables'],
- ['Drill and compatible bits','Taladro y brocas compatibles',1,txt('kit','kit')],
  ['Cable connectors, staples, clamps and labels — size to design','Conectores, grapas, abrazaderas y etiquetas — según diseño','',''],
- ['Step ladder','Escalera de tijera'],
- ['Circuit identification / lockout supplies','Identificación de circuito / bloqueo',1,txt('kit','kit')]
+ ['Electrical tape','Cinta aislante',1,txt('roll','rollo')]
 ]);
 if(toolKits.has('network'))kit([
- ['Cable tester','Probador de cable de red'],
- ['RJ45 crimper','Crimpadora RJ45'],
- ['Punch-down tool','Ponchadora'],
- ['Cable jacket stripper / scissors','Pelacables / tijeras'],
- ['Fish tape','Guía pasacables'],
- ['Drill and compatible bits','Taladro y brocas compatibles',1,txt('kit','kit')],
- ['Velcro ties','Amarres de velcro',1,txt('pack','paquete')],
+ ['Cable ties / hook-and-loop straps installed on project','Amarres / velcro instalados en el proyecto',1,txt('pack','paquete')],
  ['Cable labels','Etiquetas de cable',1,txt('pack','paquete')],
  ['RJ45 ends, keystones and faceplates — count terminations','Terminales RJ45, keystones y placas — contar terminaciones','',''],
- ['Cable supports and anchors — measure route','Soportes y anclajes — medir recorrido','',''],
- ['Step ladder','Escalera de tijera']
+ ['Cable supports and anchors — measure route','Soportes y anclajes — medir recorrido','','']
 ]);
 if(toolKits.has('carpentry'))kit([
- ['Drill / driver and bits','Taladro / atornillador y brocas',1,txt('kit','kit')],
- ['Saw and suitable blade','Sierra y hoja adecuada'],
- ['Level and square','Nivel y escuadra',1,txt('kit','kit')],
- ['Clamps','Prensas',2],
- ['Hammer / nail set','Martillo / botador',1,txt('kit','kit')],
  ['Fasteners, adhesives and anchors — count from cut list','Fijaciones, adhesivos y anclajes — contar según despiece','',''],
- ['Sander and abrasives — select finish','Lijadora y abrasivos — seleccionar acabado',1,txt('kit','kit')]
+ ['Sanding sheets / discs — select finish','Hojas / discos de lija — seleccionar acabado','','']
 ]);
 if(toolKits.has('landscape'))kit([
- ['Shovel','Pala'],
- ['Rake','Rastrillo'],
- ['Wheelbarrow','Carretilla'],
- ['Level and string line','Nivel y cordel',1,txt('kit','kit')],
- ['Hand tamper / plate compactor — select project need','Pisón / compactadora — seleccionar según proyecto','',''],
  ['Base, bedding sand, edging and stakes — measure design','Base, arena de asiento, bordes y estacas — medir diseño','','']
 ]);
 if(toolKits.has('labor'))kit([
- ['Pry bar','Barra de palanca'],['Hammer','Martillo'],['Heavy-duty debris bags','Bolsas resistentes para escombros',1,txt('pack','paquete')],['Broom and dustpan','Escoba y recogedor',1,txt('kit','kit')],['Shop vacuum','Aspiradora de taller']
+ ['Heavy-duty debris bags','Bolsas resistentes para escombros',1,txt('pack','paquete')]
 ]);
 if(toolKits.has('printing'))kit([
- ['Build plate cleaning supplies','Material de limpieza de cama',1,txt('kit','kit')],
- ['Scraper / removal tool','Espátula de extracción'],
- ['Deburring / support removal tools','Herramientas de acabado y retiro de soportes',1,txt('kit','kit')],
- ['Spare nozzle — match printer and material','Boquilla de repuesto — compatible con impresora y material']
+ ['Build plate cleaning fluid / wipes','Líquido / toallitas de limpieza de cama',1,txt('kit','kit')],
+ ['Build plate adhesive — if required by material','Adhesivo de cama — si lo requiere el material','','']
 ]);
-// Share newly purchased tools across the same project, never across projects.
+// Consolidate shared project consumables.
 const merged=new Map();
 rows=rows.filter(row=>{
  if(row.source!==project)return true;
@@ -3868,13 +3812,13 @@ rows=rows.filter(row=>{
 render();
 }
 function render(){
-panel.innerHTML='<button type="button" id="matBack">← '+txt('Back to estimate','Volver al presupuesto')+'</button><h2>'+txt('INTERNAL MATERIALS','MATERIALES INTERNOS')+'</h2><p>'+txt('Linked to the current estimate. Review quantities and specifications before purchasing. Blank quantities require confirmation.','Vinculado al presupuesto actual. Revisa cantidades y especificaciones antes de comprar. Las cantidades vacías requieren confirmación.')+'</p><p>'+txt('Paint assumption: 350 SqFt/gal per coat, coats per selected item, 10% allowance. Wall and ceiling areas are measured separately; round-up per line/color. New tools and supplies included per project for one worker; adjust crew, colors, product compatibility and quantities before purchase.','Pintura: 350 SqFt/gal por mano, manos según la partida y 10% de previsión. Paredes y techos se miden por separado; redondeo por partida/color. Herramientas y consumibles nuevos por proyecto para una persona; ajustar personal, colores, compatibilidad y cantidades antes de comprar.')+'</p><div class="mat-actions"><button id="matRebuild">'+txt('Rebuild from estimate','Actualizar desde presupuesto')+'</button><button id="matPrint">'+txt('Print / PDF','Imprimir / PDF')+'</button><button id="matCsv">CSV</button><button id="matAdd">'+txt('Add material / tool','Agregar material / herramienta')+'</button></div><div class="mat-scroll"><table><thead><tr>'+(es()?['Material / herramienta','Cantidad','Unidad','Partida','Proveedor']:['Material / tool','Quantity','Unit','Estimate item','Supplier']).map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map((r,i)=>'<tr>'+['name','qty','unit'].map(k=>'<td><input data-row="'+i+'" data-key="'+k+'" value="'+esc(r[k])+'" aria-label="'+k+'"></td>').join('')+'<td>'+esc(r.source)+'</td><td><a target="_blank" rel="noopener" href="https://www.homedepot.com/s/'+encodeURIComponent(r.name)+'">Home Depot</a> · <a target="_blank" rel="noopener" href="https://www.lowes.com/search?searchTerm='+encodeURIComponent(r.name)+'">Lowe’s</a></td></tr>').join('')+'</tbody></table></div><h3>'+txt('New project purchases','Compras nuevas por proyecto')+'</h3><p>'+txt('Tools are included as new purchases once per project. Blank quantities need site measurements; adjust packs and sizes before ordering.','Las herramientas se incluyen como compra nueva una vez por proyecto. Las cantidades vacías requieren medidas en sitio; ajustar paquetes y tamaños antes de comprar.')+'</p><p>Fuentes: <a target="_blank" href="https://s7d9.scene7.com/is/content/behr/1050_tds_uspdf-1">BEHR: 250–400 SqFt/gal</a> · <a target="_blank" href="https://www.lowes.com/pd/Charlotte-Pipe-2-in-x-10-ft-Sch-40-Cellcore-PVC-DWV-Pipe/1000219665">Lowe’s PVC DWV</a>. Revisión: 2026-11-23.</p>';
+panel.innerHTML='<button type="button" id="matBack">← '+txt('Back to estimate','Volver al presupuesto')+'</button><h2>'+txt('INTERNAL MATERIALS','MATERIALES INTERNOS')+'</h2><p>'+txt('Linked to the current estimate. Review quantities and specifications before purchasing. Blank quantities require confirmation.','Vinculado al presupuesto actual. Revisa cantidades y especificaciones antes de comprar. Las cantidades vacías requieren confirmación.')+'</p><p>'+txt('Paint assumption: 350 SqFt/gal per coat, coats per selected item, 10% allowance. Wall and ceiling areas are measured separately; round-up per line/color. Consumables and installed materials only; adjust colors, product compatibility and quantities before purchase.','Pintura: 350 SqFt/gal por mano, manos según la partida y 10% de previsión. Paredes y techos se miden por separado; redondeo por partida/color. Solo consumibles y materiales instalados; ajustar colores, compatibilidad y cantidades antes de comprar.')+'</p><div class="mat-actions"><button id="matRebuild">'+txt('Rebuild from estimate','Actualizar desde presupuesto')+'</button><button id="matPrint">'+txt('Print / PDF','Imprimir / PDF')+'</button><button id="matCsv">CSV</button><button id="matAdd">'+txt('Add material / consumable','Agregar material / consumible')+'</button></div><div class="mat-scroll"><table><thead><tr>'+(es()?['Material / consumible','Cantidad','Unidad','Partida','Proveedor']:['Material / consumable','Quantity','Unit','Estimate item','Supplier']).map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map((r,i)=>'<tr>'+['name','qty','unit'].map(k=>'<td><input data-row="'+i+'" data-key="'+k+'" value="'+esc(r[k])+'" aria-label="'+k+'"></td>').join('')+'<td>'+esc(r.source)+'</td><td><a target="_blank" rel="noopener" href="https://www.homedepot.com/s/'+encodeURIComponent(r.name)+'">Home Depot</a> · <a target="_blank" rel="noopener" href="https://www.lowes.com/search?searchTerm='+encodeURIComponent(r.name)+'">Lowe’s</a></td></tr>').join('')+'</tbody></table></div><h3>'+txt('New project purchases','Compras nuevas por proyecto')+'</h3><p>'+txt('Project consumables are included once where shared. Blank quantities need site measurements; adjust packs and sizes before ordering.','Los consumibles compartidos se incluyen una vez por proyecto. Las cantidades vacías requieren medidas en sitio; ajustar paquetes y tamaños antes de comprar.')+'</p><p>Fuentes: <a target="_blank" href="https://s7d9.scene7.com/is/content/behr/1050_tds_uspdf-1">BEHR: 250–400 SqFt/gal</a> · <a target="_blank" href="https://www.lowes.com/pd/Charlotte-Pipe-2-in-x-10-ft-Sch-40-Cellcore-PVC-DWV-Pipe/1000219665">Lowe’s PVC DWV</a>. Revisión: 2026-11-23.</p>';
 panel.querySelector('#matBack').onclick=()=>cambiarSeccion('estimate');
 panel.querySelector('#matRebuild').onclick=()=>{if(confirm(txt('Replace material edits with a fresh calculation?','¿Reemplazar los ajustes por un cálculo nuevo?')))build();};
 panel.querySelector('#matAdd').onclick=()=>{add('','','','Manual');render();};
 panel.querySelectorAll('input[data-row]').forEach(e=>e.oninput=()=>rows[Number(e.dataset.row)][e.dataset.key]=e.value);
 panel.querySelector('#matCsv').onclick=()=>{const csv=[(es()?['Material','Cantidad','Unidad','Partida']:['Material','Quantity','Unit','Estimate item']),...rows.map(r=>[r.name,r.qty,r.unit,r.source])].map(a=>a.map(x=>'"'+String(x).replaceAll('"','""')+'"').join(',')).join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));a.download='Materiales_'+document.getElementById('inputEstNum').value+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);};
-panel.querySelector('#matPrint').onclick=()=>{const w=window.open('','_blank');if(!w)return;w.document.write('<html><head><title>Materiales internos</title><style>body{font:14px Arial}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ccc;padding:8px}h1{font-size:20px}</style></head><body><h1>KN3X — Materiales internos '+esc(document.getElementById('inputEstNum').value)+'</h1><p>'+esc(document.getElementById('inputClientName').value)+'</p><table><tr><th>Material / herramienta</th><th>Cantidad</th><th>Unidad</th><th>Partida</th></tr>'+rows.map(r=>'<tr>'+[r.name,r.qty||'Confirmar',r.unit,r.source].map(x=>'<td>'+esc(x)+'</td>').join('')+'</tr>').join('')+'</table><p>Lista interna estimada. Confirmar medidas, compatibilidad, existencias antes de comprar.</p></body></html>');w.document.close();w.print();};
+panel.querySelector('#matPrint').onclick=()=>{const w=window.open('','_blank');if(!w)return;w.document.write('<html><head><title>Materiales internos</title><style>body{font:14px Arial}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ccc;padding:8px}h1{font-size:20px}</style></head><body><h1>KN3X — Materiales internos '+esc(document.getElementById('inputEstNum').value)+'</h1><p>'+esc(document.getElementById('inputClientName').value)+'</p><table><tr><th>Material / consumible</th><th>Cantidad</th><th>Unidad</th><th>Partida</th></tr>'+rows.map(r=>'<tr>'+[r.name,r.qty||'Confirmar',r.unit,r.source].map(x=>'<td>'+esc(x)+'</td>').join('')+'</tr>').join('')+'</table><p>Lista interna estimada. Confirmar medidas, compatibilidad, existencias antes de comprar.</p></body></html>');w.document.close();w.print();};
 }
 new MutationObserver(()=>{if(!panel.classList.contains('hidden'))render();}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
 window.addEventListener('kn3x:viewchange',e=>{if(e.detail==='materials'){if(!rows.length)build();else render();}});
