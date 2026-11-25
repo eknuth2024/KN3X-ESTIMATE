@@ -1111,6 +1111,19 @@
 .kn-received span{font-size:11px;font-weight:bold;letter-spacing:.08em}
 @media(max-width:600px){.kn-doc-grid{grid-template-columns:1fr}.kn-doc-header{gap:12px}.kn-brand img{width:135px}.kn-doc-title h1{font-size:20px!important}.kn-document table{min-width:520px!important}.kn-doc-footer{flex-direction:column}.kn-received strong{font-size:24px}}
 @media print{@page{size:letter;margin:16mm}html,body{margin:0;padding:0;background:#fff}.kn-document{max-width:none;font-size:12px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.kn-doc-grid{grid-template-columns:1fr 1fr}.kn-doc-header{break-inside:avoid}.kn-doc-table-wrap{overflow:visible}.kn-document table{min-width:0!important}thead{display:table-header-group}.kn-doc-footer{flex-direction:row}}
+</style><style>
+@media screen {
+ #estimateContainer:not(.pdf-export) #estimateMaterialsButton {
+   font-size:16px;line-height:1.25;min-height:48px;font-weight:700;
+   padding:12px 20px;display:flex;align-items:center;justify-content:center;gap:8px;box-sizing:border-box;
+ }
+ #estimateContainer:not(.pdf-export) #estimateMaterialsButton > span {font-size:inherit;}
+}
+@media screen and (min-width:768px) {
+ #estimateContainer:not(.pdf-export) .estimate-final-actions {flex-wrap:wrap;}
+ #estimateContainer:not(.pdf-export) .estimate-final-actions > button,
+ #estimateContainer:not(.pdf-export) #estimateMaterialsButton {width:220px;max-width:100%;}
+}
 </style></head>
 <body class="bg-gray-100 text-gray-800 font-sans h-screen overflow-hidden flex text-xs md:text-sm">
 
@@ -1383,7 +1396,7 @@
                                     <button onclick="clearEstimateContent()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-5 rounded-lg w-full md:w-auto" data-i18n="clear_estimate">Clear content</button>
                                     </div>
                                     <div class="flex justify-end mt-3 pt-4 border-t border-slate-500 no-print">
-                                      <button type="button" onclick="cambiarSeccion('materials')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-5 rounded-full w-full md:w-auto flex items-center justify-center gap-2">
+                                      <button type="button" id="estimateMaterialsButton" onclick="cambiarSeccion('materials')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-5 rounded-full w-full md:w-auto flex items-center justify-center gap-2">
                                         <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 7 9-4 9 4v10l-9 4-9-4V7Zm0 0 9 4 9-4M12 11v10M7 5l10 4"/></svg>
                                         <span data-dock-label="materials">Materials</span>
                                       </button>
