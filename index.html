@@ -1155,7 +1155,7 @@
 }
 #invoiceContainer #paymentReceipts > button:hover {background:#fde047;}
 #invoiceContainer #paymentReceipts > button:focus-visible {outline:2px solid #fef08a;outline-offset:3px;}
-</style></head>
+</style><style>#materialsContainer .materials-category{margin-top:26px;padding-top:16px;border-top:1px solid #667080}#materialsContainer .materials-category>h3{background:#3b485c;color:#fff;font-size:17px;font-weight:800;padding:12px 16px;border-radius:14px;margin-bottom:14px}#materialsContainer .materials-category:nth-of-type(2)>h3{background:#4e4532}</style></head>
 <body class="bg-gray-100 text-gray-800 font-sans h-screen overflow-hidden flex text-xs md:text-sm">
 
     <!-- SIDEBAR (MENÚ VERTICAL IZQUIERDO) -->
@@ -3707,15 +3707,17 @@ const panel=document.getElementById('materialsContainer');
 function add(name,qty,unit,source,kind='Material'){rows.push({name,qty,unit,source,kind,price:''});}
 function build(){
 rows=[];
-const toolKits=new Set();let anyWork=false;
+const toolKits=new Set();const equipmentJobs=[];let anyWork=false;
 document.querySelectorAll('#listaItems tr').forEach(tr=>{
  const item=catalogoPrecios.find(x=>x.id===tr.querySelector('select')?.selectedOptions[0]?.dataset.id),q=Number(tr.querySelector('.qty')?.value)||0;
  if(!item||q<=0)return;
  const name=item[es()?'nom_es':'nom_en'],id=item.id;
- anyWork=true;
+ anyWork=anyWork||!['dsn_cad','dsn_sld'].includes(id);
  const family=id==='hr_painter'?'paint':id==='hr_carpenter'?'carpentry':id==='hr_tech'?'network':item.repair?'drywall':/Painting|Pintura/.test(item.cat_en+' '+item.cat_es)?'paint':/^plm_/.test(id)?'plumbing':/^elec_/.test(id)?'electric':/^net_/.test(id)?'network':/^(crp_|flr_)/.test(id)?'carpentry':/^lnd_/.test(id)?'landscape':id==='dsn_3d'?'printing':/^hr_/.test(id)?'labor':null;
  if(family)toolKits.add(family);
+ equipmentJobs.push({family:family||(/^dsn_/.test(id)?'design':'custom'),id,name});
  if(item.repair)toolKits.add('paint');
+ if(['dsn_cad','dsn_sld'].includes(id))return;
  if(item.repair){
  add(txt('Drywall patch up to 6 in','Parche drywall hasta 6 pulgadas'),Math.ceil(q),'each',name);
  add(txt('Joint compound, tape, abrasives, matching texture and spot primer — measure after inspection','Masilla, cinta, abrasivos, textura compatible y primer puntual — medir tras inspección'),'','',name);
@@ -3815,6 +3817,38 @@ if(toolKits.has('printing'))kit([
  ['Build plate cleaning fluid / wipes','Líquido / toallitas de limpieza de cama',1,txt('kit','kit')],
  ['Build plate adhesive — if required by material','Adhesivo de cama — si lo requiere el material','','']
 ]);
+
+const equipmentCatalog={
+ paint:[['Roller frame','Armazón de rodillo'],['Mini roller frame','Armazón de minirrodillo'],['Paint tray','Bandeja de pintura'],['Extension pole','Extensión de rodillo'],['Step ladder — choose appropriate height','Escalera — elegir altura adecuada'],['Bucket and roller grid','Cubeta y rejilla'],['Putty knives','Espátulas'],['Caulk gun','Pistola de sellador'],['Scraper','Raspador'],['Sanding block','Bloque de lijado']],
+ drywall:[['Drywall saw','Serrucho drywall'],['Taping knives and mud pan','Espátulas de encintado y bandeja'],['Step ladder — choose appropriate height','Escalera — elegir altura adecuada']],
+ plumbing:[['Adjustable wrenches','Llaves ajustables'],['Tongue-and-groove pliers','Pinzas de extensión'],['Basin wrench','Llave de fregadero'],['Pipe cutter — match material','Cortatubos — según material'],['Deburring tool','Desbarbador'],['Bucket','Cubeta'],['Leak test equipment — select system','Equipo de prueba de fugas — según sistema']],
+ electric:[['Voltage tester','Comprobador de tensión'],['Multimeter','Multímetro'],['Insulated hand-tool set','Juego de herramientas aisladas'],['Wire stripper and cutter','Pelacables y cortacables'],['Fish tape','Guía pasacables'],['Drill and bits','Taladro y brocas'],['Step ladder — choose appropriate height','Escalera — elegir altura adecuada'],['Circuit lockout kit','Kit de bloqueo de circuito']],
+ network:[['Cable tester','Tester de red'],['RJ45 crimper','Crimpadora RJ45'],['Punch-down tool','Ponchadora'],['Cable stripper','Pelacables'],['Fish tape','Guía pasacables'],['Drill and bits','Taladro y brocas'],['Step ladder — choose appropriate height','Escalera — elegir altura adecuada']],
+ carpentry:[['Drill and bits','Taladro y brocas'],['Saw — select blade for material','Sierra — elegir hoja según material'],['Level and square','Nivel y escuadra'],['Clamps','Prensas'],['Hammer / nail set','Martillo / botador'],['Sander','Lijadora']],
+ landscape:[['Shovel','Pala'],['Rake','Rastrillo'],['Wheelbarrow','Carretilla'],['Level and string line','Nivel y cordel']],
+ labor:[['Pry bar','Barra de palanca'],['Hammer','Martillo'],['Shop vacuum','Aspiradora de taller'],['Broom and dustpan','Escoba y recogedor']],
+ printing:[['3D printer — match material','Impresora 3D — compatible con material'],['Build plate','Cama de impresión'],['Removal / finishing tools','Herramientas de extracción y acabado']],
+ design:[['Computer / workstation','Computadora / estación de trabajo'],['CAD / modeling software license','Licencia de software CAD / modelado']],
+ custom:[['Equipment to define from custom scope','Equipo por definir según alcance personalizado']]
+};
+const sharedEquipment=new Map();
+function equipmentRow(english,spanish,source){
+ const name=txt(english,spanish),key=english;
+ if(sharedEquipment.has(key)){const row=sharedEquipment.get(key);if(!row.source.includes(source))row.source+=' | '+source;return;}
+ const row={name,qty:1,unit:txt('each','unidad'),source,kind:'Equipment',price:''};sharedEquipment.set(key,row);rows.push(row);
+}
+equipmentJobs.forEach(job=>{
+ (equipmentCatalog[job.family]||equipmentCatalog.custom).forEach(([english,spanish])=>equipmentRow(english,spanish,job.name));
+ if(job.family!=='design'&&job.family!=='custom'){
+ equipmentRow('Measuring tape','Cinta métrica',job.name);
+ equipmentRow('Reusable worker PPE — select task','Equipo de protección reutilizable — según tarea',job.name);
+ }
+ if(job.family==='drywall')equipmentCatalog.paint.forEach(([a,b])=>equipmentRow(a,b,job.name));
+ if(job.id==='crp_fence'||job.id==='lnd_wall')equipmentRow('Post-hole / excavation tools — select design','Herramientas de excavación — según diseño',job.name);
+ if(job.id==='lnd_pavers'||job.id==='lnd_wall')equipmentRow('Compactor — select base design','Compactadora — según diseño de base',job.name);
+ if(job.id==='plm_pipe'||job.id==='plm_shower')equipmentRow('PEX / solder / PVC tooling — select pipe system','Herramientas PEX / soldadura / PVC — según sistema',job.name);
+ if(job.id==='net_rack'||job.id==='net_ap'||job.id==='net_cam')equipmentRow('Computer / workstation','Computadora / estación de trabajo',job.name);
+});
 // Consolidate shared project consumables.
 const merged=new Map();
 rows=rows.filter(row=>{
@@ -3825,14 +3859,29 @@ rows=rows.filter(row=>{
 });
 render();
 }
+
+function groupTitle(kind){return kind==='Equipment'?txt('Equipment & tools','Equipos y herramientas'):txt('Materials & consumables','Materiales y consumibles');}
+function groupedRows(kind,forPrint=false){
+ const items=rows.map((row,index)=>({row,index})).filter(({row})=>(row.kind==='Equipment'?'Equipment':'Material')===kind);
+ if(!items.length)return '<p>'+txt('No items for this category.','Sin elementos en esta categoría.')+'</p>';
+ const headers=forPrint?[txt('Item','Elemento'),txt('Qty','Cant.'),txt('Unit','Unidad'),txt('Estimate items','Partidas')]:[txt('Item','Elemento'),txt('Qty','Cant.'),txt('Unit','Unidad'),txt('Estimate items','Partidas'),txt('Supplier','Proveedor')];
+ return '<div class="mat-scroll"><table><thead><tr>'+headers.map(h=>'<th>'+h+'</th>').join('')+'</tr></thead><tbody>'+items.map(({row:r,index:i})=>'<tr>'+(forPrint?[r.name,r.qty===''?txt('Confirm','Confirmar'):r.qty,r.unit,r.source].map(value=>'<td>'+esc(value)+'</td>').join(''):['name','qty','unit'].map(k=>'<td><input data-row="'+i+'" data-key="'+k+'" value="'+esc(r[k])+'" aria-label="'+k+'"></td>').join('')+'<td>'+esc(r.source)+'</td><td><a target="_blank" rel="noopener" href="https://www.homedepot.com/s/'+encodeURIComponent(r.name)+'">Home Depot</a> · <a target="_blank" rel="noopener" href="https://www.lowes.com/search?searchTerm='+encodeURIComponent(r.name)+'">Lowe’s</a></td>')+'</tr>').join('')+'</tbody></table></div>';
+}
 function render(){
-panel.innerHTML='<button type="button" id="matBack">← '+txt('Back to estimate','Volver al presupuesto')+'</button><h2>'+txt('INTERNAL MATERIALS','MATERIALES INTERNOS')+'</h2><p>'+txt('Linked to the current estimate. Review quantities and specifications before purchasing. Blank quantities require confirmation.','Vinculado al presupuesto actual. Revisa cantidades y especificaciones antes de comprar. Las cantidades vacías requieren confirmación.')+'</p><p>'+txt('Paint assumption: 350 SqFt/gal per coat, coats per selected item, 10% allowance. Wall and ceiling areas are measured separately; round-up per line/color. Consumables and installed materials only; adjust colors, product compatibility and quantities before purchase.','Pintura: 350 SqFt/gal por mano, manos según la partida y 10% de previsión. Paredes y techos se miden por separado; redondeo por partida/color. Solo consumibles y materiales instalados; ajustar colores, compatibilidad y cantidades antes de comprar.')+'</p><div class="mat-actions"><button id="matRebuild">'+txt('Rebuild from estimate','Actualizar desde presupuesto')+'</button><button id="matPrint">'+txt('Print / PDF','Imprimir / PDF')+'</button><button id="matCsv">CSV</button><button id="matAdd">'+txt('Add material / consumable','Agregar material / consumible')+'</button></div><div class="mat-scroll"><table><thead><tr>'+(es()?['Material / consumible','Cantidad','Unidad','Partida','Proveedor']:['Material / consumable','Quantity','Unit','Estimate item','Supplier']).map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map((r,i)=>'<tr>'+['name','qty','unit'].map(k=>'<td><input data-row="'+i+'" data-key="'+k+'" value="'+esc(r[k])+'" aria-label="'+k+'"></td>').join('')+'<td>'+esc(r.source)+'</td><td><a target="_blank" rel="noopener" href="https://www.homedepot.com/s/'+encodeURIComponent(r.name)+'">Home Depot</a> · <a target="_blank" rel="noopener" href="https://www.lowes.com/search?searchTerm='+encodeURIComponent(r.name)+'">Lowe’s</a></td></tr>').join('')+'</tbody></table></div><h3>'+txt('New project purchases','Compras nuevas por proyecto')+'</h3><p>'+txt('Project consumables are included once where shared. Blank quantities need site measurements; adjust packs and sizes before ordering.','Los consumibles compartidos se incluyen una vez por proyecto. Las cantidades vacías requieren medidas en sitio; ajustar paquetes y tamaños antes de comprar.')+'</p><p>Fuentes: <a target="_blank" href="https://s7d9.scene7.com/is/content/behr/1050_tds_uspdf-1">BEHR: 250–400 SqFt/gal</a> · <a target="_blank" href="https://www.lowes.com/pd/Charlotte-Pipe-2-in-x-10-ft-Sch-40-Cellcore-PVC-DWV-Pipe/1000219665">Lowe’s PVC DWV</a>. Revisión: 2026-11-23.</p>';
-panel.querySelector('#matBack').onclick=()=>cambiarSeccion('estimate');
-panel.querySelector('#matRebuild').onclick=()=>{if(confirm(txt('Replace material edits with a fresh calculation?','¿Reemplazar los ajustes por un cálculo nuevo?')))build();};
-panel.querySelector('#matAdd').onclick=()=>{add('','','','Manual');render();};
-panel.querySelectorAll('input[data-row]').forEach(e=>e.oninput=()=>rows[Number(e.dataset.row)][e.dataset.key]=e.value);
-panel.querySelector('#matCsv').onclick=()=>{const csv=[(es()?['Material','Cantidad','Unidad','Partida']:['Material','Quantity','Unit','Estimate item']),...rows.map(r=>[r.name,r.qty,r.unit,r.source])].map(a=>a.map(x=>'"'+String(x).replaceAll('"','""')+'"').join(',')).join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));a.download='Materiales_'+document.getElementById('inputEstNum').value+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);};
-panel.querySelector('#matPrint').onclick=()=>{const w=window.open('','_blank');if(!w)return;w.document.write('<html><head><title>Materiales internos</title><style>body{font:14px Arial}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ccc;padding:8px}h1{font-size:20px}</style></head><body><h1>KN3X — Materiales internos '+esc(document.getElementById('inputEstNum').value)+'</h1><p>'+esc(document.getElementById('inputClientName').value)+'</p><table><tr><th>Material / consumible</th><th>Cantidad</th><th>Unidad</th><th>Partida</th></tr>'+rows.map(r=>'<tr>'+[r.name,r.qty||'Confirmar',r.unit,r.source].map(x=>'<td>'+esc(x)+'</td>').join('')+'</tr>').join('')+'</table><p>Lista interna estimada. Confirmar medidas, compatibilidad, existencias antes de comprar.</p></body></html>');w.document.close();w.print();};
+ panel.innerHTML='<button type="button" id="matBack">← '+txt('Back to estimate','Volver al presupuesto')+'</button><h2>'+txt('PROJECT MATERIALS & EQUIPMENT','MATERIALES Y EQUIPOS DEL PROYECTO')+'</h2><p>'+txt('Materials are consumed, discarded or installed in the job. Equipment and tools are reusable; check availability before purchasing or renting. Shared equipment is listed once with its related estimate items.','Los materiales se consumen, desechan o quedan instalados. Los equipos y herramientas son reutilizables; revisar disponibilidad antes de comprar o alquilar. Los equipos compartidos aparecen una vez con sus partidas relacionadas.')+'</p><p>'+txt('Paint: 350 SqFt/gal per coat, coats per item and 10% allowance. Quantities are planning allowances; blank quantities require site measurements.','Pintura: 350 SqFt/gal por mano, manos según partida y 10% de previsión. Las cantidades son estimaciones de planificación; las vacías requieren medidas en sitio.')+'</p><div class="mat-actions"><button id="matRebuild">'+txt('Update from estimate','Actualizar desde presupuesto')+'</button><button id="matPrint">'+txt('Print / PDF','Imprimir / PDF')+'</button><button id="matCsv">CSV</button></div>'+['Material','Equipment'].map(kind=>'<section class="materials-category"><h3>'+groupTitle(kind)+'</h3>'+groupedRows(kind)+'<button data-add-kind="'+kind+'">'+txt('Add item','Agregar elemento')+'</button></section>').join('');
+ panel.querySelector('#matBack').onclick=()=>cambiarSeccion('estimate');
+ panel.querySelector('#matRebuild').onclick=()=>{if(confirm(txt('Replace manual edits with a new calculation?','¿Reemplazar ajustes manuales por un cálculo nuevo?')))build();};
+ panel.querySelectorAll('[data-add-kind]').forEach(button=>button.onclick=()=>{add('','','',txt('Manual entry','Agregado manual'),button.dataset.addKind);render();});
+ panel.querySelectorAll('input[data-row]').forEach(input=>input.oninput=()=>rows[Number(input.dataset.row)][input.dataset.key]=input.value);
+ panel.querySelector('#matCsv').onclick=()=>{
+ const records=[[txt('Category','Categoría'),txt('Item','Elemento'),txt('Qty','Cant.'),txt('Unit','Unidad'),txt('Estimate items','Partidas')],...['Material','Equipment'].flatMap(kind=>rows.filter(r=>(r.kind==='Equipment'?'Equipment':'Material')===kind).map(r=>[groupTitle(kind),r.name,r.qty,r.unit,r.source]))];
+ const csv=records.map(record=>record.map(value=>'"'+String(value).replaceAll('"','""')+'"').join(',')).join('\r\n');
+ const link=document.createElement('a');link.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));link.download='Materiales_Equipos_'+document.getElementById('inputEstNum').value+'.csv';link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1000);
+ };
+ panel.querySelector('#matPrint').onclick=()=>{
+ const w=window.open('','_blank');if(!w)return;
+ w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>KN3X</title><style>body{font:13px Arial;color:#172033}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:8px;text-align:left}h1{font-size:20px}h2{background:#e6eaf0;padding:12px;font-size:16px}thead{display:table-header-group}tr{break-inside:avoid}.category{margin-top:24px}@media print{@page{margin:15mm}.category{break-inside:auto}}</style></head><body><h1>KN3X — '+txt('Materials & equipment','Materiales y equipos')+' '+esc(document.getElementById('inputEstNum').value)+'</h1><p>'+esc(document.getElementById('inputClientName').value)+'</p>'+['Material','Equipment'].map(kind=>'<section class="category"><h2>'+groupTitle(kind)+'</h2>'+groupedRows(kind,true)+'</section>').join('')+'<p>'+txt('Check site quantities, equipment availability and product compatibility before ordering.','Revisar cantidades en sitio, disponibilidad de equipo y compatibilidad antes de comprar.')+'</p></body></html>');w.document.close();w.print();
+ };
 }
 new MutationObserver(()=>{if(!panel.classList.contains('hidden'))render();}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
 window.addEventListener('kn3x:viewchange',e=>{if(e.detail==='materials'){if(!rows.length)build();else render();}});
