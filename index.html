@@ -1124,6 +1124,16 @@
  #estimateContainer:not(.pdf-export) .estimate-final-actions > button,
  #estimateContainer:not(.pdf-export) #estimateMaterialsButton {width:220px;max-width:100%;}
 }
+</style><style>
+@media screen {
+ #estimateContainer:not(.pdf-export) .estimate-acceptance-panel {display:none;}
+}
+@media screen and (max-width:1023px) {
+ html.kn3x-workspace-shell .estimate-mobile-dock {
+   background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.015)),rgba(30,55,86,.84);
+   border-color:rgba(190,212,239,.27);
+ }
+}
 </style></head>
 <body class="bg-gray-100 text-gray-800 font-sans h-screen overflow-hidden flex text-xs md:text-sm">
 
@@ -1344,7 +1354,7 @@
                                     
                                     <div class="flex justify-between gap-2 md:gap-4 mt-6 md:mt-8 w-full items-end">
                                         <!-- FIRMA DIGITAL -->
-                                        <div class="w-[45%] md:w-[40%]">
+                                        <div class="w-[45%] md:w-[40%] estimate-pdf-signature">
                                             <div class="signature-pad-container h-20 md:h-28 border-2 border-dashed border-gray-300 rounded mb-1 relative no-print bg-gray-50 cursor-crosshair">
                                                 <canvas class="absolute inset-0 w-full h-full signature-canvas"></canvas>
                                                 <button onclick="clearSignature(this)" class="absolute top-1 right-1 bg-red-100 text-red-600 text-[8px] md:text-[10px] px-1.5 py-0.5 rounded font-bold hover:bg-red-200">Clear</button>
@@ -2859,7 +2869,14 @@ function validEstimateForFinalizing() {
                 `;
                 doc.head.appendChild(printStyle);
                 const pdf=new window.jspdf.jsPDF({unit:'mm',format:'letter'});
+                const signatureBox=root.querySelector('.estimate-pdf-signature');
+                if(signatureBox)signatureBox.style.paddingTop='60px';
                 const rootTop=root.getBoundingClientRect().top;
+                const signatureRect=signatureBox?.getBoundingClientRect();
+                const dateBox=root.querySelector('.estimate-acceptance-panel [data-i18n="sign_date"]')?.parentElement;
+                const dateRect=dateBox?.getBoundingClientRect();
+                const formAreas=signatureRect?[{name:'ClientSignature',x:signatureRect.left-root.getBoundingClientRect().left+2,top:signatureRect.top-rootTop+10,width:signatureRect.width-4,height:40},
+                    ...(dateRect?[{name:'SignatureDate',x:dateRect.left-root.getBoundingClientRect().left+2,top:dateRect.top-rootTop-24,width:dateRect.width-4,height:20}]:[])]:[];
                 const height=Math.ceil(root.scrollHeight);
                 // Draw export headings as PDF text: no browser/canvas baseline differences on iOS.
                 const headings=Array.from(root.querySelectorAll('#tablaPresupuesto thead th')).filter(th=>th.querySelector('.estimate-column-title')).map((th,index)=>{
@@ -2908,6 +2925,17 @@ function validEstimateForFinalizing() {
                             const y=10+(repeated?contact.center:bodyOffset+contact.center-start)*factor;
                             pdf.text(contact.text,x,y,{baseline:'middle'});
                             if(contact.href)pdf.link(x,y-2,pdf.getTextWidth(contact.text),4,{url:contact.href});
+                        }
+                    }
+                    for(const area of formAreas){
+                        if(area.top>=start&&area.top+area.height<=end){
+                            const Field=window.jspdf.AcroFormTextField||window.jspdf.jsPDF.AcroFormTextField;
+                            if(!Field)throw new Error('PDF form fields unavailable');
+                            const field=new Field();
+                            field.fieldName=area.name;field.Rect=[10+area.x*factor,10+(bodyOffset+area.top-start)*factor,area.width*factor,area.height*factor];
+                            field.fontSize=area.name==='ClientSignature'?12:9;
+                            field.value='';field.multiline=false;
+                            pdf.addField(field);
                         }
                     }
                     canvas.width=canvas.height=0;
