@@ -1141,6 +1141,14 @@
 }
 #materialsContainer #matBack:hover {background:#101216;}
 #materialsContainer #matBack + h2 {padding-top:18px;border-top:1px solid #555b65;margin-top:0;}
+</style><style>
+#invoiceContainer .invoice-closeout{margin-top:24px;padding-top:18px;border-top:1px solid #777}
+#invoiceContainer #openCloseout,#invoiceContainer #saveCloseout{background:#2563eb}
+#invoiceContainer #closeoutEditor label{display:block;margin:12px 0 5px;font-weight:600}
+#invoiceContainer #closeoutEditor :is(input,textarea){width:100%;box-sizing:border-box;background:#3a3a3c;color:#fff;border:1px solid #999;border-radius:16px;padding:10px;font-size:16px}
+#invoiceContainer #closeoutError{color:#ff9189}
+.kn-closeout-break{height:28px;margin:24px 0;border-top:1px dashed #cbd2dc}
+@media print{.kn-closeout-break{height:0;margin:0;border:0;break-before:page;page-break-before:always}}
 </style></head>
 <body class="bg-gray-100 text-gray-800 font-sans h-screen overflow-hidden flex text-xs md:text-sm">
 
@@ -3994,6 +4002,7 @@ renderIssued();
 function renderIssued(){}
 const money=n=>'$'+(n/100).toFixed(2);
 
+const closeoutPrintStyles='@media print{.kn-closeout-break{height:0;margin:0;border:0;break-before:page;page-break-before:always}}';
 const documentStyles="\n.kn-document{font:13px/1.5 Arial,sans-serif;color:#233044;background:#fff;max-width:900px;margin:auto}\n.kn-document *{box-sizing:border-box}\n.kn-doc-header{display:flex;align-items:center;justify-content:space-between;gap:24px;border-bottom:3px solid #f47713;padding-bottom:18px;margin-bottom:22px}\n.kn-brand img{width:185px;max-width:100%;height:70px;object-fit:contain;object-position:left center;display:block}\n.kn-brand p{font-size:11px!important;color:#526174;margin:8px 0 0!important}\n.kn-doc-title{text-align:right}.kn-doc-title h1{font-size:27px!important;line-height:1.2;margin:0 0 8px!important;color:#172033;font-weight:800;letter-spacing:.04em}\n.kn-doc-number{font-size:14px;font-weight:700;color:#d45b08}\n.kn-doc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:18px 0}\n.kn-doc-box{border:1px solid #cbd2dc;border-radius:10px;padding:15px;break-inside:avoid}\n.kn-doc-box h3{font-size:10px!important;letter-spacing:.1em;color:#526174;margin:0 0 10px;text-transform:uppercase}\n.kn-doc-box p{margin:4px 0!important;overflow-wrap:anywhere}\n.kn-doc-client{font-size:16px;font-weight:700}\n.kn-doc-meta{display:flex;justify-content:space-between;gap:12px;margin:5px 0}.kn-doc-meta span{color:#526174}.kn-doc-meta strong{text-align:right;overflow-wrap:anywhere}\n.kn-doc-table-wrap{overflow:auto}\n.kn-document table{width:100%;border-collapse:collapse;margin:18px 0;min-width:0!important;font-size:12px}\n.kn-document th{background:#f47713!important;color:white;padding:11px 9px!important;font-size:10px;text-transform:uppercase;letter-spacing:.04em;text-align:left;border:0!important}\n.kn-document td{padding:12px 9px!important;border-bottom:1px solid #dde2e9!important;vertical-align:top}\n.kn-document th:not(:first-child),.kn-document td:not(:first-child){text-align:right;white-space:nowrap}\n.kn-document td:first-child{width:52%}.kn-document tr{break-inside:avoid}\n.kn-doc-note{font-size:11px;color:#657184;display:block;margin-top:5px}\n.kn-doc-totals{width:340px;max-width:100%;margin:20px 0 20px auto;border:1px solid #cbd2dc;border-radius:10px;padding:15px;break-inside:avoid}\n.kn-doc-total{display:flex;justify-content:space-between;gap:16px;padding:5px 0}\n.kn-doc-total.grand{font-weight:800;font-size:19px;border-top:2px solid #f47713;margin-top:8px;padding-top:12px}\n.kn-doc-footer{border-top:1px solid #cbd2dc;margin-top:28px;padding-top:12px;font-size:10px;color:#647185;display:flex;justify-content:space-between;gap:15px}\n.kn-received{border:1px solid #f47713;border-left:5px solid #f47713;border-radius:10px;padding:20px;margin:20px 0;display:flex;justify-content:space-between;align-items:center;gap:15px;break-inside:avoid}\n.kn-received strong{font-size:28px;color:#172033}\n.kn-received span{font-size:11px;font-weight:bold;letter-spacing:.08em}\n@media(max-width:600px){.kn-doc-grid{grid-template-columns:1fr}.kn-doc-header{gap:12px}.kn-brand img{width:135px}.kn-doc-title h1{font-size:20px!important}.kn-document table{min-width:520px!important}.kn-doc-footer{flex-direction:column}.kn-received strong{font-size:24px}}\n@media print{@page{size:letter;margin:16mm}html,body{margin:0;padding:0;background:#fff}.kn-document{max-width:none;font-size:12px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.kn-doc-grid{grid-template-columns:1fr 1fr}.kn-doc-header{break-inside:avoid}.kn-doc-table-wrap{overflow:visible}.kn-document table{min-width:0!important}thead{display:table-header-group}.kn-doc-footer{flex-direction:row}}\n";
 function documentHeader(title,number){
  return '<header class="kn-doc-header"><div class="kn-brand"><img src="'+escape(new URL('logo.PNG',document.baseURI).href)+'" alt="KN3X Project LLC"><p>KN3X PROJECT LLC<br>512 999-3239 · kn3x.project@gmail.com<br>kn3xproject.com · Austin, TX</p></div><div class="kn-doc-title"><h1>'+title+'</h1><div class="kn-doc-number">'+escape(number)+'</div></div></header>';
@@ -4041,15 +4050,85 @@ async function savePayment(id,payment,plan){
 }
 function printDocument(title,body){
  const w=window.open('','_blank');if(!w)return;
- w.document.write('<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>'+escape(title)+'</title><style>'+documentStyles+'</style></head><body>'+body+'</body></html>');w.document.close();
+ w.document.write('<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>'+escape(title)+'</title><style>'+documentStyles+closeoutPrintStyles+'</style></head><body>'+body+'</body></html>');w.document.close();
  Promise.all([...w.document.images].map(img=>img.complete?Promise.resolve():new Promise(resolve=>{img.onload=resolve;img.onerror=resolve;}))).then(()=>w.document.fonts?.ready).then(()=>{if(!w.closed){w.focus();w.print();}});
 }
 function receiptMarkup(r,p){
  const percentages=paymentPlans[r.paymentPlan]||[];
  return '<article class="kn-document">'+documentHeader(t('PAYMENT RECEIPT','RECIBO DE PAGO'),p.number)+'<div class="kn-doc-grid">'+clientBox(r)+'<section class="kn-doc-box"><h3>'+t('PAYMENT DETAILS','DATOS DEL PAGO')+'</h3>'+meta(t('Payment date','Fecha de pago'),p.date)+meta(t('Invoice','Factura'),r.number)+meta(t('Estimate','Presupuesto'),r.estimateNumber)+meta(t('Installment','Cuota'),(p.stage+1)+' / '+percentages.length+' · '+percentages[p.stage]+'%')+'</section></div><section class="kn-received"><span>'+t('AMOUNT RECEIVED · USD','IMPORTE RECIBIDO · USD')+'</span><strong>'+money(p.amount)+'</strong></section><div class="kn-doc-grid"><section class="kn-doc-box"><h3>'+t('PAYMENT METHOD','FORMA DE PAGO')+'</h3>'+meta(t('Method','Método'),p.method)+meta(t('Reference','Referencia'),p.reference||'—')+'</section><section class="kn-doc-box"><h3>'+t('ACCOUNT SUMMARY','RESUMEN DE CUENTA')+'</h3>'+meta(t('Invoice total','Total de factura'),money(r.total))+meta(t('Paid through this receipt','Pagado a este recibo'),money(p.paidToDate))+meta(t('Balance after payment','Saldo después del pago'),money(p.balance))+'</section></div><p class="kn-doc-note">'+t('This receipt confirms only the payment shown above.','Este recibo acredita únicamente el pago indicado arriba.')+'</p>'+documentFooter()+'</article>';
 }
+
+async function saveCloseout(id,details){
+ const database=await db();
+ return new Promise((resolve,reject)=>{
+  const tx=database.transaction('invoices','readwrite'),store=tx.objectStore('invoices');let result;
+  const req=store.get(id);
+  req.onsuccess=()=>{
+   result=req.result;
+   if(!result){tx.abort();return;}
+   const version=(result.closeouts||[]).length+1;
+   const record={...details,revision:version,number:result.number.replace('INV-','ENT-')+'-'+String(version).padStart(3,'0'),savedAt:new Date().toISOString()};
+   result.closeouts=[...(result.closeouts||[]),record];store.put(result);
+  };
+  tx.oncomplete=()=>{database.close();resolve(result);};
+  tx.onabort=()=>{database.close();reject(tx.error||Error('Closeout not saved'));};
+  tx.onerror=()=>{};
+ });
+}
+function closeoutMarkup(r,c){
+ const block=text=>escape(text).replace(/\n/g,'<br>');
+ const signatureLines='<div class="kn-doc-grid" style="margin-top:55px"><section class="kn-doc-box"><p style="border-top:1px solid #677487;padding-top:8px">'+t('Client signature and date','Firma y fecha del cliente')+'</p><p>'+escape(r.clientName)+'</p></section><section class="kn-doc-box"><p style="border-top:1px solid #677487;padding-top:8px">'+t('KN3X representative signature and date','Firma y fecha del representante KN3X')+'</p></section></div>';
+ const common='<div class="kn-doc-grid">'+clientBox(r)+'<section class="kn-doc-box"><h3>'+t('PROJECT DETAILS','DATOS DEL PROYECTO')+'</h3>'+meta(t('Invoice','Factura'),r.number)+meta(t('Estimate','Presupuesto'),r.estimateNumber)+meta(t('Delivery date','Fecha de entrega'),c.deliveryDate)+meta(t('Revision','Revisión'),c.revision)+'</section></div>';
+ return '<article class="kn-document">'+documentHeader(t('WORK HANDOVER','ENTREGA DEL TRABAJO'),c.number)+common+'<section class="kn-doc-box"><h3>'+t('DELIVERED WORK','TRABAJOS ENTREGADOS')+'</h3><p>'+block(c.scope)+'</p></section><div class="kn-doc-grid"><section class="kn-doc-box"><h3>'+t('STATUS','ESTADO')+'</h3><p>'+escape(c.status==='complete'?t('Completed; pending items listed below if any','Terminado; pendientes indicados abajo si existen'):t('Delivery with pending work','Entrega con trabajos pendientes'))+'</p></section><section class="kn-doc-box"><h3>'+t('PENDING ITEMS / OBSERVATIONS','PENDIENTES / OBSERVACIONES')+'</h3><p>'+block(c.pending||t('None recorded','Ninguno registrado'))+'</p></section></div><p class="kn-doc-note">'+t('Client review and signature are completed after delivery. This document does not record a payment or waive warranty rights.','La revisión y firma del cliente se realizan al entregar. Este documento no registra un pago ni renuncia a derechos de garantía.')+'</p>'+signatureLines+documentFooter()+'</article><div class="kn-closeout-break"></div><article class="kn-document">'+documentHeader(t('WORK WARRANTY','GARANTÍA DEL TRABAJO'),c.number.replace('ENT-','GAR-'))+common+'<div class="kn-doc-grid"><section class="kn-doc-box"><h3>'+t('WARRANTY PERIOD','VIGENCIA DE GARANTÍA')+'</h3>'+meta(t('Start date','Fecha de inicio'),c.startDate)+meta(t('Duration','Duración'),c.months+' '+t('months','meses'))+'</section><section class="kn-doc-box"><h3>'+t('HOW TO REQUEST SERVICE','CÓMO SOLICITAR ATENCIÓN')+'</h3><p>'+block(c.claims)+'</p></section></div><section class="kn-doc-box"><h3>'+t('AGREED COVERAGE','COBERTURA ACORDADA')+'</h3><p>'+block(c.coverage)+'</p></section><div class="kn-doc-grid"><section class="kn-doc-box"><h3>'+t('AGREED LIMITATIONS / CONDITIONS','LIMITACIONES / CONDICIONES ACORDADAS')+'</h3><p>'+block(c.exclusions||t('No additional limitations recorded','Sin limitaciones adicionales registradas'))+'</p></section><section class="kn-doc-box"><h3>'+t('MANUFACTURER DOCUMENTS / CARE','DOCUMENTOS DEL FABRICANTE / CUIDADOS')+'</h3><p>'+block(c.manufacturer||t('Not specified','No especificado'))+'</p></section></div><p class="kn-doc-note">'+t('Coverage applies to the work described above under the agreed terms and applicable law. Manufacturer warranties are separate. No signature or client acceptance is recorded automatically.','La cobertura corresponde al trabajo descrito, conforme a lo acordado y la ley aplicable. Las garantías del fabricante son independientes. No se registra firma ni aceptación del cliente automáticamente.')+'</p>'+signatureLines+documentFooter()+'</article>';
+}
+function renderCloseout(r){
+ const preview=view.querySelector('#invoicePreview'),section=document.createElement('section');
+ section.className='invoice-closeout';preview.append(section);
+ const latest=r.closeouts?.at(-1);
+ section.innerHTML='<button type="button" id="openCloseout">'+t('Handover & warranty','Entrega y garantía')+'</button><div id="closeoutEditor" hidden></div><div id="closeoutHistory"></div><div id="closeoutPreview"></div>';
+ const history=section.querySelector('#closeoutHistory');
+ function previewDocument(c){
+  const target=section.querySelector('#closeoutPreview');
+  target.innerHTML='<div class="invoice-paper">'+closeoutMarkup(r,c)+'</div><button type="button" id="closeoutPrint">'+t('Print handover & warranty / Save PDF','Imprimir entrega y garantía / Guardar PDF')+'</button>';
+  target.querySelector('#closeoutPrint').onclick=()=>printDocument(c.number,closeoutMarkup(r,c));
+ }
+ (r.closeouts||[]).forEach(c=>{const b=document.createElement('button');b.textContent=c.number+' · '+c.deliveryDate;b.onclick=()=>previewDocument(c);history.append(b);});
+ section.querySelector('#openCloseout').onclick=()=>{
+  const editor=section.querySelector('#closeoutEditor');editor.hidden=!editor.hidden;if(editor.hidden)return;
+  if(editor.childElementCount)return;
+  const now=new Date(),today=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');
+  const scope=latest?.scope||r.items.map(x=>en()?x.description_en:x.description_es).join('\n');
+  const fields=[
+   ['deliveryDate',t('Delivery date','Fecha de entrega'),'date',latest?.deliveryDate||today],
+   ['scope',t('Delivered work','Trabajos entregados'),'textarea',scope],
+   ['pending',t('Pending items / observations','Pendientes / observaciones'),'textarea',latest?.pending||''],
+   ['startDate',t('Warranty start date','Inicio de garantía'),'date',latest?.startDate||today],
+   ['months',t('Agreed warranty duration (months)','Plazo de garantía acordado (meses)'),'number',latest?.months||''],
+   ['coverage',t('Agreed coverage','Cobertura acordada'),'textarea',latest?.coverage||''],
+   ['exclusions',t('Agreed limitations / conditions','Limitaciones / condiciones acordadas'),'textarea',latest?.exclusions||''],
+   ['claims',t('How to request service','Cómo solicitar atención'),'textarea',latest?.claims||'KN3X Project LLC · 512 999-3239 · kn3x.project@gmail.com'],
+   ['manufacturer',t('Manufacturer documents / care instructions','Documentos del fabricante / instrucciones de cuidado'),'textarea',latest?.manufacturer||'']
+  ];
+  editor.innerHTML='<p>'+t('Enter the warranty terms already agreed for this job. Duration and coverage must be reviewed for its service type. These documents do not replace a required bills-paid affidavit.','Introduce las condiciones de garantía acordadas para este trabajo. Revisa el plazo y la cobertura según el servicio. Estos documentos no sustituyen la declaración de pagos a proveedores cuando sea exigible.')+'</p><label>'+t('Delivery status','Estado de entrega')+'<select id="closeoutStatus"><option value="complete">'+t('Completed','Terminado')+'</option><option value="pending">'+t('With pending items','Con pendientes')+'</option></select></label>'+fields.map(([id,label,type,value])=>'<label for="closeout_'+id+'">'+label+'</label>'+(type==='textarea'?'<textarea id="closeout_'+id+'" rows="3">'+escape(value)+'</textarea>':'<input id="closeout_'+id+'" type="'+type+'" value="'+escape(value)+'" '+(type==='number'?'min="1" step="1"':'')+'>')).join('')+'<button type="button" id="saveCloseout">'+t('Save and prepare documents','Guardar y preparar documentos')+'</button><p role="status" id="closeoutError"></p>';
+  editor.querySelector('#closeoutStatus').value=latest?.status||'complete';
+  let saving=false;
+  editor.querySelector('#saveCloseout').onclick=async()=>{
+   if(saving)return;
+   const details={status:editor.querySelector('#closeoutStatus').value};
+   fields.forEach(([id])=>details[id]=editor.querySelector('#closeout_'+id).value.trim());
+   const error=editor.querySelector('#closeoutError');
+   if(!details.deliveryDate||!details.scope||!details.startDate||!details.coverage||!details.claims||!/^\d+$/.test(details.months)||Number(details.months)<1||(details.status==='pending'&&!details.pending)){
+    error.textContent=t('Complete delivery date, work, warranty start, whole-month duration, coverage and contact. Describe pending work when applicable.','Completa fecha de entrega, trabajos, inicio, plazo en meses enteros, cobertura y contacto. Describe los pendientes cuando corresponda.');return;
+   }
+   details.months=Number(details.months);saving=true;editor.querySelector('#saveCloseout').disabled=true;
+   try{const updated=await saveCloseout(r.id,details);invoices=await records();show(updated);const last=updated.closeouts.at(-1);const box=view.querySelector('#closeoutPreview');box.innerHTML='<div class="invoice-paper">'+closeoutMarkup(updated,last)+'</div><button id="closeoutPrint">'+t('Print handover & warranty / Save PDF','Imprimir entrega y garantía / Guardar PDF')+'</button>';box.querySelector('#closeoutPrint').onclick=()=>printDocument(last.number,closeoutMarkup(updated,last));}
+   catch(e){console.error(e);error.textContent=t('Unable to save. Your entries remain here; try again.','No se pudo guardar. Tus datos siguen aquí; inténtalo de nuevo.');saving=false;editor.querySelector('#saveCloseout').disabled=false;}
+  };
+ };
+}
+
 const originalShow=show;
-show=function(r){originalShow(r);renderPayments(r);};
+show=function(r){originalShow(r);renderPayments(r);renderCloseout(r);};
 function renderPayments(r){
  const preview=view.querySelector('#invoicePreview'),section=document.createElement('section');
  section.className='invoice-payments';preview.append(section);
