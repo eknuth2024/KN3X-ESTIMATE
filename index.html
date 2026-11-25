@@ -3865,7 +3865,7 @@ invoice=await reserve({id:estimate.id,number:'INV-'+String(estimate.number),esti
 invoices=await records();renderIssued();
 }
 show(invoice);button.textContent=t('Open invoice','Abrir factura');
-view.querySelector('#invoiceStatus').textContent=t('Invoice saved on this device.','Factura guardada en este dispositivo.');
+view.querySelector('#invoiceStatus').textContent='';
 }catch(error){console.error(error);view.querySelector('#invoiceStatus').textContent=t('Unable to save invoice. No approval confirmed; try again.','No se pudo guardar la factura. No se confirmó la aprobación; inténtalo de nuevo.');}
 finally{busy=false;button.disabled=!select.value;}
 };
