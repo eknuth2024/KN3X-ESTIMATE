@@ -1081,7 +1081,7 @@
  #mainContent :is(#customerLedgerContainer,#contractContainer,#ledgerContainer) .estimate-field-error {color:#ff6961!important;font-size:12px;line-height:1.35;font-weight:600;margin:5px 4px 0;}
  #mainContent :is(#customerLedgerContainer,#contractContainer,#ledgerContainer) label .text-red-500 {font-size:17px;font-weight:900;line-height:1;color:#ff453a;vertical-align:middle;}
 }
-</style><style>#customerHubContainer,#invoiceContainer{max-width:1050px;margin:auto;padding:20px;background:#2c2c2e;color:#f5f5f7;border-radius:24px}#customerHubContainer h2,#invoiceContainer h2{font-size:22px;font-weight:800}#invoiceContainer p{margin:16px 0;line-height:1.5}#customerHubContainer button,#invoiceContainer button{border-radius:24px;background:#3a3a3c;border:1px solid #777;padding:12px 18px;margin:8px 6px 8px 0}#invoiceContainer #approveInvoice{background:#15803d}#invoiceContainer button:disabled{opacity:.5}#invoiceContainer select{width:100%;padding:12px;background:#3a3a3c;border:1px solid #777;border-radius:20px;font-size:16px}#invoiceContainer .invoice-paper{background:#fff;color:#172033;padding:20px;margin-top:20px;overflow:auto;border-radius:16px}#invoiceContainer table{width:100%;border-collapse:collapse;min-width:550px}#invoiceContainer td,#invoiceContainer th{border-bottom:1px solid #ccc;padding:8px;text-align:left}#invoiceContainer h1{font-size:20px;font-weight:bold}</style></head>
+</style><style>#customerHubContainer,#invoiceContainer{max-width:1050px;margin:auto;padding:20px;background:#2c2c2e;color:#f5f5f7;border-radius:24px}#customerHubContainer h2,#invoiceContainer h2{font-size:22px;font-weight:800}#invoiceContainer p{margin:16px 0;line-height:1.5}#customerHubContainer button,#invoiceContainer button{border-radius:24px;background:#3a3a3c;border:1px solid #777;padding:12px 18px;margin:8px 6px 8px 0}#invoiceContainer #approveInvoice{background:#15803d}#invoiceContainer button:disabled{opacity:.5}#invoiceContainer select{width:100%;padding:12px;background:#3a3a3c;border:1px solid #777;border-radius:20px;font-size:16px}#invoiceContainer .invoice-paper{background:#fff;color:#172033;padding:20px;margin-top:20px;overflow:auto;border-radius:16px}#invoiceContainer table{width:100%;border-collapse:collapse;min-width:550px}#invoiceContainer td,#invoiceContainer th{border-bottom:1px solid #ccc;padding:8px;text-align:left}#invoiceContainer h1{font-size:20px;font-weight:bold}</style><style>#invoiceContainer .invoice-payments{margin-top:24px;border-top:1px solid #777;padding-top:18px}#invoiceContainer .installment-row{padding:14px;border:1px solid #777;border-radius:18px;margin:10px 0}#invoiceContainer #paymentEntry label{display:block;margin:12px 0}#invoiceContainer #paymentEntry input{display:block;width:100%;box-sizing:border-box;padding:10px;border:1px solid #999;border-radius:18px;background:#3a3a3c;color:white;font-size:16px}#invoiceContainer #paymentSave{background:#15803d}#invoiceContainer #paymentError{color:#ff9189}</style></head>
 <body class="bg-gray-100 text-gray-800 font-sans h-screen overflow-hidden flex text-xs md:text-sm">
 
     <!-- SIDEBAR (MENÚ VERTICAL IZQUIERDO) -->
@@ -1095,7 +1095,7 @@
 
         <nav class="flex-1 overflow-y-auto py-4" aria-label="Desktop navigation">
 <button type="button" data-sidebar-view="estimate" onclick="cambiarSeccion('estimate')" class="desktop-nav-item w-full flex items-center gap-3 px-6 py-3 text-left hover:bg-slate-800 transition"><svg class="desktop-menu-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg><span data-sidebar-label="estimate" class="font-bold text-sm uppercase tracking-wider">Estimate</span></button>
-<button type="button" data-sidebar-view="invoice" onclick="cambiarSeccion('invoice')" class="desktop-nav-item w-full flex items-center gap-3 px-6 py-3 text-left hover:bg-slate-800 transition"><svg class="desktop-menu-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3Z"/><path d="M9 7h6M9 11h6M9 15h3"/></svg><span data-sidebar-label="invoice" class="font-bold text-sm uppercase tracking-wider">Invoice</span></button><button type="button" data-sidebar-view="customerHub" onclick="cambiarSeccion('customerHub')" class="desktop-nav-item w-full flex items-center gap-3 px-6 py-3 text-left hover:bg-slate-800 transition"><svg class="desktop-menu-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="17" height="18" rx="2"/><path d="M1 7h5M1 12h5M1 17h5"/><circle cx="13" cy="9" r="2.5"/><path d="M9 17v-1a4 4 0 0 1 8 0v1"/></svg><span data-sidebar-label="customerHub" class="font-bold text-sm uppercase tracking-wider">Customer</span></button>
+<button type="button" data-sidebar-view="invoice" onclick="cambiarSeccion('invoice')" class="desktop-nav-item w-full flex items-center gap-3 px-6 py-3 text-left hover:bg-slate-800 transition"><svg class="desktop-menu-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3Z"/><path d="M9 7h6M9 11h6M9 15h3"/></svg><span data-sidebar-label="invoice" class="font-bold text-sm uppercase tracking-wider">Invoice</span></button><button type="button" data-sidebar-view="customerLedger" onclick="cambiarSeccion('customerLedger')" class="desktop-nav-item w-full flex items-center gap-3 px-6 py-3 text-left hover:bg-slate-800 transition"><svg class="desktop-menu-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="17" height="18" rx="2"/><path d="M1 7h5M1 12h5M1 17h5"/><circle cx="13" cy="9" r="2.5"/><path d="M9 17v-1a4 4 0 0 1 8 0v1"/></svg><span data-sidebar-label="customerLedger" class="font-bold text-sm uppercase tracking-wider">Customer</span></button>
 <button type="button" id="desktop-team-toggle" onclick="toggleMenu('menuVendors','iconVendors');this.setAttribute('aria-expanded',String(document.getElementById('menuVendors').classList.contains('open')))" aria-expanded="false" aria-controls="menuVendors" class="desktop-nav-item w-full flex items-center justify-between px-6 py-3 text-left hover:bg-slate-800 transition">
 <span class="flex items-center gap-3"><svg class="desktop-menu-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M2 21v-2a7 7 0 0 1 14 0v2M16 5a3 3 0 0 1 0 6M18 14a6 6 0 0 1 4 5v2"/></svg><span data-sidebar-label="team" class="font-bold text-sm uppercase tracking-wider">Team</span></span>
 <svg id="iconVendors" class="w-4 h-4 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>
@@ -3454,7 +3454,7 @@ function validEstimateForFinalizing() {
 </div>
 <nav class="estimate-mobile-dock no-print" aria-label="Navegación de presupuestos / Estimate navigation">
 <button type="button" data-dock-view="estimate" aria-current="page" aria-label="Estimate Tool"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg><span class="dock-label" data-dock-label="estimate">Estimate</span></button>
-<button type="button" data-dock-view="invoice" aria-label="Invoice"><svg class="desktop-menu-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3Z"/><path d="M9 7h6M9 11h6M9 15h3"/></svg><span class="dock-label" data-dock-label="invoice">Invoice</span></button><button type="button" data-dock-view="customerHub" aria-label="Customer Directory"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="17" height="18" rx="2"/><path d="M1 7h5M1 12h5M1 17h5"/><circle cx="13" cy="9" r="2.5"/><path d="M9 17v-1a4 4 0 0 1 8 0v1"/></svg><span class="dock-label" data-dock-label="directory">Customer</span></button>
+<button type="button" data-dock-view="invoice" aria-label="Invoice"><svg class="desktop-menu-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3Z"/><path d="M9 7h6M9 11h6M9 15h3"/></svg><span class="dock-label" data-dock-label="invoice">Invoice</span></button><button type="button" data-dock-view="customerLedger" aria-label="Customer Directory"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="17" height="18" rx="2"/><path d="M1 7h5M1 12h5M1 17h5"/><circle cx="13" cy="9" r="2.5"/><path d="M9 17v-1a4 4 0 0 1 8 0v1"/></svg><span class="dock-label" data-dock-label="directory">Customer</span></button>
 <button type="button" id="estimate-team-toggle" aria-expanded="false" aria-controls="estimate-team-panel" aria-label="Team"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M2 21v-2a7 7 0 0 1 14 0v2M16 5a3 3 0 0 1 0 6M18 14a6 6 0 0 1 4 5v2"/></svg><span class="dock-label" data-dock-label="team">Team</span></button>
 <button type="button" data-dock-view="radar" aria-label="Radar"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 12l6-6M12 7a5 5 0 1 0 5 5"/><circle cx="12" cy="12" r="1"/></svg><span class="dock-label" data-dock-label="radar">Radar</span></button>
 <a id="mobile-account-link" href="login.html" aria-label="Usuario / User"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 22v-2a8 8 0 0 1 16 0v2"/></svg><span class="dock-label" data-dock-label="user">User</span></a>
@@ -3468,7 +3468,7 @@ function validEstimateForFinalizing() {
     function closeTeam() { panel.hidden = true; teamToggle.setAttribute('aria-expanded','false'); }
     function selectView(view) {
         dock.querySelectorAll('[aria-current]').forEach(item => item.removeAttribute('aria-current'));
-        const target = ['contract','ledger','form1099'].includes(view) ? teamToggle : dock.querySelector('[data-dock-view="' + (['customerLedger'].includes(view)?'customerHub':view) + '"]');
+        const target = ['contract','ledger','form1099'].includes(view) ? teamToggle : dock.querySelector('[data-dock-view="' + (view) + '"]');
         if (target) target.setAttribute('aria-current','page');
         closeTeam();
     }
@@ -3494,7 +3494,7 @@ function validEstimateForFinalizing() {
     function translateDock() {
         const es = document.documentElement.lang === 'es';
         const labels = es ? { estimate:'Presupuesto',invoice:'Factura',directory:'Clientes',team:'Equipo',radar:'Radar',materials:'Materiales',user:'Usuario' } : { estimate:'Estimate',invoice:'Invoice',directory:'Customer',team:'Team',radar:'Radar',materials:'Materials',user:'User' };
-        const desktopLabels = es ? {estimate:'Presupuesto',invoice:'Factura',customerHub:'Clientes',team:'Equipo',radar:'Radar',materials:'MATERIALES'} : {estimate:'Estimate',invoice:'Invoice',customerHub:'Customer',team:'Team',radar:'Radar',materials:'MATERIALS'};
+        const desktopLabels = es ? {estimate:'Presupuesto',invoice:'Factura',customerLedger:'Clientes',team:'Equipo',radar:'Radar',materials:'MATERIALES'} : {estimate:'Estimate',invoice:'Invoice',customerLedger:'Customer',team:'Team',radar:'Radar',materials:'MATERIALS'};
         document.querySelectorAll('[data-sidebar-label]').forEach(label => {label.textContent=desktopLabels[label.dataset.sidebarLabel];});
         document.getElementById('workspace-account-link').textContent = es ? 'Usuario' : 'User';
 
@@ -3503,7 +3503,7 @@ function validEstimateForFinalizing() {
         panel.querySelector('[data-team-item="contract"]').textContent = es ? 'Contrato de subcontratista' : 'Subcontractor Doc';
         panel.querySelector('[data-team-item="ledger"]').textContent = es ? 'Libro 1099' : '1099 Ledger';
         dock.querySelector('[data-dock-view="estimate"]').setAttribute('aria-label',es ? 'Herramienta de presupuestos' : 'Estimate Tool');
-        dock.querySelector('[data-dock-view="customerHub"]').setAttribute('aria-label',es ? 'Directorio de clientes' : 'Customer Directory');
+        dock.querySelector('[data-dock-view="customerLedger"]').setAttribute('aria-label',es ? 'Directorio de clientes' : 'Customer Directory');
         teamToggle.setAttribute('aria-label',es ? 'Equipo' : 'Team');
     }
     new MutationObserver(translateDock).observe(document.documentElement,{ attributes:true,attributeFilter:['lang'] });
@@ -3831,7 +3831,7 @@ const d=estimate.document;
 const items=d.items.map(item=>{const catalog=catalogoPrecios.find(x=>x.id===item.serviceId);return {description_en:catalog?.nom_en||item.nota||'Service',description_es:catalog?.nom_es||item.nota||'Servicio',note:item.nota,quantity:Number(item.qty),unit:item.unit||inferEstimateUnit(item.serviceId),price:Number(item.price)};});
 if(!items.length||items.some(x=>!Number.isFinite(x.quantity)||x.quantity<=0||!Number.isFinite(x.price)||x.price<0))throw Error('Invalid line items');
 const subtotal=items.reduce((sum,x)=>sum+Math.round(x.quantity*x.price*100),0),tax=Math.round(subtotal*.0825);
-invoice=await reserve({id:estimate.id,number:'INV-'+String(estimate.number),estimateNumber:formatEstimateNumber(estimate.number),approvedAt:new Date().toISOString(),clientName:d.clientName,email:d.email,phone:d.phone,address:d.address,items,subtotal,tax,total:subtotal+tax,currency:'USD'});
+invoice=await reserve({id:estimate.id,number:'INV-'+String(estimate.number),estimateNumber:formatEstimateNumber(estimate.number),approvedAt:new Date().toISOString(),clientName:d.clientName,email:d.email,phone:d.phone,address:d.address,items,paymentPlan:d.pagoPlan,payments:[],subtotal,tax,total:subtotal+tax,currency:'USD'});
 invoices=await records();renderIssued();
 }
 show(invoice);button.textContent=t('Open invoice','Abrir factura');
@@ -3845,12 +3845,78 @@ renderIssued();
 function renderIssued(){const target=view.querySelector('#issuedInvoices');target.replaceChildren();invoices.forEach(record=>{const button=document.createElement('button');button.textContent=record.number+' — '+record.clientName;button.onclick=()=>show(record);target.append(button);});}
 const money=n=>'$'+(n/100).toFixed(2);
 function markup(r){
-return '<h1>'+t('INVOICE','FACTURA')+' '+escape(r.number)+'</h1><p>KN3X Project LLC · 512 999-3239 · kn3x.project@gmail.com</p><p>'+t('Estimate','Presupuesto')+': '+escape(r.estimateNumber)+'<br>'+t('Issued','Emisión')+': '+escape(r.approvedAt.slice(0,10))+'</p><p>'+escape(r.clientName)+'<br>'+escape(r.address)+'<br>'+escape(r.email)+'</p><table><thead><tr>'+[t('Service','Servicio'),t('Qty','Cant.'),t('Unit','Unidad'),t('Unit price','Precio unitario'),'Total'].map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+r.items.map(x=>'<tr>'+[escape(en()?x.description_en:x.description_es)+(x.note?'<br>'+escape(x.note):''),x.quantity,escape(x.unit),money(Math.round(x.price*100)),money(Math.round(x.quantity*x.price*100))].map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table><p>Subtotal: '+money(r.subtotal)+'<br>'+t('Tax','Impuesto')+' (8.25%): '+money(r.tax)+'<br><strong>Total USD: '+money(r.total)+'</strong></p><p>'+t('Invoice issued from approved estimate. Payment is not recorded by this document.','Factura emitida desde presupuesto aprobado. Este documento no registra un pago recibido.')+'</p>';
+return '<h1>'+t('INVOICE','FACTURA')+' '+escape(r.number)+'</h1><p>KN3X Project LLC · 512 999-3239 · kn3x.project@gmail.com</p><p>'+t('Estimate','Presupuesto')+': '+escape(r.estimateNumber)+'<br>'+t('Issued','Emisión')+': '+escape(r.approvedAt.slice(0,10))+'</p><p>'+escape(r.clientName)+'<br>'+escape(r.address)+'<br>'+escape(r.email)+'</p><table><thead><tr>'+[t('Service','Servicio'),t('Qty','Cant.'),t('Unit','Unidad'),t('Unit price','Precio unitario'),'Total'].map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+r.items.map(x=>'<tr>'+[escape(en()?x.description_en:x.description_es)+(x.note?'<br>'+escape(x.note):''),x.quantity,escape(x.unit),money(Math.round(x.price*100)),money(Math.round(x.quantity*x.price*100))].map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table><p>Subtotal: '+money(r.subtotal)+'<br>'+t('Tax','Impuesto')+' (8.25%): '+money(r.tax)+'<br><strong>Total USD: '+money(r.total)+'</strong></p><p>'+t('Invoice issued from approved estimate. Payments are documented by separate receipts.','Factura emitida desde presupuesto aprobado. Los pagos se documentan en recibos separados.')+'</p>';
 }
 function show(r){
 const preview=view.querySelector('#invoicePreview');preview.innerHTML='<div class="invoice-paper">'+markup(r)+'</div><button id="invoicePrint">'+t('Print / Save PDF','Imprimir / Guardar PDF')+'</button>';
 preview.querySelector('#invoicePrint').onclick=()=>{const w=window.open('','_blank');if(!w)return;w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>'+escape(r.number)+'</title><style>body{font:14px Arial;color:#172033;padding:24px}h1{color:#ed6b13}table{width:100%;border-collapse:collapse}td,th{padding:8px;border-bottom:1px solid #ddd;text-align:left}th{background:#f47713;color:#fff}tr{break-inside:avoid}</style></head><body>'+markup(r)+'</body></html>');w.document.close();w.print();};
 }
+
+const paymentPlans={'50-50':[50,50],thirds:[33,33,34],milestones:[20,30,30,20]};
+function planFor(r){return r.paymentPlan||readEstimateStore().estimates.find(x=>x.id===r.id)?.document.pagoPlan;}
+function stages(total,plan){let allocated=0;return paymentPlans[plan].map((percent,i,a)=>{const amount=i===a.length-1?total-allocated:Math.round(total*percent/100);allocated+=amount;return {percent,amount};});}
+function paidFor(r,stage){return (r.payments||[]).filter(p=>stage===undefined||p.stage===stage).reduce((sum,p)=>sum+p.amount,0);}
+function parseCents(value){if(!/^\d+(?:\.\d{1,2})?$/.test(value))return NaN;const parts=value.split('.');return Number(parts[0])*100+Number((parts[1]||'').padEnd(2,'0'));}
+async function savePayment(id,payment,plan){
+ const database=await db();
+ return new Promise((resolve,reject)=>{
+ const tx=database.transaction('invoices','readwrite'),store=tx.objectStore('invoices');let result;
+ const request=store.get(id);
+ request.onsuccess=()=>{
+ try{
+ result=request.result;if(!result)throw Error('Invoice missing');
+ if(!result.paymentPlan)result.paymentPlan=plan;
+ if(!paymentPlans[result.paymentPlan]||result.paymentPlan!==plan)throw Error('Payment plan changed');
+ result.payments=result.payments||[];
+ if(result.payments.some(x=>x.id===payment.id))return;
+ const stage=stages(result.total,plan)[payment.stage];
+ if(!stage||!Number.isSafeInteger(payment.amount)||payment.amount<=0||payment.amount>stage.amount-paidFor(result,payment.stage)||payment.amount>result.total-paidFor(result))throw Error('Amount exceeds remaining installment');
+ const after=paidFor(result)+payment.amount;
+ result.payments.push({...payment,number:result.number.replace('INV-','REC-')+'-'+String(result.payments.length+1).padStart(3,'0'),paidToDate:after,balance:result.total-after});
+ store.put(result);
+ }catch(error){tx.abort();}
+ };
+ tx.oncomplete=()=>{database.close();resolve(result);};
+ tx.onabort=()=>{database.close();reject(tx.error||Error('Payment not saved'));};
+ tx.onerror=()=>{};
+ });
+}
+function printDocument(title,body){
+ const w=window.open('','_blank');if(!w)return;
+ w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>'+escape(title)+'</title><style>body{font:14px Arial;color:#172033;padding:24px}h1{color:#ed6b13}table{width:100%;border-collapse:collapse}td,th{padding:8px;border-bottom:1px solid #ddd;text-align:left}tr{break-inside:avoid}</style></head><body>'+body+'</body></html>');w.document.close();w.print();
+}
+function receiptMarkup(r,p){
+return '<h1>'+t('PAYMENT RECEIPT','RECIBO DE PAGO')+' '+escape(p.number)+'</h1><p>KN3X Project LLC · 512 999-3239<br>kn3x.project@gmail.com</p><p>'+escape(r.clientName)+'<br>'+escape(r.address)+'</p><p>'+t('Invoice','Factura')+': '+escape(r.number)+'<br>'+t('Estimate','Presupuesto')+': '+escape(r.estimateNumber)+'<br>'+t('Payment date','Fecha de pago')+': '+escape(p.date)+'<br>'+t('Installment','Cuota')+': '+(p.stage+1)+' / '+paymentPlans[r.paymentPlan].length+' ('+paymentPlans[r.paymentPlan][p.stage]+'%)<br>'+t('Method','Método')+': '+escape(p.method)+'<br>'+t('Reference','Referencia')+': '+escape(p.reference||'—')+'</p><p><strong>'+t('Amount received','Importe recibido')+': '+money(p.amount)+'</strong><br>'+t('Invoice total','Total factura')+': '+money(r.total)+'<br>'+t('Total paid through this receipt','Pagado acumulado a este recibo')+': '+money(p.paidToDate)+'<br>'+t('Balance after this payment','Saldo después de este pago')+': '+money(p.balance)+'</p>';
+}
+const originalShow=show;
+show=function(r){originalShow(r);renderPayments(r);};
+function renderPayments(r){
+ const preview=view.querySelector('#invoicePreview'),section=document.createElement('section');
+ section.className='invoice-payments';preview.append(section);
+ const plan=planFor(r);
+ if(!paymentPlans[plan]){section.innerHTML='<p>'+t('Payment plan unavailable. Reopen the source finalized estimate before recording a payment.','Plan de pagos no disponible. Abre el presupuesto finalizado de origen antes de registrar pagos.')+'</p>';return;}
+ const schedule=stages(r.total,plan);
+ section.innerHTML='<h3>'+t('PAYMENT SCHEDULE & RECEIPTS','CALENDARIO DE PAGOS Y RECIBOS')+'</h3><p>'+t('Paid','Pagado')+': '+money(paidFor(r))+' · '+t('Balance','Saldo')+': '+money(r.total-paidFor(r))+'</p>'+schedule.map((stage,i)=>'<div class="installment-row"><strong>'+t('Installment','Cuota')+' '+(i+1)+' · '+stage.percent+'% · '+money(stage.amount)+'</strong><p>'+t('Paid','Pagado')+': '+money(paidFor(r,i))+' · '+t('Remaining','Pendiente')+': '+money(stage.amount-paidFor(r,i))+'</p><button data-pay-stage="'+i+'" '+(stage.amount<=paidFor(r,i)?'disabled':'')+'>'+t('Record payment','Registrar pago')+'</button></div>').join('')+'<div id="paymentEntry"></div><h3>'+t('RECEIPTS','RECIBOS')+'</h3><div id="paymentReceipts"></div>';
+ const receipts=section.querySelector('#paymentReceipts');
+ (r.payments||[]).forEach(p=>{const button=document.createElement('button');button.textContent=p.number+' · '+p.date+' · '+money(p.amount);button.onclick=()=>printDocument(p.number,receiptMarkup({...r,paymentPlan:plan},p));receipts.append(button);});
+ section.querySelectorAll('[data-pay-stage]').forEach(button=>button.onclick=()=>{
+ const stage=Number(button.dataset.payStage),remaining=schedule[stage].amount-paidFor(r,stage),entry=section.querySelector('#paymentEntry');
+ entry.innerHTML='<h4>'+t('Record received payment — installment ','Registrar pago recibido — cuota ')+(stage+1)+'</h4><label>'+t('Amount USD','Importe USD')+'<input id="paymentAmount" type="number" inputmode="decimal" step=".01" min=".01" max="'+(remaining/100).toFixed(2)+'" value="'+(remaining/100).toFixed(2)+'"></label><label>'+t('Date received','Fecha de recepción')+'<input id="paymentDate" type="date"></label><label>'+t('Method','Método')+'<select id="paymentMethod"><option value="">'+t('Select…','Seleccionar…')+'</option><option>Cash</option><option>Check</option><option>Zelle</option><option>ACH</option><option>Card</option><option>Other</option></select></label><label>'+t('Reference (optional)','Referencia (opcional)')+'<input id="paymentReference" maxlength="200"></label><button id="paymentSave">'+t('Confirm payment received','Confirmar pago recibido')+'</button><p id="paymentError" role="status"></p>';
+ const now=new Date();entry.querySelector('#paymentDate').value=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');
+ let saving=false;const requestId=crypto.randomUUID();
+ entry.querySelector('#paymentSave').onclick=async()=>{
+ if(saving)return;
+ const amount=parseCents(entry.querySelector('#paymentAmount').value),date=entry.querySelector('#paymentDate').value,method=entry.querySelector('#paymentMethod').value,reference=entry.querySelector('#paymentReference').value.trim();
+ const error=entry.querySelector('#paymentError');
+ if(!Number.isSafeInteger(amount)||amount<=0||amount>remaining||!date||!method){error.textContent=t('Enter a valid amount, date and method. The amount cannot exceed the remaining installment.','Introduce importe, fecha y método válidos. El importe no puede superar el saldo de la cuota.');return;}
+ if(!confirm(t('Confirm you received ','¿Confirmas que recibiste ')+money(amount)+'?'))return;
+ saving=true;entry.querySelector('#paymentSave').disabled=true;
+ try{const updated=await savePayment(r.id,{id:requestId,stage,amount,date,method,reference,recordedAt:new Date().toISOString()},plan);invoices=await records();renderIssued();show(updated);}
+ catch(e){error.textContent=t('Payment was not saved. Reopen the invoice to refresh its balance before trying again.','El pago no se guardó. Abre nuevamente la factura para actualizar el saldo antes de reintentar.');saving=false;entry.querySelector('#paymentSave').disabled=false;}
+ };
+ });
+}
+
 window.addEventListener('kn3x:viewchange',event=>{if(event.detail==='customerHub')hubRender();if(event.detail==='invoice')render();});
 new MutationObserver(()=>{if(!hub.classList.contains('hidden'))hubRender();if(!view.classList.contains('hidden'))render();}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
 })();
