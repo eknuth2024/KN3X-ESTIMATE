@@ -1224,6 +1224,23 @@
    bottom:calc(99px + env(safe-area-inset-bottom,0px) + var(--workspace-keyboard-inset,0px));
  }
 }
+</style><style>
+@media screen and (max-width:1023px) {
+ /* Paint the language accent as an image, keeping the sampled solid color neutral. */
+ html.kn3x-workspace-shell #topHeader #langBtn {
+   background-color:#2c2c2e!important;
+   background-image:linear-gradient(#facc15,#facc15)!important;
+ }
+ html.kn3x-workspace-shell #topHeader #langBtn:hover {
+   background-color:#2c2c2e!important;
+   background-image:linear-gradient(#fde047,#fde047)!important;
+ }
+ /* A narrow edge controls browser tint without creating a band under the dock. */
+ html.kn3x-workspace-shell::after {
+   content:"";position:fixed;left:0;right:0;bottom:0;height:4px;
+   background:#2c2c2e!important;pointer-events:none;z-index:2099;
+ }
+}
 </style></head>
 <body class="bg-gray-100 text-gray-800 font-sans h-screen overflow-hidden flex text-xs md:text-sm">
 
