@@ -773,7 +773,7 @@
     <link rel="icon" href="./favicon.ico?v=20261119" sizes="any">
     <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=20261119">
     <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=20261119">
-    <link rel="manifest" href="./site.webmanifest?v=20261119">
+    <link rel="manifest" href="./site.webmanifest?v=20261125-dark-safari">
     <meta name="theme-color" content="#2c2c2e">
     <meta name="apple-mobile-web-app-title" content="KN3X Estimate">
 
@@ -1205,6 +1205,15 @@
 #estimateGroupDialog p{margin:16px 0;line-height:1.5}
 #estimateGroupDialog input{display:block;width:100%;box-sizing:border-box;padding:12px;background:#3a3a3c;color:white;border:1px solid #ff9500;border-radius:18px;margin:8px 0 18px;font-size:16px}
 #estimateGroupDialog button{padding:10px 18px;border-radius:22px;background:#4b5563;margin:4px}#estimateGroupDialog button[type="submit"]{background:#2563eb}
+</style><style>
+@media screen and (max-width:1023px) {
+ html.kn3x-workspace-shell {background-color:#2c2c2e!important;}
+ html.kn3x-workspace-shell body {background-color:#2c2c2e!important;}
+ html.kn3x-workspace-shell::after {
+   background:#2c2c2e!important;
+   height:calc(env(safe-area-inset-bottom,0px) + 20px);
+ }
+}
 </style></head>
 <body class="bg-gray-100 text-gray-800 font-sans h-screen overflow-hidden flex text-xs md:text-sm">
 
