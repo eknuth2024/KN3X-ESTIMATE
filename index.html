@@ -1241,6 +1241,24 @@
    background:#2c2c2e!important;pointer-events:none;z-index:2099;
  }
 }
+</style><style>
+#estimateContainer:not(.pdf-export) .mobile-add-room{display:none}
+@media screen and (max-width:1023px){
+ #addEstimateGroupButton{display:none!important}
+ #estimateContainer:not(.pdf-export) #listaItems .estimate-group-control{
+   display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px 8px;align-items:center;
+ }
+ #estimateContainer:not(.pdf-export) #listaItems .estimate-group-control>.service-field-label{grid-column:1/-1;margin:0}
+ #estimateContainer:not(.pdf-export) #listaItems .estimate-group-control>.estimate-group-input{
+   grid-column:1;width:100%!important;max-width:none!important;min-width:0;height:36px!important;min-height:36px;box-sizing:border-box;
+ }
+ #estimateContainer:not(.pdf-export) #listaItems .estimate-group-control>.mobile-add-room{
+   display:flex;align-items:center;justify-content:center;grid-column:2;
+   width:100%;height:36px;min-height:36px;box-sizing:border-box;margin:0;padding:4px 8px;
+   background:#2563eb;color:#fff;border:1px solid #5995f1;border-radius:999px;
+   font-size:13px;font-weight:700;line-height:1.15;
+ }
+}
 </style></head>
 <body class="bg-gray-100 text-gray-800 font-sans h-screen overflow-hidden flex text-xs md:text-sm">
 
@@ -2484,7 +2502,7 @@
             tr.className = "border-b border-gray-100 hover:bg-slate-50 transition group print:border-gray-200";
             tr.innerHTML = `
                 <td class="p-1 md:p-2 print:py-1 print:px-0 flex flex-col gap-1 w-full">
-                    <div class="estimate-group-control no-print"><label class="service-field-label" data-service-label-en="Room / Area" data-service-label-es="Habitación / Zona">${currentLang==='es'?'Habitación / Zona':'Room / Area'}</label><input type="text" class="estimate-group-input" maxlength="100" list="estimateGroupNames" placeholder="${currentLang==='es'?'Ej. Comedor, habitación principal':'e.g. Dining room, master bedroom'}" oninput="calcularTotales()" onblur="setActiveEstimateGroup(this);groupEstimateRows()"></div>
+                    <div class="estimate-group-control no-print"><label class="service-field-label" data-service-label-en="Room / Area" data-service-label-es="Habitación / Zona">${currentLang==='es'?'Habitación / Zona':'Room / Area'}</label><input type="text" class="estimate-group-input" maxlength="100" list="estimateGroupNames" placeholder="${currentLang==='es'?'Ej. Comedor, habitación principal':'e.g. Dining room, master bedroom'}" oninput="calcularTotales()" onblur="setActiveEstimateGroup(this);groupEstimateRows()"><button type="button" class="mobile-add-room" onclick="openEstimateGroupDialog()" data-service-label-en="+ Add room / area" data-service-label-es="+ Agregar zona">${currentLang==='es'?'+ Agregar zona':'+ Add room / area'}</button></div>
                     <div class="service-row-tools relative w-full mb-1 group">
                         <span class="service-field-label no-print" data-service-label-en="Search service" data-service-label-es="Buscar servicio">${currentLang === 'es' ? 'Buscar servicio' : 'Search service'}</span>
                         <input type="text" class="service-search no-print w-full p-1 border border-gray-200 rounded focus:border-slate-500 focus:outline-none bg-white transition text-[9px] md:text-[11px]" placeholder="🔍 Search service..." onkeyup="filtrarServicios(this)">
