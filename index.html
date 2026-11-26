@@ -1177,6 +1177,11 @@
 }
 </style><style>
 #materialsContainer select[data-key="unit"]{width:100%;min-width:115px;background:#3a3a3c;color:#fff;border:1px solid #8290a2;padding:8px 10px;border-radius:12px;font-size:16px;}
+</style><style>
+#estimateContainer:not(.pdf-export) #uploadPlanButton{font-size:16px;line-height:1.25;min-height:48px;padding:12px 20px}
+@media(min-width:768px){#estimateContainer:not(.pdf-export) #uploadPlanButton{width:220px;max-width:100%}}
+#planUploadDialog{width:min(620px,calc(100vw - 24px));max-height:85dvh;overflow:auto;background:#2c2c2e;color:#f5f5f7;border:1px solid #738093;border-radius:24px;padding:22px;margin:auto}
+#planUploadDialog::backdrop{background:rgba(0,0,0,.7)}.plan-dialog-header{display:flex;justify-content:space-between;align-items:center;gap:12px}.plan-dialog-header h2{font-size:21px;font-weight:800}#closePlanUpload{font-size:26px;padding:0 10px}#planUploadDialog p{margin:16px 0;line-height:1.5}#planUploadPreview img{max-width:100%;max-height:45dvh;object-fit:contain;margin-top:16px}#planUploadPreview a{color:#93c5fd;text-decoration:underline}.plan-ai-note{border-top:1px solid #667080;padding-top:14px;font-size:13px}
 </style></head>
 <body class="bg-gray-100 text-gray-800 font-sans h-screen overflow-hidden flex text-xs md:text-sm">
 
@@ -1448,11 +1453,12 @@
                                     </button>
                                     <button onclick="clearEstimateContent()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-5 rounded-lg w-full md:w-auto" data-i18n="clear_estimate">Clear content</button>
                                     </div>
-                                    <div class="flex justify-end mt-3 pt-4 border-t border-slate-500 no-print">
+                                    <div class="plan-material-actions flex flex-col md:flex-row justify-end gap-3 mt-3 pt-4 border-t border-slate-500 no-print">
                                       <button type="button" id="estimateMaterialsButton" onclick="cambiarSeccion('materials')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-5 rounded-full w-full md:w-auto flex items-center justify-center gap-2">
                                         <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 7 9-4 9 4v10l-9 4-9-4V7Zm0 0 9 4 9-4M12 11v10M7 5l10 4"/></svg>
                                         <span data-dock-label="materials">Materials</span>
                                       </button>
+                                      <button type="button" id="uploadPlanButton" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-5 rounded-full w-full md:w-auto flex items-center justify-center gap-2"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 3h10l4 4v14H5V3Zm10 0v5h4M12 18v-7m-3 3 3-3 3 3"/></svg><span data-plan-label="upload">Upload plan</span></button>
                                     </div>
                                 </div>
                             </td>
@@ -4295,6 +4301,35 @@ window.addEventListener('kn3x:viewchange',event=>{if(event.detail==='customerHub
 new MutationObserver(()=>{if(!hub.classList.contains('hidden'))hubRender();if(!view.classList.contains('hidden'))render();}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
 })();
 </script>
-</body>
+<dialog id="planUploadDialog" class="no-print"><div class="plan-dialog-header"><h2 data-plan-label="title">Upload plan</h2><button type="button" id="closePlanUpload" aria-label="Close">×</button></div><p data-plan-label="help">PDF, JPG or PNG. Prefer a dimensioned PDF with clear scale and units. Maximum 20 MB per file.</p><input type="file" id="planUploadInput" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"><p id="planUploadStatus" role="status"></p><div id="planUploadPreview"></div><p class="plan-ai-note" data-plan-label="local">Local AI analysis is not connected yet. Selecting a file only previews it in this browser; it is not saved or analyzed.</p></dialog>
+<script>
+(()=>{
+ const dialog=document.getElementById('planUploadDialog'),input=document.getElementById('planUploadInput'),status=document.getElementById('planUploadStatus'),preview=document.getElementById('planUploadPreview');
+ let url='',request=0;
+ const words={en:{upload:'Upload plan',title:'Upload plan',help:'PDF, JPG or PNG. Prefer a dimensioned PDF with clear scale and units. Maximum 20 MB per file.',local:'Local AI analysis is not connected yet. Selecting a file only previews it in this browser; it is not saved or analyzed.',invalid:'Select a valid PDF, JPG or PNG up to 20 MB.',open:'Open plan preview',close:'Close'},es:{upload:'Subir plano',title:'Subir plano',help:'PDF, JPG o PNG. Preferiblemente PDF acotado con escala y unidades claras. Máximo 20 MB por archivo.',local:'El análisis con IA local aún no está conectado. Seleccionar un archivo solo permite verlo en este navegador; no se guarda ni se analiza.',invalid:'Selecciona un PDF, JPG o PNG válido de hasta 20 MB.',open:'Abrir vista previa del plano',close:'Cerrar'}};
+ const t=key=>words[document.documentElement.lang==='es'?'es':'en'][key];
+ function language(){document.querySelectorAll('[data-plan-label]').forEach(el=>el.textContent=t(el.dataset.planLabel));document.getElementById('closePlanUpload').setAttribute('aria-label',t('close'));const link=preview.querySelector('a');if(link)link.textContent=t('open');}
+ document.getElementById('uploadPlanButton').onclick=()=>dialog.showModal();
+ document.getElementById('closePlanUpload').onclick=()=>dialog.close();
+ input.onchange=async()=>{
+ const file=input.files[0],token=++request;if(!file)return;
+ if(url)URL.revokeObjectURL(url);url='';preview.replaceChildren();status.textContent='';
+ try{
+ if(file.size>20*1024*1024||!file.size)throw Error();
+ const bytes=new Uint8Array(await file.slice(0,8).arrayBuffer());
+ if(token!==request)return;
+ const pdf=bytes[0]===37&&bytes[1]===80&&bytes[2]===68&&bytes[3]===70&&bytes[4]===45;
+ const jpg=bytes[0]===255&&bytes[1]===216&&bytes[2]===255;
+ const png=bytes[0]===137&&bytes[1]===80&&bytes[2]===78&&bytes[3]===71&&bytes[4]===13&&bytes[5]===10&&bytes[6]===26&&bytes[7]===10;
+ if(!pdf&&!jpg&&!png)throw Error();
+ url=URL.createObjectURL(new Blob([file],{type:pdf?'application/pdf':jpg?'image/jpeg':'image/png'}));status.textContent=file.name+' · '+(file.size/1024/1024).toFixed(1)+' MB';
+ const link=document.createElement('a');link.href=url;link.target='_blank';link.rel='noopener';link.textContent=t('open');preview.append(link);
+ if(!pdf){const img=document.createElement('img');img.src=url;img.alt=file.name;preview.append(img);}
+ }catch{status.textContent=t('invalid');input.value='';}
+ };
+ new MutationObserver(language).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});language();
+ window.addEventListener('pagehide',()=>{if(url)URL.revokeObjectURL(url);});
+})();
+</script></body>
 </html>
 
