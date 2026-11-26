@@ -1076,8 +1076,8 @@
 }
 </style><style>
 @media screen {
- html.kn3x-workspace-shell #mainContent :is(#customerLedgerContainer,#contractContainer,#ledgerContainer) :is(#newCustName,#newCustPhone,#newCustAddr,#newSubName,#newSubTrade,#newSubPhone,#newSubAddr,#newSubID,#subNameSelect,#subService,#subPayNum,#subDate)[aria-required="true"] {border:2px solid #ff9500!important;}
- html.kn3x-workspace-shell #mainContent :is(#customerLedgerContainer,#contractContainer,#ledgerContainer) :is(#newCustName,#newCustPhone,#newCustAddr,#newSubName,#newSubTrade,#newSubPhone,#newSubAddr,#newSubID,#subNameSelect,#subService,#subPayNum,#subDate)[aria-required="true"][aria-invalid="true"] {border:2px solid #ff453a!important;outline-color:#ff453a;}
+ html.kn3x-workspace-shell #mainContent :is(#customerLedgerContainer,#contractContainer,#ledgerContainer) :is(#newCustName,#newCustEmail,#newCustPhone,#newCustAddr,#newSubName,#newSubTrade,#newSubPhone,#newSubAddr,#newSubID,#subNameSelect,#subService,#subPayNum,#subDate)[aria-required="true"] {border:2px solid #ff9500!important;}
+ html.kn3x-workspace-shell #mainContent :is(#customerLedgerContainer,#contractContainer,#ledgerContainer) :is(#newCustName,#newCustEmail,#newCustPhone,#newCustAddr,#newSubName,#newSubTrade,#newSubPhone,#newSubAddr,#newSubID,#subNameSelect,#subService,#subPayNum,#subDate)[aria-required="true"][aria-invalid="true"] {border:2px solid #ff453a!important;outline-color:#ff453a;}
  #mainContent :is(#customerLedgerContainer,#contractContainer,#ledgerContainer) .estimate-field-error {color:#ff6961!important;font-size:12px;line-height:1.35;font-weight:600;margin:5px 4px 0;}
  #mainContent :is(#customerLedgerContainer,#contractContainer,#ledgerContainer) label .text-red-500 {font-size:17px;font-weight:900;line-height:1;color:#ff453a;vertical-align:middle;}
 }
@@ -1579,19 +1579,19 @@
                             <div class="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4">
                                 <div class="col-span-1 md:col-span-2">
                                     <label class="block text-[10px] font-bold text-orange-800 uppercase mb-1">Client / Company Name <span class="text-red-500">*</span></label>
-                                    <input type="text" id="newCustName" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-orange-500 border" aria-required="true">
+                                    <input type="text" id="newCustName" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-orange-500 border" aria-required="true" required>
                                 </div>
                                 <div>
                                     <label class="block text-[10px] font-bold text-orange-800 uppercase mb-1">Phone Number <span class="text-red-500">*</span></label>
-                                    <input type="text" id="newCustPhone" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-orange-500 border" aria-required="true">
+                                    <input type="text" id="newCustPhone" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-orange-500 border" aria-required="true" required>
                                 </div>
                                 <div>
-                                    <label class="block text-[10px] font-bold text-orange-800 uppercase mb-1">Email Address</label>
-                                    <input type="email" id="newCustEmail" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-orange-500 border">
+                                    <label class="block text-[10px] font-bold text-orange-800 uppercase mb-1" for="newCustEmail"><span>Email Address</span> <span class="text-red-500">*</span></label>
+                                    <input type="email" id="newCustEmail" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-orange-500 border" aria-required="true" required>
                                 </div>
                                 <div class="col-span-1 md:col-span-4">
                                     <label class="block text-[10px] font-bold text-orange-800 uppercase mb-1">Default Property Address <span class="text-red-500">*</span></label>
-                                    <input type="text" id="newCustAddr" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-orange-500 border" aria-required="true">
+                                    <input type="text" id="newCustAddr" class="w-full border-gray-300 rounded p-1.5 md:p-2 text-[11px] md:text-sm focus:outline-none focus:border-orange-500 border" aria-required="true" required>
                                 </div>
                             </div>
                             <div class="mt-4 flex flex-col sm:flex-row justify-end gap-2">
@@ -2355,7 +2355,7 @@
             const email = document.getElementById('newCustEmail').value.trim();
             const addr = document.getElementById('newCustAddr').value.trim();
 
-            if(!validateRequiredGroup(["newCustName","newCustPhone","newCustAddr"])) {
+            if(!validateRequiredGroup(["newCustName","newCustEmail","newCustPhone","newCustAddr"])) {
                 alert(currentLang === 'en' ? "Please fill all mandatory fields (*) for the Customer." : "Por favor llena todos los campos obligatorios (*) del Cliente.");
                 return;
             }
@@ -2771,7 +2771,7 @@ function calcularTotales() {
 
 function updateRequiredFieldError(field,show=false) {
             const empty=!field.value.trim();
-            const invalidEmail=field.id==='inputClientEmail'&&!empty&&!field.checkValidity();
+            const invalidEmail=field.type==='email'&&!empty&&!field.checkValidity();
             const invalidAmount=field.id==='subPayNum'&&!empty&&(!Number.isFinite(Number(field.value))||Number(field.value)<=0);
             const invalid=empty||invalidEmail||invalidAmount;
             let message=document.getElementById(field.id+'Error');
