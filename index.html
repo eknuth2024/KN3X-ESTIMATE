@@ -1196,6 +1196,15 @@
  #estimateContainer:not(.pdf-export) #listaItems td:nth-child(n+2){grid-row:3}
 }
 @media print{.estimate-group-control{display:none!important}}
+</style><style>
+#addEstimateGroupButton{margin-left:8px}
+@media(max-width:767px){#addEstimateGroupButton{margin-left:0}}
+#estimateGroupDialog{width:min(480px,calc(100vw - 24px));margin:auto;background:#2c2c2e;color:#f5f5f7;border:1px solid #738093;border-radius:24px;padding:24px}
+#estimateGroupDialog::backdrop{background:rgba(0,0,0,.7)}
+#estimateGroupDialog h2{font-size:21px;font-weight:800}
+#estimateGroupDialog p{margin:16px 0;line-height:1.5}
+#estimateGroupDialog input{display:block;width:100%;box-sizing:border-box;padding:12px;background:#3a3a3c;color:white;border:1px solid #ff9500;border-radius:18px;margin:8px 0 18px;font-size:16px}
+#estimateGroupDialog button{padding:10px 18px;border-radius:22px;background:#4b5563;margin:4px}#estimateGroupDialog button[type="submit"]{background:#2563eb}
 </style></head>
 <body class="bg-gray-100 text-gray-800 font-sans h-screen overflow-hidden flex text-xs md:text-sm">
 
@@ -1345,6 +1354,7 @@
                                     </table>
                                     <datalist id="estimateGroupNames"></datalist><div id="estimateGroupSummary" class="no-print"></div><div class="px-2 md:px-0">
                                         <button onclick="agregarFila()" class="mt-3 no-print text-[11px] md:text-sm bg-green-500 hover:bg-green-600 text-white font-bold py-1.5 md:py-2.5 px-4 md:px-5 rounded md:rounded-lg shadow transition transform hover:-translate-y-0.5 w-full md:w-auto" id="addServiceButton" data-i18n="add_item">+ Add Service</button>
+                                        <button type="button" onclick="openEstimateGroupDialog()" id="addEstimateGroupButton" class="mt-3 no-print text-[11px] md:text-sm bg-blue-600 hover:bg-blue-700 text-white font-bold py-1.5 md:py-2.5 px-4 md:px-5 rounded-full w-full md:w-auto" data-i18n="add_group">+ Add Room / Area</button>
                                     </div>
                                 </div>
         
@@ -1860,7 +1870,7 @@
         // TEXTOS Y TRADUCCIONES
         // ==========================================
         const i18n = {
-            en: {
+            en: {add_group:"+ Add Room / Area",group_title:"New room / area",group_name:"Room / area name",group_help:"Examples: Kitchen, Dining room, Master room. New services will use this group until you add another.",group_create:"Create group",group_cancel:"Cancel",
                 title: "Estimate", est_num: "Est. #:", client: "Client / Project Name", date: "Date",
                 email: "Email Address", phone: "Phone Number", address: "Job Site Address",
                 service: "Service / Material", unit: "Unit", qty: "Qty", price: "Unit Price", total: "Total",
@@ -1886,7 +1896,7 @@
                 btn_lang: "🌐 ES", btn_contract: "Subcontractor Doc", btn_estimate_view: "Estimate Tool", btn_ledger: "1099 Ledger",
                 customer_picker: "Customer", menu_customers: "Customers", menu_team: "Vendors & Team", btn_customer_dir: "Directory"
             },
-            es: {
+            es: {add_group:"+ Agregar habitación / zona",group_title:"Nueva habitación / zona",group_name:"Nombre de habitación / zona",group_help:"Ejemplos: Kitchen, comedor, habitación principal. Las nuevas partidas usarán este grupo hasta que agregues otro.",group_create:"Crear grupo",group_cancel:"Cancelar",
                 title: "Presupuesto", est_num: "Folio:", client: "Nombre del Cliente / Proyecto", date: "Fecha",
                 email: "Correo Electrónico", phone: "Teléfono", address: "Dirección de la Obra",
                 service: "Servicio / Material", unit: "Unidad", qty: "Cant.", price: "Precio Unitario", total: "Total",
@@ -2429,14 +2439,16 @@
             field.setAttribute('aria-label',currentLang === 'es' ? 'Cantidad' : 'Quantity');
         }
 
+        let activeEstimateGroup=null;
+        function setActiveEstimateGroup(field){activeEstimateGroup=field.value.trim().replace(/\s+/g,' ');}
         function agregarFila() {
             const tbody = document.getElementById('listaItems');
-            const previousGroup=tbody.lastElementChild?.querySelector('.estimate-group-input')?.value||'';
+            const previousGroup=activeEstimateGroup??(tbody.lastElementChild?.querySelector('.estimate-group-input')?.value||'');
             const tr = document.createElement('tr');
             tr.className = "border-b border-gray-100 hover:bg-slate-50 transition group print:border-gray-200";
             tr.innerHTML = `
                 <td class="p-1 md:p-2 print:py-1 print:px-0 flex flex-col gap-1 w-full">
-                    <div class="estimate-group-control no-print"><label class="service-field-label" data-service-label-en="Room / Area" data-service-label-es="Habitación / Zona">${currentLang==='es'?'Habitación / Zona':'Room / Area'}</label><input type="text" class="estimate-group-input" maxlength="100" list="estimateGroupNames" placeholder="${currentLang==='es'?'Ej. Comedor, habitación principal':'e.g. Dining room, master bedroom'}" oninput="calcularTotales()" onblur="groupEstimateRows()"></div>
+                    <div class="estimate-group-control no-print"><label class="service-field-label" data-service-label-en="Room / Area" data-service-label-es="Habitación / Zona">${currentLang==='es'?'Habitación / Zona':'Room / Area'}</label><input type="text" class="estimate-group-input" maxlength="100" list="estimateGroupNames" placeholder="${currentLang==='es'?'Ej. Comedor, habitación principal':'e.g. Dining room, master bedroom'}" oninput="calcularTotales()" onblur="setActiveEstimateGroup(this);groupEstimateRows()"></div>
                     <div class="service-row-tools relative w-full mb-1 group">
                         <span class="service-field-label no-print" data-service-label-en="Search service" data-service-label-es="Buscar servicio">${currentLang === 'es' ? 'Buscar servicio' : 'Search service'}</span>
                         <input type="text" class="service-search no-print w-full p-1 border border-gray-200 rounded focus:border-slate-500 focus:outline-none bg-white transition text-[9px] md:text-[11px]" placeholder="🔍 Search service..." onkeyup="filtrarServicios(this)">
@@ -2506,7 +2518,28 @@
         function eliminarFila(btn) { btn.closest('tr').remove(); calcularTotales(); }
 
         
-        function estimateGroupName(row){return (row.querySelector('.estimate-group-input')?.value||row.dataset.estimateGroup||'').trim().replace(/\s+/g,' ');}
+        
+        function openEstimateGroupDialog(){
+            const dialog=document.getElementById('estimateGroupDialog'),input=document.getElementById('newEstimateGroupName');
+            input.value='';input.setCustomValidity('');dialog.showModal();input.focus();
+        }
+        function createEstimateGroup(event){
+            event.preventDefault();
+            const input=document.getElementById('newEstimateGroupName'),name=input.value.trim().replace(/\s+/g,' ');
+            if(!name){input.setCustomValidity(currentLang==='es'?'Escribe el nombre de la habitación o zona.':'Enter a room or area name.');input.reportValidity();return;}
+            const tbody=document.getElementById('listaItems');
+            let row=tbody.lastElementChild;
+            const reusable=row&&!estimateGroupName(row)&&!row.querySelector('.catalogo-select').selectedOptions[0]?.dataset.id&&!row.querySelector('.qty').value&&!row.querySelector('.nota-input').value.trim();
+            if(!reusable){agregarFila();row=tbody.lastElementChild;}
+            const existing=estimateGroupedRows(tbody.children).find(group=>group.name.toLocaleLowerCase()===name.toLocaleLowerCase());
+            const field=row.querySelector('.estimate-group-input');field.value=existing?.name||name;activeEstimateGroup=field.value;
+            field.dispatchEvent(new Event('change',{bubbles:true}));
+            groupEstimateRows();calcularTotales();
+            document.getElementById('estimateGroupDialog').close();
+            row.scrollIntoView({block:'center',behavior:'smooth'});
+        }
+
+function estimateGroupName(row){return (row.querySelector('.estimate-group-input')?.value||row.dataset.estimateGroup||'').trim().replace(/\s+/g,' ');}
         function estimateGroupedRows(elements){const groups=new Map();[...elements].forEach(row=>{const name=estimateGroupName(row),key=name.toLocaleLowerCase();if(!groups.has(key))groups.set(key,{name,rows:[]});groups.get(key).rows.push(row);});return [...groups.values()];}
         function groupEstimateRows(){const body=document.getElementById('listaItems'),ordered=estimateGroupedRows(body.children).flatMap(g=>g.rows);if(ordered.some((row,i)=>body.children[i]!==row))ordered.forEach(row=>body.append(row));renderEstimateGroupSummary();}
         function renderEstimateGroupSummary(){
@@ -3556,7 +3589,7 @@ function validEstimateForFinalizing() {
             document.getElementById('inputDuration').value = project.duration;
             document.getElementById('inputEstNum').value = project.id;
             document.getElementById('inputClientEmail').value = ''; document.getElementById('inputPhone').value = '';
-            document.getElementById('listaItems').innerHTML = '';
+            document.getElementById('listaItems').innerHTML = '';activeEstimateGroup=null;
             project.items.forEach(item => { agregarFila(); const row = document.getElementById('listaItems').lastElementChild; row.querySelector('select').innerHTML = `<option value="0" disabled>Select service</option>${generarOpcionesCatalogo(item.id)}`; row.querySelector('.qty').value = item.qty; row.querySelector('.price').value = item.price; row.querySelector('.estimate-group-input').value = item.group || ''; row.querySelector('.nota-input').value = item.nota; restoreEstimateUnit(row,item); }); calcularTotales();
             toggleVista('estimate'); 
         };
@@ -4372,6 +4405,6 @@ new MutationObserver(()=>{if(!hub.classList.contains('hidden'))hubRender();if(!v
  new MutationObserver(language).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});language();
  window.addEventListener('pagehide',()=>{if(url)URL.revokeObjectURL(url);});
 })();
-</script></body>
+</script><dialog id="estimateGroupDialog" class="no-print"><form onsubmit="createEstimateGroup(event)"><h2 data-i18n="group_title">New room / area</h2><p data-i18n="group_help">Examples: Kitchen, Dining room, Master room. New services will use this group until you add another.</p><label for="newEstimateGroupName" data-i18n="group_name">Room / area name</label><input type="text" id="newEstimateGroupName" maxlength="100" required list="estimateGroupNames" autocomplete="off" oninput="this.setCustomValidity('')"><div><button type="button" onclick="document.getElementById('estimateGroupDialog').close()" data-i18n="group_cancel">Cancel</button><button type="submit" data-i18n="group_create">Create group</button></div></form></dialog></body>
 </html>
 
