@@ -1214,6 +1214,16 @@
    height:calc(env(safe-area-inset-bottom,0px) + 20px);
  }
 }
+</style><style>
+@media screen and (max-width:1023px) {
+ html.kn3x-workspace-shell::after {height:env(safe-area-inset-bottom,0px);background:transparent!important;}
+ html.kn3x-workspace-shell .estimate-mobile-dock {
+   bottom:calc(18px + env(safe-area-inset-bottom,0px) + var(--workspace-keyboard-inset,0px));
+ }
+ html.kn3x-workspace-shell .estimate-team-panel:not([hidden]) {
+   bottom:calc(99px + env(safe-area-inset-bottom,0px) + var(--workspace-keyboard-inset,0px));
+ }
+}
 </style></head>
 <body class="bg-gray-100 text-gray-800 font-sans h-screen overflow-hidden flex text-xs md:text-sm">
 
