@@ -3721,8 +3721,12 @@ function validEstimateForFinalizing() {
 
 <script>
 (()=> {
-const es=()=>currentLang==='es', txt=(a,b)=>es()?b:a, esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const materialTranslations=new Map();
+const es=()=>currentLang==='es', txt=(a,b)=>{materialTranslations.set(a,{en:a,es:b});materialTranslations.set(b,{en:a,es:b});return es()?b:a;}, esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let rows=[];
+catalogoPrecios.forEach(item=>{materialTranslations.set(item.nom_en,{en:item.nom_en,es:item.nom_es});materialTranslations.set(item.nom_es,{en:item.nom_en,es:item.nom_es});});
+[['each','unidad'],['LinFt','pie lineal'],['SqFt','ft²'],['CuYd','yd³'],['Manual entry','Agregado manual']].forEach(([a,b])=>{materialTranslations.set(a,{en:a,es:b});materialTranslations.set(b,{en:a,es:b});});
+function translateMaterialRows(){const lang=es()?'es':'en';rows.forEach(row=>{['name','unit','source'].forEach(key=>{if(row.manualFields?.[key])return;row[key]=String(row[key]??'').split(' | ').map(value=>materialTranslations.get(value)?.[lang]||value).join(' | ');});});}
 const panel=document.getElementById('materialsContainer');
 function add(name,qty,unit,source,kind='Material'){rows.push({name,qty,unit,source,kind,price:''});}
 function build(){
@@ -3775,8 +3779,11 @@ document.querySelectorAll('#listaItems tr').forEach(tr=>{
  lnd_light:'Luminarias;Cable de baja tensión según recorrido;Transformador según carga',
  dsn_3d:'Filamento: usar gramos del slicer;Material de soporte según slicer'
  };
+ const englishLists={"plm_faucet":"Faucet or toilet according to scope;Water supply connectors;Compatible seals and fasteners","plm_disp":"Compatible garbage disposal;Drain connection kit;Cord / connection according to model","plm_pipe":"Pipe: specify supply or drain, material and diameter;Elbows and fittings according to route;Valves and supports","plm_shower":"Compatible shower valve;Pipe and fittings according to plan;Supports and protection","plm_heater":"Water heater according to capacity and energy source;Compatible connections and valves;Pan and drainage according to installation","elec_rec":"Compatible lights and boxes;Wire according to circuit and route;Connectors and fasteners","elec_out":"Outlets or switches according to circuit;Boxes and plates;Wire and connectors","elec_fan":"Ceiling fan;Fan-rated box and support;Wire and connectors","elec_panel":"Panel and breakers according to approved design;Conductors according to load and route;Connectors and grounding","net_drop":"Cat6 cable: measure route per drop;Jacks and plates;Patch cords and organizers","net_cam":"Camera according to design;Cable according to route;Compatible mounting and power","net_ap":"Wi-Fi access point;Cable according to route;PoE and compatible mount","net_rack":"Rack and accessories according to equipment;Patch panel and organizers;Fasteners","net_cable":"Organizers and hook-and-loop ties;Labels;Patch cords according to route","elec_smart":"Compatible smart device;Connectors and plate;Verify neutral and power","crp_deck":"Boards according to plan;Framing and supports according to design;Compatible fasteners","crp_patio":"Lumber according to structural plan;Hardware and anchors;Roof covering according to design","crp_fence":"Posts and rails according to height and spacing;Boards or panels;Concrete and fasteners","crp_cab":"Panels according to cut list;Hardware;Fasteners and finish","lnd_wall":"Blocks according to dimensions;Base and drainage according to design;Geotextile","lnd_light":"Lighting fixtures;Low-voltage cable according to route;Transformer according to load","dsn_3d":"Filament: use slicer weight in grams;Support material according to slicer"};
  const materials=lists[id]||( /Painting|Pintura/.test(item.cat_en+' '+item.cat_es)?'Pintura o recubrimiento: medir área y confirmar rendimiento;Protección y preparación de superficies': /Hourly|Design/.test(item.cat_en)?'Sin compra automática: definir alcance y consumibles':'Definir materiales según alcance');
- materials.split(';').forEach(n=>add(n,'','',name));
+ const fallbackEnglish=/Painting|Pintura/.test(item.cat_en+' '+item.cat_es)?'Paint or coating: measure area and verify coverage;Surface protection and preparation':/Hourly|Design/.test(item.cat_en)?'No automatic purchase: define scope and consumables':'Define materials according to scope';
+ const enMaterials=(englishLists[id]||fallbackEnglish).split(';');
+ materials.split(';').forEach((n,i)=>add(txt(enMaterials[i]||n,n),'','',name));
  }
 
 });
@@ -3892,7 +3899,7 @@ function render(){
  panel.querySelector('#matBack').onclick=()=>cambiarSeccion('estimate');
  panel.querySelector('#matRebuild').onclick=()=>{if(confirm(txt('Replace manual edits with a new calculation?','¿Reemplazar ajustes manuales por un cálculo nuevo?')))build();};
  panel.querySelectorAll('[data-add-kind]').forEach(button=>button.onclick=()=>{add('','','',txt('Manual entry','Agregado manual'),button.dataset.addKind);render();});
- panel.querySelectorAll('input[data-row]').forEach(input=>input.oninput=()=>rows[Number(input.dataset.row)][input.dataset.key]=input.value);
+ panel.querySelectorAll('input[data-row]').forEach(input=>input.oninput=()=>{const row=rows[Number(input.dataset.row)];row[input.dataset.key]=input.value;row.manualFields=row.manualFields||{};row.manualFields[input.dataset.key]=true;});
  panel.querySelector('#matCsv').onclick=()=>{
  const records=[[txt('Category','Categoría'),txt('Item','Elemento'),txt('Qty','Cant.'),txt('Unit','Unidad'),txt('Estimate items','Partidas')],...['Material','Equipment'].flatMap(kind=>rows.filter(r=>(r.kind==='Equipment'?'Equipment':'Material')===kind).map(r=>[groupTitle(kind),r.name,r.qty,r.unit,r.source]))];
  const csv=records.map(record=>record.map(value=>'"'+String(value).replaceAll('"','""')+'"').join(',')).join('\r\n');
@@ -3903,8 +3910,8 @@ function render(){
  w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>KN3X</title><style>body{font:13px Arial;color:#172033}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:8px;text-align:left}h1{font-size:20px}h2{background:#e6eaf0;padding:12px;font-size:16px}thead{display:table-header-group}tr{break-inside:avoid}.category{margin-top:24px}@media print{@page{margin:15mm}.category{break-inside:auto}}</style></head><body><h1>KN3X — '+txt('Materials & equipment','Materiales y equipos')+' '+esc(document.getElementById('inputEstNum').value)+'</h1><p>'+esc(document.getElementById('inputClientName').value)+'</p>'+['Material','Equipment'].map(kind=>'<section class="category"><h2>'+groupTitle(kind)+'</h2>'+groupedRows(kind,true)+'</section>').join('')+'<p>'+txt('Check site quantities, equipment availability and product compatibility before ordering.','Revisar cantidades en sitio, disponibilidad de equipo y compatibilidad antes de comprar.')+'</p></body></html>');w.document.close();w.print();
  };
 }
-new MutationObserver(()=>{if(!panel.classList.contains('hidden'))render();}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
-window.addEventListener('kn3x:viewchange',e=>{if(e.detail==='materials'){if(!rows.length)build();else render();}});
+new MutationObserver(()=>{translateMaterialRows();if(!panel.classList.contains('hidden'))render();}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+window.addEventListener('kn3x:viewchange',e=>{if(e.detail==='materials'){if(!rows.length)build();else{translateMaterialRows();render();}}});
 })();
 </script>
 <script>
