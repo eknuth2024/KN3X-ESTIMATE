@@ -1175,6 +1175,8 @@
    color:#000000!important;-webkit-text-fill-color:#000000!important;opacity:1!important;
  }
 }
+</style><style>
+#materialsContainer select[data-key="unit"]{width:100%;min-width:115px;background:#3a3a3c;color:#fff;border:1px solid #8290a2;padding:8px 10px;border-radius:12px;font-size:16px;}
 </style></head>
 <body class="bg-gray-100 text-gray-800 font-sans h-screen overflow-hidden flex text-xs md:text-sm">
 
@@ -3888,11 +3890,37 @@ render();
 }
 
 function groupTitle(kind){return kind==='Equipment'?txt('Equipment & tools','Equipos y herramientas'):txt('Materials & consumables','Materiales y consumibles');}
+
+const materialUnitChoices=[
+ ['each','Each','Unidad',['unidad','unit','und']],
+ ['sqft','SqFt','SqFt',['ft²','ft2','sq ft']],
+ ['lft','LFt','LFt',['linft','pie lineal','pies lineales','lf']],
+ ['gal','Gallon','Galón',['gallon','galón','galon']],
+ ['roll','Roll','Rollo',['rollo']],
+ ['box','Box','Caja',['caja']],
+ ['pack','Pack','Paquete',['paquete']],
+ ['bag','Bag','Bolsa',['bolsa']],
+ ['tube','Tube','Tubo',['tubo']],
+ ['bottle','Bottle','Envase',['envase']],
+ ['kit','Kit','Kit',[]],
+ ['cuyd','CuYd','Yd³',['yd³','yd3']],
+ ['lb','lb','lb',[]],
+ ['kg','kg','kg',[]],
+ ['g','g','g',[]],
+ ['liter','Liter','Litro',['litro','litre','l']]
+];
+function materialUnitChoice(value){const key=String(value||'').trim().toLowerCase();return materialUnitChoices.find(([code,en,es,aliases])=>[code,en,es,...aliases].some(x=>x.toLowerCase()===key));}
+function materialUnitLabel(value){const choice=materialUnitChoice(value);return choice?txt(choice[1],choice[2]):String(value||'');}
+function materialUnitSelect(value,index){
+ const choice=materialUnitChoice(value),selected=choice?choice[0]:String(value||'');
+ return '<select data-row="'+index+'" data-key="unit" aria-label="'+txt('Unit','Unidad')+'"><option value="">'+txt('Select unit…','Seleccionar unidad…')+'</option>'+(!choice&&selected?'<option value="'+esc(selected)+'" selected>'+esc(selected)+'</option>':'')+materialUnitChoices.map(([code,en,es])=>'<option value="'+code+'" '+(code===selected?'selected':'')+'>'+esc(txt(en,es))+'</option>').join('')+'</select>';
+}
+
 function groupedRows(kind,forPrint=false){
  const items=rows.map((row,index)=>({row,index})).filter(({row})=>(row.kind==='Equipment'?'Equipment':'Material')===kind);
  if(!items.length)return '<p>'+txt('No items for this category.','Sin elementos en esta categoría.')+'</p>';
  const headers=forPrint?[txt('Item','Elemento'),txt('Qty','Cant.'),txt('Unit','Unidad'),txt('Estimate items','Partidas')]:[txt('Item','Elemento'),txt('Qty','Cant.'),txt('Unit','Unidad'),txt('Estimate items','Partidas'),txt('Supplier','Proveedor')];
- return '<div class="mat-scroll"><table><thead><tr>'+headers.map(h=>'<th>'+h+'</th>').join('')+'</tr></thead><tbody>'+items.map(({row:r,index:i})=>'<tr>'+(forPrint?[r.name,r.qty===''?txt('Confirm','Confirmar'):r.qty,r.unit,r.source].map(value=>'<td>'+esc(value)+'</td>').join(''):['name','qty','unit'].map(k=>'<td><input data-row="'+i+'" data-key="'+k+'" value="'+esc(r[k])+'" aria-label="'+k+'"></td>').join('')+'<td>'+esc(r.source)+'</td><td><a target="_blank" rel="noopener" href="https://www.homedepot.com/s/'+encodeURIComponent(r.name)+'">Home Depot</a> · <a target="_blank" rel="noopener" href="https://www.lowes.com/search?searchTerm='+encodeURIComponent(r.name)+'">Lowe’s</a></td>')+'</tr>').join('')+'</tbody></table></div>';
+ return '<div class="mat-scroll"><table><thead><tr>'+headers.map(h=>'<th>'+h+'</th>').join('')+'</tr></thead><tbody>'+items.map(({row:r,index:i})=>'<tr>'+(forPrint?[r.name,r.qty===''?txt('Confirm','Confirmar'):r.qty,materialUnitLabel(r.unit),r.source].map(value=>'<td>'+esc(value)+'</td>').join(''):['name','qty','unit'].map(k=>'<td>'+(k==='unit'?materialUnitSelect(r.unit,i):'<input data-row="'+i+'" data-key="'+k+'" value="'+esc(r[k])+'" aria-label="'+k+'">')+'</td>').join('')+'<td>'+esc(r.source)+'</td><td><a target="_blank" rel="noopener" href="https://www.homedepot.com/s/'+encodeURIComponent(r.name)+'">Home Depot</a> · <a target="_blank" rel="noopener" href="https://www.lowes.com/search?searchTerm='+encodeURIComponent(r.name)+'">Lowe’s</a></td>')+'</tr>').join('')+'</tbody></table></div>';
 }
 function render(){
  panel.innerHTML='<button type="button" id="matBack">← '+txt('Back to estimate','Volver al presupuesto')+'</button><h2>'+txt('PROJECT MATERIALS & EQUIPMENT','MATERIALES Y EQUIPOS DEL PROYECTO')+'</h2><p>'+txt('Materials are consumed, discarded or installed in the job. Equipment and tools are reusable; check availability before purchasing or renting. Shared equipment is listed once with its related estimate items.','Los materiales se consumen, desechan o quedan instalados. Los equipos y herramientas son reutilizables; revisar disponibilidad antes de comprar o alquilar. Los equipos compartidos aparecen una vez con sus partidas relacionadas.')+'</p><p>'+txt('Paint: 350 SqFt/gal per coat, coats per item and 10% allowance. Quantities are planning allowances; blank quantities require site measurements.','Pintura: 350 SqFt/gal por mano, manos según partida y 10% de previsión. Las cantidades son estimaciones de planificación; las vacías requieren medidas en sitio.')+'</p><div class="mat-actions"><button id="matRebuild">'+txt('Update from estimate','Actualizar desde presupuesto')+'</button><button id="matPrint">'+txt('Print / PDF','Imprimir / PDF')+'</button><button id="matCsv">CSV</button></div>'+['Material','Equipment'].map(kind=>'<section class="materials-category"><h3>'+groupTitle(kind)+'</h3>'+groupedRows(kind)+'<button data-add-kind="'+kind+'">'+txt('Add item','Agregar elemento')+'</button></section>').join('');
@@ -3900,6 +3928,8 @@ function render(){
  panel.querySelector('#matRebuild').onclick=()=>{if(confirm(txt('Replace manual edits with a new calculation?','¿Reemplazar ajustes manuales por un cálculo nuevo?')))build();};
  panel.querySelectorAll('[data-add-kind]').forEach(button=>button.onclick=()=>{add('','','',txt('Manual entry','Agregado manual'),button.dataset.addKind);render();});
  panel.querySelectorAll('input[data-row]').forEach(input=>input.oninput=()=>{const row=rows[Number(input.dataset.row)];row[input.dataset.key]=input.value;row.manualFields=row.manualFields||{};row.manualFields[input.dataset.key]=true;});
+ panel.querySelectorAll('select[data-row]').forEach(select=>select.onchange=()=>{const row=rows[Number(select.dataset.row)];row.unit=select.value;row.manualFields=row.manualFields||{};row.manualFields.unit=true;});
+
  panel.querySelector('#matCsv').onclick=()=>{
  const records=[[txt('Category','Categoría'),txt('Item','Elemento'),txt('Qty','Cant.'),txt('Unit','Unidad'),txt('Estimate items','Partidas')],...['Material','Equipment'].flatMap(kind=>rows.filter(r=>(r.kind==='Equipment'?'Equipment':'Material')===kind).map(r=>[groupTitle(kind),r.name,r.qty,r.unit,r.source]))];
  const csv=records.map(record=>record.map(value=>'"'+String(value).replaceAll('"','""')+'"').join(',')).join('\r\n');
