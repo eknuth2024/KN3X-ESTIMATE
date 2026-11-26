@@ -3725,14 +3725,23 @@ function validEstimateForFinalizing() {
 (()=> {
 const materialTranslations=new Map();
 const es=()=>currentLang==='es', txt=(a,b)=>{materialTranslations.set(a,{en:a,es:b});materialTranslations.set(b,{en:a,es:b});return es()?b:a;}, esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let rows=[];
+let rows=[],lastMaterialSnapshot='',lastMaterialIdentity='',materialTimer=0;
+function materialIdentity(){return JSON.stringify(['inputEstNum','inputClientName','inputAddress'].map(id=>document.getElementById(id)?.value||''));}
+function materialSnapshot(){return JSON.stringify({identity:materialIdentity(),items:[...document.querySelectorAll('#listaItems tr')].map(tr=>({id:tr.querySelector('select')?.selectedOptions[0]?.dataset.id||'',qty:tr.querySelector('.qty')?.value||'',note:tr.querySelector('.nota-input')?.value||'',unit:tr.querySelector('.unit-display')?.dataset.unit||''}))});}
+function materialSyncKey(row){const english=value=>String(value||'').split(' | ').map(text=>materialTranslations.get(text)?.en||text).join(' | ');return [row.kind==='Equipment'?'Equipment':'Material',english(row.name),row.kind==='Equipment'?'':english(row.source)].join('::');}
+function syncFromEstimate(){if(materialSnapshot()!==lastMaterialSnapshot)build(true);}
+function scheduleMaterialSync(){clearTimeout(materialTimer);materialTimer=setTimeout(syncFromEstimate,150);}
+
 catalogoPrecios.forEach(item=>{materialTranslations.set(item.nom_en,{en:item.nom_en,es:item.nom_es});materialTranslations.set(item.nom_es,{en:item.nom_en,es:item.nom_es});});
 [['each','unidad'],['LinFt','pie lineal'],['SqFt','ft²'],['CuYd','yd³'],['Manual entry','Agregado manual']].forEach(([a,b])=>{materialTranslations.set(a,{en:a,es:b});materialTranslations.set(b,{en:a,es:b});});
 function translateMaterialRows(){const lang=es()?'es':'en';rows.forEach(row=>{['name','unit','source'].forEach(key=>{if(row.manualFields?.[key])return;row[key]=String(row[key]??'').split(' | ').map(value=>materialTranslations.get(value)?.[lang]||value).join(' | ');});});}
 const panel=document.getElementById('materialsContainer');
 function add(name,qty,unit,source,kind='Material'){rows.push({name,qty,unit,source,kind,price:''});}
-function build(){
-rows=[];
+function build(preserve=false){
+ const identity=materialIdentity(),sameEstimate=preserve&&identity===lastMaterialIdentity;
+ const previous=sameEstimate?new Map(rows.filter(row=>row.syncKey).map(row=>[row.syncKey,row])):new Map();
+ const manualRows=sameEstimate?rows.filter(row=>row.manualEntry):[];
+ rows=[];
 const toolKits=new Set();const equipmentJobs=[];let anyWork=false;
 document.querySelectorAll('#listaItems tr').forEach(tr=>{
  const item=catalogoPrecios.find(x=>x.id===tr.querySelector('select')?.selectedOptions[0]?.dataset.id),q=Number(tr.querySelector('.qty')?.value)||0;
@@ -3886,6 +3895,14 @@ rows=rows.filter(row=>{
  if(merged.has(key)){const prior=merged.get(key);if(Number(row.qty)>Number(prior.qty))prior.qty=row.qty;return false;}
  merged.set(key,row);return true;
 });
+rows.forEach(row=>{
+ row.syncKey=materialSyncKey(row);const prior=previous.get(row.syncKey);if(!prior)return;
+ for(const key of ['name','unit','qty']){
+ if(prior.manualFields?.[key]&&(key!=='qty'||row.qty==='')){row[key]=prior[key];row.manualFields=row.manualFields||{};row.manualFields[key]=true;}
+ }
+});
+rows.push(...manualRows);
+lastMaterialSnapshot=materialSnapshot();lastMaterialIdentity=identity;
 render();
 }
 
@@ -3926,7 +3943,7 @@ function render(){
  panel.innerHTML='<button type="button" id="matBack">← '+txt('Back to estimate','Volver al presupuesto')+'</button><h2>'+txt('PROJECT MATERIALS & EQUIPMENT','MATERIALES Y EQUIPOS DEL PROYECTO')+'</h2><p>'+txt('Materials are consumed, discarded or installed in the job. Equipment and tools are reusable; check availability before purchasing or renting. Shared equipment is listed once with its related estimate items.','Los materiales se consumen, desechan o quedan instalados. Los equipos y herramientas son reutilizables; revisar disponibilidad antes de comprar o alquilar. Los equipos compartidos aparecen una vez con sus partidas relacionadas.')+'</p><p>'+txt('Paint: 350 SqFt/gal per coat, coats per item and 10% allowance. Quantities are planning allowances; blank quantities require site measurements.','Pintura: 350 SqFt/gal por mano, manos según partida y 10% de previsión. Las cantidades son estimaciones de planificación; las vacías requieren medidas en sitio.')+'</p><div class="mat-actions"><button id="matRebuild">'+txt('Update from estimate','Actualizar desde presupuesto')+'</button><button id="matPrint">'+txt('Print / PDF','Imprimir / PDF')+'</button><button id="matCsv">CSV</button></div>'+['Material','Equipment'].map(kind=>'<section class="materials-category"><h3>'+groupTitle(kind)+'</h3>'+groupedRows(kind)+'<button data-add-kind="'+kind+'">'+txt('Add item','Agregar elemento')+'</button></section>').join('');
  panel.querySelector('#matBack').onclick=()=>cambiarSeccion('estimate');
  panel.querySelector('#matRebuild').onclick=()=>{if(confirm(txt('Replace manual edits with a new calculation?','¿Reemplazar ajustes manuales por un cálculo nuevo?')))build();};
- panel.querySelectorAll('[data-add-kind]').forEach(button=>button.onclick=()=>{add('','','',txt('Manual entry','Agregado manual'),button.dataset.addKind);render();});
+ panel.querySelectorAll('[data-add-kind]').forEach(button=>button.onclick=()=>{add('','','',txt('Manual entry','Agregado manual'),button.dataset.addKind);rows.at(-1).manualEntry=true;render();});
  panel.querySelectorAll('input[data-row]').forEach(input=>input.oninput=()=>{const row=rows[Number(input.dataset.row)];row[input.dataset.key]=input.value;row.manualFields=row.manualFields||{};row.manualFields[input.dataset.key]=true;});
  panel.querySelectorAll('select[data-row]').forEach(select=>select.onchange=()=>{const row=rows[Number(select.dataset.row)];row.unit=select.value;row.manualFields=row.manualFields||{};row.manualFields.unit=true;});
 
@@ -3940,8 +3957,11 @@ function render(){
  w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>KN3X</title><style>body{font:13px Arial;color:#172033}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:8px;text-align:left}h1{font-size:20px}h2{background:#e6eaf0;padding:12px;font-size:16px}thead{display:table-header-group}tr{break-inside:avoid}.category{margin-top:24px}@media print{@page{margin:15mm}.category{break-inside:auto}}</style></head><body><h1>KN3X — '+txt('Materials & equipment','Materiales y equipos')+' '+esc(document.getElementById('inputEstNum').value)+'</h1><p>'+esc(document.getElementById('inputClientName').value)+'</p>'+['Material','Equipment'].map(kind=>'<section class="category"><h2>'+groupTitle(kind)+'</h2>'+groupedRows(kind,true)+'</section>').join('')+'<p>'+txt('Check site quantities, equipment availability and product compatibility before ordering.','Revisar cantidades en sitio, disponibilidad de equipo y compatibilidad antes de comprar.')+'</p></body></html>');w.document.close();w.print();
  };
 }
+document.getElementById('estimateContainer').addEventListener('input',scheduleMaterialSync);
+document.getElementById('estimateContainer').addEventListener('change',scheduleMaterialSync);
+new MutationObserver(scheduleMaterialSync).observe(document.getElementById('listaItems'),{childList:true,subtree:true});
 new MutationObserver(()=>{translateMaterialRows();if(!panel.classList.contains('hidden'))render();}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
-window.addEventListener('kn3x:viewchange',e=>{if(e.detail==='materials'){if(!rows.length)build();else{translateMaterialRows();render();}}});
+window.addEventListener('kn3x:viewchange',e=>{if(e.detail==='materials'){syncFromEstimate();translateMaterialRows();render();}});
 })();
 </script>
 <script>
